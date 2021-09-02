@@ -6,8 +6,8 @@
 \title{Fuzzy Analysis Cluster Learner}
 \description{
 A \link{LearnerClust} for fuzzy clustering implemented in \code{\link[cluster:fanny]{cluster::fanny()}}.
-\code{\link[cluster:fanny]{cluster::fanny()}} doesn't have a deafult value for the number of clusters.
-Therefore, the \code{k} parameter which correponds to the number
+\code{\link[cluster:fanny]{cluster::fanny()}} doesn't have a default value for the number of clusters.
+Therefore, the \code{k} parameter which corresponds to the number
 of clusters here is set to 2 by default.
 The predict method copies cluster assignments and memberships
 generated for train data. The predict does not work for
@@ -40,6 +40,7 @@ learner$param_set$ids()
 \if{html}{
 \out{<details ><summary>Inherited methods</summary>}
 \itemize{
+\item \out{<span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="base_learner">}\href{../../mlr3/html/Learner.html#method-base_learner}{\code{mlr3::Learner$base_learner()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="format">}\href{../../mlr3/html/Learner.html#method-format}{\code{mlr3::Learner$format()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="help">}\href{../../mlr3/html/Learner.html#method-help}{\code{mlr3::Learner$help()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="predict">}\href{../../mlr3/html/Learner.html#method-predict}{\code{mlr3::Learner$predict()}}\out{</span>}

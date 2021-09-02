@@ -5,8 +5,8 @@
 \alias{LearnerClustAP}
 \title{Affinity Propagation Clustering Learner}
 \description{
-A \link{LearnerClust} for Affinity Propagation clustering implemented in \code{\link[apcluster:apcluster]{apcluster::apcluster()}}.
-\code{\link[apcluster:apcluster]{apcluster::apcluster()}} doesn't have set a default for similarity function.
+A \link{LearnerClust} for Affinity Propagation clustering implemented in \code{\link[apcluster:apcluster-methods]{apcluster::apcluster()}}.
+\code{\link[apcluster:apcluster-methods]{apcluster::apcluster()}} doesn't have set a default for similarity function.
 Therefore, the \code{s} parameter here is set to \code{apcluster::negDistMat(r = 2L)} by default
 since this is what is used in the original paper on Affity Propagation clustering.
 The predict method computes the closest cluster exemplar to find the
@@ -42,6 +42,7 @@ learner$param_set$ids()
 \if{html}{
 \out{<details ><summary>Inherited methods</summary>}
 \itemize{
+\item \out{<span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="base_learner">}\href{../../mlr3/html/Learner.html#method-base_learner}{\code{mlr3::Learner$base_learner()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="format">}\href{../../mlr3/html/Learner.html#method-format}{\code{mlr3::Learner$format()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="help">}\href{../../mlr3/html/Learner.html#method-help}{\code{mlr3::Learner$help()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="predict">}\href{../../mlr3/html/Learner.html#method-predict}{\code{mlr3::Learner$predict()}}\out{</span>}

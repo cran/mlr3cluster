@@ -9,6 +9,7 @@
 #'
 #' @template param_id
 #' @template param_backend
+#' @template param_label
 #' @family Task
 #' @export
 #' @examples
@@ -20,12 +21,12 @@
 #' # possible properties:
 #' mlr_reflections$task_properties$clust
 TaskClust = R6Class("TaskClust",
-  inherit = Task,
+  inherit = TaskUnsupervised,
   public = list(
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
-    initialize = function(id, backend) {
-      super$initialize(id = id, task_type = "clust", backend = backend)
+    initialize = function(id, backend, label = NA_character_) {
+      super$initialize(id = id, task_type = "clust", backend = backend, label = label)
     }
   )
 )

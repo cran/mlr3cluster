@@ -3,7 +3,7 @@
 \name{mlr_learners_clust.fanny}
 \alias{mlr_learners_clust.fanny}
 \alias{LearnerClustFanny}
-\title{Fuzzy Analysis Cluster Learner}
+\title{Fuzzy Analysis Clustering Learner}
 \description{
 A \link{LearnerClust} for fuzzy clustering implemented in \code{\link[cluster:fanny]{cluster::fanny()}}.
 \code{\link[cluster:fanny]{cluster::fanny()}} doesn't have a default value for the number of clusters.
@@ -17,6 +17,29 @@ new data.
 
 This \link{Learner} can be instantiated via the \link[mlr3misc:Dictionary]{dictionary} \link{mlr_learners} or with the associated sugar function \code{\link[=lrn]{lrn()}}:\preformatted{mlr_learners$get("clust.fanny")
 lrn("clust.fanny")
+}
+}
+
+\section{Meta Information}{
+
+\itemize{
+\item Task type: \dQuote{clust}
+\item Predict Types: \dQuote{partition}, \dQuote{prob}
+\item Feature Types: \dQuote{logical}, \dQuote{integer}, \dQuote{numeric}
+\item Required Packages: \CRANpkg{mlr3}, \CRANpkg{mlr3cluster}, \CRANpkg{cluster}
+}
+}
+
+\section{Parameters}{
+\tabular{lllll}{
+   Id \tab Type \tab Default \tab Levels \tab Range \cr
+   k \tab integer \tab 2 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   memb.exp \tab numeric \tab 2 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   metric \tab character \tab euclidean \tab euclidean, manhattan, SqEuclidean \tab - \cr
+   stand \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
+   maxit \tab integer \tab 500 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
+   tol \tab numeric \tab 1e-15 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
+   trace.lev \tab integer \tab 0 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
 }
 }
 

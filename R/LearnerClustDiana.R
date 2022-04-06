@@ -10,7 +10,7 @@
 #' The default value for `k` is 2.
 #'
 #' @templateVar id clust.diana
-#' @template section_dictionary_learner
+#' @template learner
 #' @template example
 #'
 #' @export
@@ -20,15 +20,11 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
-      ps = ParamSet$new(
-        params = list(
-          ParamFct$new(
-            id = "metric", default = "euclidean",
-            levels = c("euclidean", "manhattan"), tags = "train"),
-          ParamLgl$new(id = "stand", default = FALSE, tags = "train"),
-          ParamInt$new(id = "trace.lev", lower = 0L, default = 0L, tags = "train"),
-          ParamInt$new(id = "k", lower = 1L, default = 2L, tags = "predict")
-        )
+      ps = ps(
+        metric = p_fct(default = "euclidean", levels = c("euclidean", "manhattan"), tags = "train"),
+        stand = p_lgl(default = FALSE, tags = "train"),
+        trace.lev = p_int(lower = 0L, default = 0L, tags = "train"),
+        k = p_int(lower = 1L, default = 2L, tags = "predict")
       )
       ps$values = list(k = 2L)
 
@@ -38,7 +34,8 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
         predict_types = "partition",
         param_set = ps,
         properties = c("hierarchical", "exclusive", "complete"),
-        packages = "cluster"
+        packages = "cluster",
+        label = "Divisive Hierarchical Clustering"
       )
     }
   ),

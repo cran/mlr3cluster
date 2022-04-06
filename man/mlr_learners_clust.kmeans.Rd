@@ -3,7 +3,7 @@
 \name{mlr_learners_clust.kmeans}
 \alias{mlr_learners_clust.kmeans}
 \alias{LearnerClustKMeans}
-\title{KMeans Cluster Learner}
+\title{K-Means Clustering Learner}
 \description{
 A \link{LearnerClust} for k-means clustering implemented in \code{\link[stats:kmeans]{stats::kmeans()}}.
 \code{\link[stats:kmeans]{stats::kmeans()}} doesn't have a default value for the number of clusters.
@@ -15,6 +15,27 @@ cluster memberships for new data.
 
 This \link{Learner} can be instantiated via the \link[mlr3misc:Dictionary]{dictionary} \link{mlr_learners} or with the associated sugar function \code{\link[=lrn]{lrn()}}:\preformatted{mlr_learners$get("clust.kmeans")
 lrn("clust.kmeans")
+}
+}
+
+\section{Meta Information}{
+
+\itemize{
+\item Task type: \dQuote{clust}
+\item Predict Types: \dQuote{partition}
+\item Feature Types: \dQuote{logical}, \dQuote{integer}, \dQuote{numeric}
+\item Required Packages: \CRANpkg{mlr3}, \CRANpkg{mlr3cluster}, 'stats', \CRANpkg{clue}
+}
+}
+
+\section{Parameters}{
+\tabular{lllll}{
+   Id \tab Type \tab Default \tab Levels \tab Range \cr
+   centers \tab untyped \tab 2 \tab  \tab - \cr
+   iter.max \tab integer \tab 10 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   algorithm \tab character \tab Hartigan-Wong \tab Hartigan-Wong, Lloyd, Forgy, MacQueen \tab - \cr
+   nstart \tab integer \tab 1 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   trace \tab integer \tab 0 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
 }
 }
 

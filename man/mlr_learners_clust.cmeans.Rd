@@ -18,6 +18,31 @@ lrn("clust.cmeans")
 }
 }
 
+\section{Meta Information}{
+
+\itemize{
+\item Task type: \dQuote{clust}
+\item Predict Types: \dQuote{partition}, \dQuote{prob}
+\item Feature Types: \dQuote{logical}, \dQuote{integer}, \dQuote{numeric}
+\item Required Packages: \CRANpkg{mlr3}, \CRANpkg{mlr3cluster}, \CRANpkg{e1071}
+}
+}
+
+\section{Parameters}{
+\tabular{lllll}{
+   Id \tab Type \tab Default \tab Levels \tab Range \cr
+   centers \tab untyped \tab 2 \tab  \tab - \cr
+   iter.max \tab integer \tab 100 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   verbose \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
+   dist \tab character \tab euclidean \tab euclidean, manhattan \tab - \cr
+   method \tab character \tab cmeans \tab cmeans, ufcl \tab - \cr
+   m \tab numeric \tab 2 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   rate.par \tab numeric \tab - \tab  \tab \eqn{[0, 1]}{[0, 1]} \cr
+   weights \tab untyped \tab 1 \tab  \tab - \cr
+   control \tab untyped \tab - \tab  \tab - \cr
+}
+}
+
 \examples{
 learner = mlr3::lrn("clust.cmeans")
 print(learner)

@@ -2,6 +2,7 @@
 #'
 #' @name mlr_learners_clust.mclust
 #' @include LearnerClust.R
+#' @include aaa.R
 #'
 #' @description
 #' A [LearnerClust] for model-based clustering implemented in [mclust::Mclust()].
@@ -71,6 +72,7 @@ LearnerClustMclust = R6Class("LearnerClustMclust",
         param_set = ps,
         properties = c("partitional", "fuzzy", "complete"),
         packages = "mclust",
+        man = "mlr3cluster::mlr_learners_clust.mclust",
         label = "Gaussian Mixture Models Clustering"
       )
     }
@@ -97,3 +99,5 @@ LearnerClustMclust = R6Class("LearnerClustMclust",
     }
   )
 )
+
+learners[["clust.mclust"]] = LearnerClustMclust

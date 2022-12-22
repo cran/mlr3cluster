@@ -3,7 +3,7 @@
 Cluster analysis for mlr3
 
 <!-- badges: start -->
-[![tic](https://github.com/mlr-org/mlr3cluster/workflows/tic/badge.svg?branch=main)](https://github.com/mlr-org/mlr3cluster/actions)
+[![r-cmd-check](https://github.com/mlr-org/mlr3cluster/actions/workflows/r-cmd-check.yml/badge.svg)](https://github.com/mlr-org/mlr3cluster/actions/workflows/r-cmd-check.yml)
 [![CRAN status](https://www.r-pkg.org/badges/version/mlr3cluster)](https://CRAN.R-project.org/package=mlr3cluster)
 [![StackOverflow](https://img.shields.io/badge/stackoverflow-mlr3-orange.svg)](https://stackoverflow.com/questions/tagged/mlr3)
 [![Mattermost](https://img.shields.io/badge/chat-mattermost-orange.svg)](https://lmmisld-lmu-stats-slds.srv.mwn.de/mlr_invite/)
@@ -29,7 +29,7 @@ devtools::install_github("mlr-org/mlr3cluster")
 
 The current version of **mlr3cluster** contains:
 
-  - A selection of 17 clustering learners that represent a wide variety of clusterers:
+  - A selection of 19 clustering learners that represent a wide variety of clusterers:
     partitional, hierarchical, fuzzy, etc.
   - A selection of 4 performance measures
   - One built-in task to get started with clustering
@@ -55,6 +55,7 @@ Also, the package is integrated with **[mlr3viz](https://github.com/mlr-org/mlr3
 | [clust.hclust](https://mlr3cluster.mlr-org.com/reference/mlr_learners_clust.hclust.html) | Agglomerative Hierarchical Clustering | [stats](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/stats-package.html) |
 | [clust.kkmeans](https://mlr3cluster.mlr-org.com/reference/mlr_learners_clust.kkmeans.html) | Kernel K-Means Clustering |  [kernlab](https://CRAN.R-project.org/package=kernlab) |
 | [clust.kmeans](https://mlr3cluster.mlr-org.com/reference/mlr_learners_clust.kmeans.html) | K-Means Clustering | [stats](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/stats-package.html) |
+| [clust.mclust](https://mlr3cluster.mlr-org.com/reference/mlr_learners_clust.mclust.html) | Gaussian Mixture Models-Based Clustering | [mclust](https://cran.r-project.org/package=mclust) |
 | [clust.MBatchKMeans](https://mlr3cluster.mlr-org.com/reference/mlr_learners_clust.MiniBatchKMeans.html) | Mini Batch K-Means Clustering | [ClusterR](https://CRAN.R-project.org/package=ClusterR) |
 | [clust.meanshift](https://mlr3cluster.mlr-org.com/reference/mlr_learners_clust.meanshift.html) | Mean Shift Clustering | [LPCM](https://CRAN.R-project.org/package=LPCM) |
 | [clust.pam](https://mlr3cluster.mlr-org.com/reference/mlr_learners_clust.pam.html) | Clustering Around Medoids | [cluster](https://CRAN.R-project.org/package=cluster) |

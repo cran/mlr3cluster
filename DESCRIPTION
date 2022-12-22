@@ -1,6 +1,6 @@
 Package: mlr3cluster
 Title: Cluster Extension for 'mlr3'
-Version: 0.1.5
+Version: 0.1.6
 Authors@R: 
     c(person(given = "Damir",
              family = "Pulatov",
@@ -22,8 +22,8 @@ Imports: backports (>= 1.1.10), checkmate, clue, clusterCrit, cluster,
 Suggests: dbscan, e1071, ClusterR, kernlab, apcluster, LPCM, mclust,
         mlbench, RWeka, testthat
 Encoding: UTF-8
-RoxygenNote: 7.2.1
-Collate: 'LearnerClust.R' 'LearnerClustAffinityPropagation.R'
+RoxygenNote: 7.2.3
+Collate: 'LearnerClust.R' 'aaa.R' 'LearnerClustAffinityPropagation.R'
         'LearnerClustAgnes.R' 'LearnerClustCMeans.R'
         'LearnerClustCobweb.R' 'LearnerClustDBSCAN.R'
         'LearnerClustDiana.R' 'LearnerClustEM.R' 'LearnerClustFanny.R'
@@ -37,9 +37,9 @@ Collate: 'LearnerClust.R' 'LearnerClustAffinityPropagation.R'
         'PredictionDataClust.R' 'TaskClust.R' 'TaskClust_usarrest.R'
         'as_prediction_clust.R' 'as_task_clust.R' 'helper.R' 'zzz.R'
 NeedsCompilation: no
-Packaged: 2022-11-01 16:43:27 UTC; damir
+Packaged: 2022-12-22 17:33:00 UTC; marc
 Author: Damir Pulatov [cre, aut],
   Michel Lang [aut] (<https://orcid.org/0000-0001-9754-0393>)
 Maintainer: Damir Pulatov <damirpolat@protonmail.com>
 Repository: CRAN
-Date/Publication: 2022-11-01 21:57:36 UTC
+Date/Publication: 2022-12-22 18:00:02 UTC

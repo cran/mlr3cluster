@@ -2,6 +2,7 @@
 #'
 #' @name mlr_learners_clust.em
 #' @include LearnerClust.R
+#' @include aaa.R
 #'
 #' @description
 #' A [LearnerClust] for Expectation-Maximization clustering implemented in
@@ -42,6 +43,7 @@ LearnerClustEM = R6Class("LearnerClustEM",
         param_set = ps,
         properties = c("partitional", "exclusive", "complete"),
         packages = "RWeka",
+        man = "mlr3cluster::mlr_learners_clust.em",
         label = "Expectation-Maximization Clustering"
       )
     }
@@ -66,3 +68,5 @@ LearnerClustEM = R6Class("LearnerClustEM",
     }
   )
 )
+
+learners[["clust.em"]] = LearnerClustEM

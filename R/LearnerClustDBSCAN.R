@@ -2,6 +2,7 @@
 #'
 #' @name mlr_learners_clust.dbscan
 #' @include LearnerClust.R
+#' @include aaa.R
 #'
 #' @description
 #' A [LearnerClust] for density-based clustering implemented in [dbscan::dbscan()].
@@ -46,6 +47,7 @@ LearnerClustDBSCAN = R6Class("LearnerClustDBSCAN",
         param_set = ps,
         properties = c("partitional", "exclusive", "complete"),
         packages = "dbscan",
+        man = "mlr3cluster::mlr_learners_clust.dbscan",
         label = "Density-Based Clustering"
       )
     }
@@ -72,3 +74,5 @@ LearnerClustDBSCAN = R6Class("LearnerClustDBSCAN",
     }
   )
 )
+
+learners[["clust.dbscan"]] = LearnerClustDBSCAN

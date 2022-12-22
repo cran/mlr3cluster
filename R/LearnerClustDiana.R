@@ -2,6 +2,7 @@
 #'
 #' @name mlr_learners_clust.diana
 #' @include LearnerClust.R
+#' @include aaa.R
 #'
 #' @description
 #' A [LearnerClust] for divisive hierarchical clustering implemented in [cluster::diana()].
@@ -35,6 +36,7 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
         param_set = ps,
         properties = c("hierarchical", "exclusive", "complete"),
         packages = "cluster",
+        man = "mlr3cluster::mlr_learners_clust.diana",
         label = "Divisive Hierarchical Clustering"
       )
     }
@@ -62,3 +64,5 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
     }
   )
 )
+
+learners[["clust.diana"]] = LearnerClustDiana

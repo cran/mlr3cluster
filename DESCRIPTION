@@ -1,6 +1,6 @@
 Package: mlr3cluster
 Title: Cluster Extension for 'mlr3'
-Version: 0.1.7
+Version: 0.1.8
 Authors@R: 
     c(person(given = "Damir",
              family = "Pulatov",
@@ -34,12 +34,13 @@ Collate: 'LearnerClust.R' 'aaa.R' 'LearnerClustAffinityPropagation.R'
         'LearnerClustPAM.R' 'LearnerClustSimpleKMeans.R'
         'LearnerClustXMeans.R' 'MeasureClust.R' 'measures.R'
         'MeasureClustInternal.R' 'PredictionClust.R'
-        'PredictionDataClust.R' 'TaskClust.R' 'TaskClust_usarrest.R'
-        'as_prediction_clust.R' 'as_task_clust.R' 'helper.R' 'zzz.R'
+        'PredictionDataClust.R' 'TaskClust.R' 'TaskClust_ruspini.R'
+        'TaskClust_usarrest.R' 'as_prediction_clust.R'
+        'as_task_clust.R' 'bibentries.R' 'helper.R' 'zzz.R'
 NeedsCompilation: no
-Packaged: 2023-03-10 17:40:26 UTC; damir
+Packaged: 2023-03-12 21:18:12 UTC; damir
 Author: Damir Pulatov [cre, aut],
   Michel Lang [aut] (<https://orcid.org/0000-0001-9754-0393>)
 Maintainer: Damir Pulatov <damirpolat@protonmail.com>
 Repository: CRAN
-Date/Publication: 2023-03-10 19:10:02 UTC
+Date/Publication: 2023-03-12 21:50:12 UTC

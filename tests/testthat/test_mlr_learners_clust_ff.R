@@ -1,19 +1,16 @@
-context("clust.ff")
-
 skip_if_not_installed("RWeka")
 skip_on_cran()
 
 test_that("autotest", {
   learner = mlr3::lrn("clust.ff")
   expect_learner(learner)
-
   result = run_autotest(learner)
   expect_true(result, info = result$error)
 })
 
 test_that("Learner properties are respected", {
   task = tsk("usarrests")
-  learner = mlr_learners$get("clust.ff")
+  learner = lrn("clust.ff")
   expect_learner(learner, task)
 
   # test on multiple paramsets

@@ -1,7 +1,7 @@
-skip_if_not_installed("clue")
+skip_if_not_installed("fpc")
 
 test_that("autotest", {
-  learner = mlr3::lrn("clust.kmeans")
+  learner = mlr3::lrn("clust.dbscan_fpc", eps = 25)
   expect_learner(learner)
   result = run_autotest(learner)
   expect_true(result, info = result$error)
@@ -9,21 +9,14 @@ test_that("autotest", {
 
 test_that("Learner properties are respected", {
   task = tsk("usarrests")
-  learner = lrn("clust.kmeans")
+  learner = lrn("clust.dbscan_fpc", eps = 25)
   expect_learner(learner, task)
 
   # test on multiple paramsets
-  centers = data.frame(matrix(ncol = length(colnames(task$data())), nrow = 4L))
-  colnames(centers) = colnames(task$data())
-  centers$Assault = c(100, 200, 150, 300)
-  centers$Murder = c(11, 3, 10, 5)
-  centers$Rape = c(20, 18, 10, 26)
-  centers$UrbanPop = c(60, 54, 53, 69)
-
   parset_list = list(
-    list(centers = 2L),
-    list(centers = centers),
-    list(centers = 2L, algorithm = "MacQueen")
+    list(eps = 25),
+    list(eps = 25, MinPts = 10),
+    list(eps = 25, method = "hybrid")
   )
 
   for (i in seq_along(parset_list)) {
@@ -39,7 +32,5 @@ test_that("Learner properties are respected", {
     if ("exclusive" %in% learner$properties) {
       expect_prediction_exclusive(p, learner$predict_type)
     }
-
-    learner$reset()
   }
 })

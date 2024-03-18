@@ -1,8 +1,6 @@
 #' @title Fuzzy Analysis Clustering Learner
 #'
 #' @name mlr_learners_clust.fanny
-#' @include LearnerClust.R
-#' @include aaa.R
 #'
 #' @description
 #' A [LearnerClust] for fuzzy clustering implemented in [cluster::fanny()].
@@ -15,31 +13,35 @@
 #'
 #' @templateVar id clust.fanny
 #' @template learner
-#' @template example
+#'
+#' @references
+#' `r format_bib("kaufman2009finding")`
 #'
 #' @export
+#' @template seealso_learner
+#' @template example
 LearnerClustFanny = R6Class("LearnerClustFanny",
   inherit = LearnerClust,
   public = list(
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
-      ps = ps(
-        k = p_int(lower = 1L, default = 2L, tags = c("required", "train")),
-        memb.exp = p_dbl(lower = 1L, default = 2L, tags = "train"),
+      param_set = ps(
+        k = p_int(1L, tags = c("required", "train")),
+        memb.exp = p_dbl(1, default = 2, tags = "train"),
         metric = p_fct(default = "euclidean", levels = c("euclidean", "manhattan", "SqEuclidean"), tags = "train"),
         stand = p_lgl(default = FALSE, tags = "train"),
-        maxit = p_int(lower = 0L, default = 500L, tags = "train"),
-        tol = p_dbl(lower = 0L, default = 1e-15, tags = "train"),
-        trace.lev = p_int(lower = 0L, default = 0L, tags = "train")
+        maxit = p_int(0L, default = 500L, tags = "train"),
+        tol = p_dbl(0, default = 1e-15, tags = "train"),
+        trace.lev = p_int(0L, default = 0L, tags = "train")
       )
-      ps$values = list(k = 2L)
+      param_set$set_values(k = 2L)
 
       super$initialize(
         id = "clust.fanny",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = c("partition", "prob"),
-        param_set = ps,
+        param_set = param_set,
         properties = c("partitional", "fuzzy", "complete"),
         packages = "cluster",
         man = "mlr3cluster::mlr_learners_clust.fanny",
@@ -47,7 +49,6 @@ LearnerClustFanny = R6Class("LearnerClustFanny",
       )
     }
   ),
-
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
@@ -72,4 +73,5 @@ LearnerClustFanny = R6Class("LearnerClustFanny",
   )
 )
 
+#' @include aaa.R
 learners[["clust.fanny"]] = LearnerClustFanny

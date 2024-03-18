@@ -1,8 +1,6 @@
 #' @title Featureless Clustering Learner
 #'
 #' @name mlr_learners_clust.featureless
-#' @include LearnerClust.R
-#' @include aaa.R
 #'
 #' @description
 #' A simple [LearnerClust] which randomly (but evenly) assigns observations to
@@ -10,31 +8,30 @@
 #'
 #' @templateVar id clust.featureless
 #' @template learner
-#' @template example
+#'
 #' @export
+#' @template seealso_learner
+#' @template example
 LearnerClustFeatureless = R6Class("LearnerClustFeatureless",
   inherit = LearnerClust,
   public = list(
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
-      ps = ps(
-        num_clusters = p_int(lower = 1L, default = 1L, tags = c("required", "train", "predict"))
-      )
-      ps$values = list(num_clusters = 1L)
+      param_set = ps(num_clusters = p_int(1L, tags = c("required", "train", "predict")))
+      param_set$set_values(num_clusters = 1L)
 
       super$initialize(
         id = "clust.featureless",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = c("partition", "prob"),
-        param_set = ps,
+        param_set = param_set,
         properties = c("partitional", "exclusive", "complete", "missings"),
         man = "mlr3cluster::mlr_learners_clust.featureless",
         label = "Featureless Clustering"
       )
     }
   ),
-
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
@@ -72,7 +69,7 @@ LearnerClustFeatureless = R6Class("LearnerClustFeatureless",
         # reorder rows so that the max probability corresponds to
         # the selected partition in `partition`
         prob = do.call(rbind, map(seq_along(partition), function(i) {
-          x = prob[i,, drop = TRUE]
+          x = prob[i, , drop = TRUE]
           pos = which_max(x)
           if (pos == i) x else append(x[-pos], x[pos], after = partition[i] - 1L)
         }))
@@ -83,4 +80,5 @@ LearnerClustFeatureless = R6Class("LearnerClustFeatureless",
   )
 )
 
+#' @include aaa.R
 learners[["clust.featureless"]] = LearnerClustFeatureless

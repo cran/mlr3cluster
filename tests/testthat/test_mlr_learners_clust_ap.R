@@ -1,19 +1,15 @@
-context("clust.ap")
-
 skip_if_not_installed("apcluster")
 
 test_that("autotest", {
-  learner = mlr3::lrn("clust.ap")
+  learner = mlr3::lrn("clust.ap", s = apcluster::negDistMat(r = 2L))
   expect_learner(learner)
-
   result = run_autotest(learner)
   expect_true(result, info = result$error)
 })
 
-
 test_that("Learner properties are respected", {
   task = tsk("usarrests")
-  learner = mlr_learners$get("clust.ap")
+  learner = lrn("clust.ap")
   expect_learner(learner, task)
 
   # test on multiple paramsets

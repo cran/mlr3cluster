@@ -1,8 +1,6 @@
 #' @title Cobweb Clustering Learner
 #'
 #' @name mlr_learners_clust.cobweb
-#' @include LearnerClust.R
-#' @include aaa.R
 #'
 #' @description
 #' A [LearnerClust] for Cobweb clustering implemented in [RWeka::Cobweb()].
@@ -11,26 +9,30 @@
 #'
 #' @templateVar id clust.cobweb
 #' @template learner
-#' @template example
+#'
+#' @references
+#' `r format_bib("witten2002data", "fisher1987knowledge", "gennari1989models")`
 #'
 #' @export
+#' @template seealso_learner
+#' @template example
 LearnerClustCobweb = R6Class("LearnerClustCobweb",
   inherit = LearnerClust,
   public = list(
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
-      ps = ps(
-        A = p_dbl(default = 1, lower = 0, tags = "train"),
-        C = p_dbl(default = 0.002, lower = 0, tags = "train"),
-        S = p_int(default = 42L, lower = 1L, tags = "train")
+      param_set = ps(
+        A = p_dbl(0, default = 1, tags = "train"),
+        C = p_dbl(0, default = 0.002, tags = "train"),
+        S = p_int(1L, default = 42L, tags = "train")
       )
 
       super$initialize(
         id = "clust.cobweb",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
-        param_set = ps,
+        param_set = param_set,
         properties = c("partitional", "exclusive", "complete"),
         packages = "RWeka",
         man = "mlr3cluster::mlr_learners_clust.cobweb",
@@ -38,7 +40,6 @@ LearnerClustCobweb = R6Class("LearnerClustCobweb",
       )
     }
   ),
-
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
@@ -58,4 +59,5 @@ LearnerClustCobweb = R6Class("LearnerClustCobweb",
   )
 )
 
+#' @include aaa.R
 learners[["clust.cobweb"]] = LearnerClustCobweb

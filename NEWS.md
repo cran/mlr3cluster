@@ -1,3 +1,8 @@
+# mlr3cluster 0.1.10
+
+* Add BIRCH learner from 'stream' package
+* Add BICO learner from 'stream' package
+
 # mlr3cluster 0.1.9
 
 * Add DBSCAN learner from 'fpc' package
@@ -43,7 +48,6 @@
 * Add within sum of squares measure
 * add doc wss
 * code factor adaptions
-
 
 # mlr3cluster 0.1.1
 

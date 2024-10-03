@@ -35,6 +35,7 @@ LearnerClustFanny = R6Class("LearnerClustFanny",
         tol = p_dbl(0, default = 1e-15, tags = "train"),
         trace.lev = p_int(0L, default = 0L, tags = "train")
       )
+
       param_set$set_values(k = 2L)
 
       super$initialize(
@@ -56,8 +57,7 @@ LearnerClustFanny = R6Class("LearnerClustFanny",
       if (self$save_assignments) {
         self$assignments = m$clustering
       }
-
-      return(m)
+      m
     },
 
     .predict = function(task) {
@@ -73,5 +73,5 @@ LearnerClustFanny = R6Class("LearnerClustFanny",
   )
 )
 
-#' @include aaa.R
-learners[["clust.fanny"]] = LearnerClustFanny
+#' @include zzz.R
+register_learner("clust.fanny", LearnerClustFanny)

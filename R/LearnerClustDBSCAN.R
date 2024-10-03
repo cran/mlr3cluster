@@ -27,22 +27,22 @@ LearnerClustDBSCAN = R6Class("LearnerClustDBSCAN",
         borderPoints = p_lgl(default = TRUE, tags = "train"),
         weights = p_uty(tags = "train", custom_check = check_numeric),
         search = p_fct(levels = c("kdtree", "linear", "dist"), default = "kdtree", tags = "train"),
-        bucketSize = p_int(1L, default = 10L, tags = "train"),
+        bucketSize = p_int(1L, default = 10L, tags = "train", depends = quote(search == "kdtree")),
         splitRule = p_fct(
-          levels = c("STD", "MIDPT", "FAIR", "SL_MIDPT", "SL_FAIR", "SUGGEST"), default = "SUGGEST", tags = "train"
+          levels = c("STD", "MIDPT", "FAIR", "SL_MIDPT", "SL_FAIR", "SUGGEST"),
+          default = "SUGGEST",
+          tags = "train",
+          depends = quote(search == "kdtree")
         ),
         approx = p_dbl(default = 0, tags = "train")
       )
-      # add deps
-      param_set$add_dep("bucketSize", "search", CondEqual$new("kdtree"))
-      param_set$add_dep("splitRule", "search", CondEqual$new("kdtree"))
 
       super$initialize(
         id = "clust.dbscan",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
         param_set = param_set,
-        properties = c("partitional", "exclusive", "complete"),
+        properties = c("density", "exclusive", "complete"),
         packages = "dbscan",
         man = "mlr3cluster::mlr_learners_clust.dbscan",
         label = "Density-Based Clustering"
@@ -52,13 +52,13 @@ LearnerClustDBSCAN = R6Class("LearnerClustDBSCAN",
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      m = invoke(dbscan::dbscan, x = task$data(), .args = pv)
-      m = insert_named(m, list(data = task$data()))
+      data = task$data()
+      m = invoke(dbscan::dbscan, x = data, .args = pv)
+      m = insert_named(m, list(data = data))
       if (self$save_assignments) {
         self$assignments = m$cluster
       }
-
-      return(m)
+      m
     },
 
     .predict = function(task) {
@@ -68,5 +68,5 @@ LearnerClustDBSCAN = R6Class("LearnerClustDBSCAN",
   )
 )
 
-#' @include aaa.R
-learners[["clust.dbscan"]] = LearnerClustDBSCAN
+#' @include zzz.R
+register_learner("clust.dbscan", LearnerClustDBSCAN)

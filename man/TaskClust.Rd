@@ -8,7 +8,7 @@ This task specializes \link[mlr3:Task]{mlr3::Task} for cluster problems.
 As an unsupervised task, this task has no target column.
 The \code{task_type} is set to \code{"clust"}.
 
-Predefined tasks are stored in the \link[mlr3misc:Dictionary]{dictionary} \link{mlr_tasks}.
+Predefined tasks are stored in the \link[mlr3misc:Dictionary]{dictionary} \link[mlr3:mlr_tasks]{mlr3::mlr_tasks}.
 }
 \examples{
 library(mlr3)
@@ -18,6 +18,11 @@ task$task_type
 
 # possible properties:
 mlr_reflections$task_properties$clust
+}
+\seealso{
+Other Task: 
+\code{\link{mlr_tasks_ruspini}},
+\code{\link{mlr_tasks_usarrests}}
 }
 \concept{Task}
 \section{Super classes}{
@@ -36,6 +41,7 @@ mlr_reflections$task_properties$clust
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Task" data-id="add_strata"><a href='../../mlr3/html/Task.html#method-Task-add_strata'><code>mlr3::Task$add_strata()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Task" data-id="cbind"><a href='../../mlr3/html/Task.html#method-Task-cbind'><code>mlr3::Task$cbind()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Task" data-id="data"><a href='../../mlr3/html/Task.html#method-Task-data'><code>mlr3::Task$data()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="mlr3" data-topic="Task" data-id="divide"><a href='../../mlr3/html/Task.html#method-Task-divide'><code>mlr3::Task$divide()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Task" data-id="droplevels"><a href='../../mlr3/html/Task.html#method-Task-droplevels'><code>mlr3::Task$droplevels()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Task" data-id="filter"><a href='../../mlr3/html/Task.html#method-Task-filter'><code>mlr3::Task$filter()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Task" data-id="format"><a href='../../mlr3/html/Task.html#method-Task-format'><code>mlr3::Task$format()</code></a></span></li>
@@ -69,9 +75,9 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
 \item{\code{id}}{(\code{character(1)})\cr
 Identifier for the new instance.}
 
-\item{\code{backend}}{(\link{DataBackend})\cr
-Either a \link{DataBackend}, or any object which is convertible to a \link{DataBackend} with \code{as_data_backend()}.
-E.g., a \code{data.frame()} will be converted to a \link{DataBackendDataTable}.}
+\item{\code{backend}}{(\link[mlr3:DataBackend]{mlr3::DataBackend})\cr
+Either a \link[mlr3:DataBackend]{mlr3::DataBackend}, or any object which is convertible to a \link[mlr3:DataBackend]{mlr3::DataBackend} with \code{as_data_backend()}.
+E.g., a \code{data.frame()} will be converted to a \link[mlr3:DataBackendDataTable]{mlr3::DataBackendDataTable}.}
 
 \item{\code{label}}{(\code{character(1)})\cr
 Label for the new instance.}

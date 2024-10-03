@@ -34,22 +34,20 @@ LearnerClustKKMeans = R6Class("LearnerClustKKMeans",
           levels = c("vanilladot", "polydot", "rbfdot", "tanhdot", "laplacedot", "besseldot", "anovadot", "splinedot"),
           tags = "train"
         ),
-        sigma = p_dbl(0, tags = "train"),
-        degree = p_int(1L, default = 3L, tags = "train"),
-        scale = p_dbl(0, default = 1, tags = "train"),
-        offset = p_dbl(default = 1, tags = "train"),
-        order = p_int(default = 1L, tags = "train"),
+        sigma = p_dbl(
+          0, tags = "train", depends = quote(kernel %in% c("rbfdot", "anovadot", "besseldot", "laplacedot"))
+        ),
+        degree = p_int(
+          1L, default = 3L, tags = "train", depends = quote(kernel %in% c("polydot", "anovadot", "besseldot"))
+        ),
+        scale = p_dbl(0, default = 1, tags = "train", depends = quote(kernel %in% c("polydot", "tanhdot"))),
+        offset = p_dbl(default = 1, tags = "train", depends = quote(kernel %in% c("polydot", "tanhdot"))),
+        order = p_int(default = 1L, tags = "train", depends = quote(kernel == "besseldot")),
         alg = p_fct(levels = c("kkmeans", "kerninghan"), default = "kkmeans", tags = "train"),
         p = p_dbl(default = 1, tags = "train")
       )
-      param_set$set_values(centers = 2L)
 
-      # add deps
-      param_set$add_dep("sigma", "kernel", CondAnyOf$new(c("rbfdot", "anovadot", "besseldot", "laplacedot")))
-      param_set$add_dep("degree", "kernel", CondAnyOf$new(c("polydot", "anovadot", "besseldot")))
-      param_set$add_dep("scale", "kernel", CondAnyOf$new(c("polydot", "tanhdot")))
-      param_set$add_dep("offset", "kernel", CondAnyOf$new(c("polydot", "tanhdot")))
-      param_set$add_dep("order", "kernel", CondEqual$new("besseldot"))
+      param_set$set_values(centers = 2L)
 
       super$initialize(
         id = "clust.kkmeans",
@@ -65,14 +63,14 @@ LearnerClustKKMeans = R6Class("LearnerClustKKMeans",
   ),
   private = list(
     .train = function(task) {
-      check_centers_param(self$param_set$values$centers, task, test_data_frame, "centers")
-
       pv = self$param_set$get_values(tags = "train")
+      assert_centers_param(pv$centers, task, test_data_frame, "centers")
+
       m = invoke(kernlab::kkmeans, x = as.matrix(task$data()), .args = pv)
       if (self$save_assignments) {
         self$assignments = m[seq_along(m)]
       }
-      return(m)
+      m
     },
 
     .predict = function(task) {
@@ -80,12 +78,13 @@ LearnerClustKKMeans = R6Class("LearnerClustKKMeans",
 
       c = kernlab::centers(self$model)
       K = kernlab::kernelf(self$model)
+      data = task$data()
 
       # kernel product between each new datapoint and the centers
-      d_xc = matrix(kernlab::kernelMatrix(K, as.matrix(task$data()), c), ncol = nrow(c))
+      d_xc = matrix(kernlab::kernelMatrix(K, as.matrix(data), c), ncol = nrow(c))
       # kernel product between each new datapoint and itself: rows are identical
       d_xx = matrix(
-        rep(diag(kernlab::kernelMatrix(K, as.matrix(task$data()))), each = ncol(d_xc)),
+        rep(diag(kernlab::kernelMatrix(K, as.matrix(data))), each = ncol(d_xc)),
         ncol = ncol(d_xc), byrow = TRUE
       )
       # kernel product between each center and itself: columns are identical
@@ -102,5 +101,5 @@ LearnerClustKKMeans = R6Class("LearnerClustKKMeans",
   )
 )
 
-#' @include aaa.R
-learners[["clust.kkmeans"]] = LearnerClustKKMeans
+#' @include zzz.R
+register_learner("clust.kkmeans", LearnerClustKKMeans)

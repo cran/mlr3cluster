@@ -30,7 +30,9 @@ LearnerClustMiniBatchKMeans = R6Class("LearnerClustMiniBatchKMeans",
         batch_size = p_int(1L, default = 10L, tags = "train"),
         num_init = p_int(1L, default = 1L, tags = "train"),
         max_iters = p_int(1L, default = 100L, tags = "train"),
-        init_fraction = p_dbl(0, 1, default = 1, tags = "train"),
+        init_fraction = p_dbl(
+          0, 1, default = 1, tags = "train", depends = quote(initializer %in% c("kmeans++", "optimal_init"))
+        ),
         initializer = p_fct(
           levels = c("optimal_init", "quantile_init", "kmeans++", "random"), default = "kmeans++", tags = "train"
         ),
@@ -41,10 +43,8 @@ LearnerClustMiniBatchKMeans = R6Class("LearnerClustMiniBatchKMeans",
         tol_optimal_init = p_dbl(0, default = 0.3, tags = "train"),
         seed = p_int(default = 1L, tags = "train")
       )
-      param_set$set_values(clusters = 2L)
 
-      # add deps
-      param_set$add_dep("init_fraction", "initializer", CondAnyOf$new(c("kmeans++", "optimal_init")))
+      param_set$set_values(clusters = 2L)
 
       super$initialize(
         id = "clust.MBatchKMeans",
@@ -60,53 +60,32 @@ LearnerClustMiniBatchKMeans = R6Class("LearnerClustMiniBatchKMeans",
   ),
   private = list(
     .train = function(task) {
-      check_centers_param(self$param_set$values$CENTROIDS, task, test_matrix, "CENTROIDS")
-      if (test_matrix(self$param_set$values$CENTROIDS) &&
-            nrow(self$param_set$values$CENTROIDS) != self$param_set$values$clusters) {
+      pv = self$param_set$get_values(tags = "train")
+      assert_centers_param(pv$CENTROIDS, task, test_matrix, "CENTROIDS")
+      if (test_matrix(pv$CENTROIDS) && nrow(pv$CENTROIDS) != pv$clusters) {
         stopf("`CENTROIDS` must have same number of rows as `clusters`")
       }
 
-      pv = self$param_set$get_values(tags = "train")
-      m = invoke(ClusterR::MiniBatchKmeans, data = task$data(), .args = pv)
+      data = task$data()
+      m = invoke(ClusterR::MiniBatchKmeans, data = data, .args = pv)
       if (self$save_assignments) {
-        self$assignments = unclass(ClusterR::predict_MBatchKMeans(
-          data = task$data(),
-          CENTROIDS = m$centroids,
-          fuzzy = FALSE
-        ))
-        self$assignments = as.integer(self$assignments)
+        self$assignments = as.integer(invoke(predict, m, newdata = data))
       }
-
-      return(m)
+      m
     },
 
     .predict = function(task) {
-      if (self$predict_type == "partition") {
-        partition = unclass(ClusterR::predict_MBatchKMeans(
-          data = task$data(),
-          CENTROIDS = self$model$centroids,
-          fuzzy = FALSE
-        ))
-        partition = as.integer(partition)
-        pred = PredictionClust$new(task = task, partition = partition)
-      } else if (self$predict_type == "prob") {
-        partition = unclass(ClusterR::predict_MBatchKMeans(
-          data = task$data(),
-          CENTROIDS = self$model$centroids,
-          fuzzy = TRUE
-        ))
-        colnames(partition$fuzzy_clusters) = seq_len(ncol(partition$fuzzy_clusters))
-        pred = PredictionClust$new(
-          task = task,
-          partition = as.integer(partition$clusters),
-          prob = partition$fuzzy_clusters
-        )
+      data = task$data()
+      partition = as.integer(invoke(predict, self$model, newdata = data))
+      prob = NULL
+      if (self$predict_type == "prob") {
+        prob = invoke(predict, self$model, newdata = data, fuzzy = TRUE)
+        colnames(prob) = seq_len(ncol(prob))
       }
-
-      return(pred)
+      PredictionClust$new(task = task, partition = partition, prob = prob)
     }
   )
 )
 
-#' @include aaa.R
-learners[["clust.MBatchKMeans"]] = LearnerClustMiniBatchKMeans
+#' @include zzz.R
+register_learner("clust.MBatchKMeans", LearnerClustMiniBatchKMeans)

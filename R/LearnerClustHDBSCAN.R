@@ -33,7 +33,7 @@ LearnerClustHDBSCAN = R6Class("LearnerClustHDBSCAN",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
         param_set = param_set,
-        properties = c("partitional", "exclusive", "complete"),
+        properties = c("density", "exclusive", "complete"),
         packages = "dbscan",
         man = "mlr3cluster::mlr_learners_clust.hdbscan",
         label = "HDBSCAN Clustering"
@@ -43,14 +43,14 @@ LearnerClustHDBSCAN = R6Class("LearnerClustHDBSCAN",
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      m = invoke(dbscan::hdbscan, x = task$data(), .args = pv)
-      m = insert_named(m, list(data = task$data()))
+      data = task$data()
+      m = invoke(dbscan::hdbscan, x = data, .args = pv)
+      m = insert_named(m, list(data = data))
 
       if (self$save_assignments) {
         self$assignments = m$cluster
       }
-
-      return(m)
+      m
     },
 
     .predict = function(task) {
@@ -60,5 +60,5 @@ LearnerClustHDBSCAN = R6Class("LearnerClustHDBSCAN",
   )
 )
 
-#' @include aaa.R
-learners[["clust.hdbscan"]] = LearnerClustHDBSCAN
+#' @include zzz.R
+register_learner("clust.hdbscan", LearnerClustHDBSCAN)

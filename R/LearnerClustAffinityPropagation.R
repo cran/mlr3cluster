@@ -62,12 +62,12 @@ LearnerClustAP = R6Class("LearnerClustAP",
       if (self$save_assignments) {
         self$assignments = apcluster::labels(m, type = "enum")
       }
-
-      return(m)
+      m
     },
 
     .predict = function(task) {
-      sim_func = self$param_set$values$s
+      pv = self$param_set$get_values(tags = "train")
+      sim_func = pv$s
       exemplar_data = attributes(self$model)$exemplar_data
 
       d = task$data()
@@ -81,5 +81,5 @@ LearnerClustAP = R6Class("LearnerClustAP",
   )
 )
 
-#' @include aaa.R
-learners[["clust.ap"]] = LearnerClustAP
+#' @include zzz.R
+register_learner("clust.ap", LearnerClustAP)

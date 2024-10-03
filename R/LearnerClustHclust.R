@@ -34,12 +34,10 @@ LearnerClustHclust = R6Class("LearnerClustHclust",
         ),
         diag = p_lgl(default = FALSE, tags = c("train", "dist")),
         upper = p_lgl(default = FALSE, tags = c("train", "dist")),
-        p = p_dbl(default = 2, tags = c("train", "dist")),
-        k = p_int(1L, default = 2L, tags = "predict")
+        p = p_dbl(default = 2, tags = c("train", "dist"), depends = quote(distmethod == "minkowski")),
+        k = p_int(1L, default = 2L, tags = c("train", "predict"))
       )
 
-      # param deps
-      param_set$add_dep("p", "distmethod", CondAnyOf$new("minkowski"))
       param_set$set_values(k = 2L, distmethod = "euclidean")
 
       super$initialize(
@@ -56,23 +54,25 @@ LearnerClustHclust = R6Class("LearnerClustHclust",
   ),
   private = list(
     .train = function(task) {
-      d = self$param_set$values$distmethod
-      dist_arg = self$param_set$get_values(tags = c("train", "dist"))
+      pv = self$param_set$get_values(tags = "train")
       dist = invoke(stats::dist,
         x = task$data(),
-        method = ifelse(is.null(d), "euclidean", d), .args = dist_arg
+        method = pv$d %??% "euclidean",
+        .args = self$param_set$get_values(tags = c("train", "dist"))
       )
-      pv = self$param_set$get_values(tags = c("train", "hclust"))
-      m = invoke(stats::hclust, d = dist, .args = pv)
+      m = invoke(stats::hclust,
+        d = dist,
+        .args = self$param_set$get_values(tags = c("train", "hclust"))
+      )
       if (self$save_assignments) {
-        self$assignments = stats::cutree(m, self$param_set$values$k)
+        self$assignments = stats::cutree(m, pv$k)
       }
-
-      return(m)
+      m
     },
 
     .predict = function(task) {
-      if (self$param_set$values$k > task$nrow) {
+      pv = self$param_set$get_values(tags = "predict")
+      if (pv$k > task$nrow) {
         stopf("`k` needs to be between 1 and %i", task$nrow)
       }
 
@@ -83,5 +83,5 @@ LearnerClustHclust = R6Class("LearnerClustHclust",
   )
 )
 
-#' @include aaa.R
-learners[["clust.hclust"]] = LearnerClustHclust
+#' @include zzz.R
+register_learner("clust.hclust", LearnerClustHclust)

@@ -27,8 +27,9 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
         metric = p_fct(default = "euclidean", levels = c("euclidean", "manhattan"), tags = "train"),
         stand = p_lgl(default = FALSE, tags = "train"),
         trace.lev = p_int(0L, default = 0L, tags = "train"),
-        k = p_int(1L, default = 2L, tags = "predict")
+        k = p_int(1L, default = 2L, tags = c("train", "predict"))
       )
+
       param_set$set_values(k = 2L)
 
       super$initialize(
@@ -46,16 +47,20 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      m = invoke(cluster::diana, x = task$data(), diss = FALSE, .args = pv)
+      m = invoke(cluster::diana,
+        x = task$data(),
+        diss = FALSE,
+        .args = remove_named(pv, "k")
+      )
       if (self$save_assignments) {
-        self$assignments = stats::cutree(m, self$param_set$values$k)
+        self$assignments = stats::cutree(m, pv$k)
       }
-
-      return(m)
+      m
     },
 
     .predict = function(task) {
-      if (test_true(self$param_set$values$k > task$nrow)) {
+      pv = self$param_set$get_values(tags = "predict")
+      if (pv$k > task$nrow) {
         stopf("`k` needs to be between 1 and %s", task$nrow)
       }
 
@@ -66,5 +71,5 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
   )
 )
 
-#' @include aaa.R
-learners[["clust.diana"]] = LearnerClustDiana
+#' @include zzz.R
+register_learner("clust.diana", LearnerClustDiana)

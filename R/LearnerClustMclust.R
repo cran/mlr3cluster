@@ -52,12 +52,11 @@ LearnerClustMclust = R6Class("LearnerClustMclust",
       if (self$save_assignments) {
         self$assignments = m$classification
       }
-
-      return(m)
+      m
     },
 
     .predict = function(task) {
-      predictions = predict(self$model, newdata = task$data())
+      predictions = invoke(predict, self$model, newdata = task$data())
       partition = as.integer(predictions$classification)
       prob = predictions$z
       PredictionClust$new(task = task, partition = partition, prob = prob)
@@ -65,5 +64,5 @@ LearnerClustMclust = R6Class("LearnerClustMclust",
   )
 )
 
-#' @include aaa.R
-learners[["clust.mclust"]] = LearnerClustMclust
+#' @include zzz.R
+register_learner("clust.mclust", LearnerClustMclust)

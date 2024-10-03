@@ -36,6 +36,7 @@ LearnerClustPAM = R6Class("LearnerClustPAM",
         pamonce = p_int(0L, 5L, default = 0L, tags = "train"),
         trace.lev = p_int(0L, default = 0L, tags = "train")
       )
+
       param_set$set_values(k = 2L)
 
       super$initialize(
@@ -52,35 +53,30 @@ LearnerClustPAM = R6Class("LearnerClustPAM",
   ),
   private = list(
     .train = function(task) {
-      if (!is.null(self$param_set$values$medoids)) {
-        if (test_true(length(self$param_set$values$medoids) != self$param_set$values$k)) {
+      pv = self$param_set$get_values(tags = "train")
+      if (!is.null(pv$medoids)) {
+        if (length(pv$medoids) != pv$k) {
           stopf("number of `medoids`' needs to match `k`!")
         }
-        r = map_lgl(self$param_set$values$medoids, function(i) {
-          test_true(i <= task$nrow) && test_true(i >= 1L)
-        })
-        if (sum(r) != self$param_set$values$k) {
+        if (sum(pv$medoids <= task$nrow & pv$medoids >= 1L) != pv$k) {
           msg = sprintf("`medoids` need to contain valid indices from 1")
-          msg = sprintf("%s to %s (number of observations)!", msg, self$param_set$values$k)
-          stopf(msg)
+          stopf("%s to %s (number of observations)!", msg, pv$k)
         }
       }
 
-      pv = self$param_set$get_values(tags = "train")
       m = invoke(cluster::pam, x = task$data(), diss = FALSE, .args = pv)
       if (self$save_assignments) {
         self$assignments = m$clustering
       }
-
-      return(m)
+      m
     },
 
     .predict = function(task) {
-      partition = unclass(cl_predict(self$model, newdata = task$data(), type = "class_ids"))
+      partition = unclass(invoke(cl_predict, self$model, newdata = task$data(), type = "class_ids"))
       PredictionClust$new(task = task, partition = partition)
     }
   )
 )
 
-#' @include aaa.R
-learners[["clust.pam"]] = LearnerClustPAM
+#' @include zzz.R
+register_learner("clust.pam", LearnerClustPAM)

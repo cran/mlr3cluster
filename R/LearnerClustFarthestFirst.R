@@ -44,21 +44,20 @@ LearnerClustFarthestFirst = R6Class("LearnerClustFF",
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
       names(pv) = chartr("_", "-", names(pv))
-      ctrl = do.call(RWeka::Weka_control, pv)
+      ctrl = invoke(RWeka::Weka_control, .args = pv)
       m = invoke(RWeka::FarthestFirst, x = task$data(), control = ctrl)
       if (self$save_assignments) {
         self$assignments = unname(m$class_ids + 1L)
       }
-
-      return(m)
+      m
     },
 
     .predict = function(task) {
-      partition = predict(self$model, newdata = task$data(), type = "class") + 1L
+      partition = invoke(predict, self$model, newdata = task$data(), type = "class") + 1L
       PredictionClust$new(task = task, partition = partition)
     }
   )
 )
 
-#' @include aaa.R
-learners[["clust.ff"]] = LearnerClustFarthestFirst
+#' @include zzz.R
+register_learner("clust.ff", LearnerClustFarthestFirst)

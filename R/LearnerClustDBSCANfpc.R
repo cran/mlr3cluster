@@ -28,7 +28,7 @@ LearnerClustDBSCANfpc = R6Class("LearnerClustDBSCANfpc",
         method = p_fct(levels = c("hybrid", "raw", "dist"), tags = "train"),
         seeds = p_lgl(default = TRUE, tags = "train"),
         showplot = p_uty(default = FALSE, tags = "train", custom_check = crate(function(x) {
-          if (test_flag(x) || test_int(x, lower = 0, upper = 2)) {
+          if (test_flag(x) || test_int(x, lower = 0L, upper = 2L)) {
             TRUE
           } else {
             "`showplot` need to be either logical or integer between 0 and 2"
@@ -53,7 +53,7 @@ LearnerClustDBSCANfpc = R6Class("LearnerClustDBSCANfpc",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
         param_set = param_set,
-        properties = c("partitional", "exclusive", "complete"),
+        properties = c("density", "exclusive", "complete"),
         man = "mlr3cluster::mlr_learners_clust.dbscan_fpc",
         label = "Density-Based Clustering with fpc"
       )
@@ -61,14 +61,14 @@ LearnerClustDBSCANfpc = R6Class("LearnerClustDBSCANfpc",
   ),
   private = list(
     .train = function(task) {
-      pars = self$param_set$get_values(tags = "train")
-      m = invoke(fpc::dbscan, data = task$data(), .args = pars)
-      m = insert_named(m, list(data = task$data()))
+      pv = self$param_set$get_values(tags = "train")
+      data = task$data()
+      m = invoke(fpc::dbscan, data = data, .args = pv)
+      m = insert_named(m, list(data = data))
       if (self$save_assignments) {
         self$assignments = m$cluster
       }
-
-      return(m)
+      m
     },
 
     .predict = function(task) {
@@ -78,5 +78,5 @@ LearnerClustDBSCANfpc = R6Class("LearnerClustDBSCANfpc",
   )
 )
 
-#' @include aaa.R
-learners[["clust.dbscan_fpc"]] = LearnerClustDBSCANfpc
+#' @include zzz.R
+register_learner("clust.dbscan_fpc", LearnerClustDBSCANfpc)

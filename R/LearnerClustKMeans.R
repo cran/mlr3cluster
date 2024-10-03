@@ -35,6 +35,7 @@ LearnerClustKMeans = R6Class("LearnerClustKMeans",
         nstart = p_int(1L, default = 1L, tags = "train"),
         trace = p_int(0L, default = 0L, tags = "train")
       )
+
       param_set$set_values(centers = 2L)
 
       super$initialize(
@@ -52,27 +53,26 @@ LearnerClustKMeans = R6Class("LearnerClustKMeans",
 
   private = list(
     .train = function(task) {
-      if ("nstart" %in% names(self$param_set$values) && !test_int(self$param_set$values$centers)) {
+      pv = self$param_set$get_values(tags = "train")
+      if (!is.null(pv$nstart) && !test_int(pv$centers)) {
         warningf("`nstart` parameter is only relevant when `centers` is integer.")
       }
 
-      check_centers_param(self$param_set$values$centers, task, test_data_frame, "centers")
+      assert_centers_param(pv$centers, task, test_data_frame, "centers")
 
-      pv = self$param_set$get_values(tags = "train")
       m = invoke(stats::kmeans, x = task$data(), .args = pv)
       if (self$save_assignments) {
         self$assignments = m$cluster
       }
-
-      return(m)
+      m
     },
 
     .predict = function(task) {
-      partition = unclass(cl_predict(self$model, newdata = task$data(), type = "class_ids"))
+      partition = unclass(invoke(cl_predict, self$model, newdata = task$data(), type = "class_ids"))
       PredictionClust$new(task = task, partition = partition)
     }
   )
 )
 
-#' @include aaa.R
-learners[["clust.kmeans"]] = LearnerClustKMeans
+#' @include zzz.R
+register_learner("clust.kmeans", LearnerClustKMeans)

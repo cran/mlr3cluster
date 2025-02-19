@@ -1,7 +1,7 @@
 skip_if_not_installed("apcluster")
 
 test_that("autotest", {
-  learner = mlr3::lrn("clust.ap", s = apcluster::negDistMat(r = 2L))
+  learner = lrn("clust.ap", s = apcluster::negDistMat(r = 2L))
   expect_learner(learner)
   result = run_autotest(learner)
   expect_true(result, info = result$error)
@@ -24,13 +24,13 @@ test_that("Learner properties are respected", {
     parset = parset_list[[i]]
     learner$param_set$values = parset
 
-    suppressWarnings({p = learner$train(task)$predict(task)})
+    p = suppressWarnings(learner$train(task)$predict(task))
     expect_prediction_clust(p)
 
-    if ("complete" %in% learner$properties) {
+    if ("complete" %chin% learner$properties) {
       expect_prediction_complete(p, learner$predict_type)
     }
-    if ("exclusive" %in% learner$properties) {
+    if ("exclusive" %chin% learner$properties) {
       expect_prediction_exclusive(p, learner$predict_type)
     }
   }

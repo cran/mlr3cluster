@@ -1,3 +1,8 @@
+# mlr3cluster 0.1.11
+
+* fix: Mclust learner no longer sets the control default with a function not in
+  import to stay compliant with {paradox} conventions
+
 # mlr3cluster 0.1.10
 
 * Add BIRCH learner from 'stream' package
@@ -51,9 +56,9 @@
 
 # mlr3cluster 0.1.1
 
-*	Eight new learners
-*	Added `assignments` and `save_assignments` fields to `LearnerClust` class
+* Eight new learners
+* Added `assignments` and `save_assignments` fields to `LearnerClust` class
 
 # mlr3cluster 0.1.0
 
-*	Initial upload to CRAN
+* Initial upload to CRAN

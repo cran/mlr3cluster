@@ -24,11 +24,11 @@ LearnerClustAgnes = R6Class("LearnerClustAgnes",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        metric = p_fct(default = "euclidean", levels = c("euclidean", "manhattan"), tags = "train"),
+        metric = p_fct(c("euclidean", "manhattan"), default = "euclidean", tags = "train"),
         stand = p_lgl(default = FALSE, tags = "train"),
         method = p_fct(
-          default = "average",
           levels = c("average", "single", "complete", "ward", "weighted", "flexible", "gaverage"),
+          default = "average",
           tags = "train"
         ),
         trace.lev = p_int(0L, default = 0L, tags = "train"),
@@ -40,11 +40,7 @@ LearnerClustAgnes = R6Class("LearnerClustAgnes",
             if (!(test_numeric(x) || test_list(x))) {
               return("`par.method` needs to be a numeric vector")
             }
-            if (length(x) %in% c(1L, 3L, 4L)) {
-              TRUE
-            } else {
-              "`par.method` needs be of length 1, 3, or 4"
-            }
+            if (length(x) %in% c(1L, 3L, 4L)) TRUE else "`par.method` needs be of length 1, 3, or 4"
           })
         )
       )
@@ -63,6 +59,7 @@ LearnerClustAgnes = R6Class("LearnerClustAgnes",
       )
     }
   ),
+
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")

@@ -14,7 +14,7 @@
 #'
 #' @export
 #' @template seealso_learner
-#' @template example
+#' @template simple_example
 LearnerClustDBSCAN = R6Class("LearnerClustDBSCAN",
   inherit = LearnerClust,
   public = list(
@@ -22,11 +22,11 @@ LearnerClustDBSCAN = R6Class("LearnerClustDBSCAN",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        eps = p_dbl(0, tags = c("required", "train")),
+        eps = p_dbl(0, tags = c("train", "required")),
         minPts = p_int(0L, default = 5L, tags = "train"),
-        borderPoints = p_lgl(default = TRUE, tags = "train"),
         weights = p_uty(tags = "train", custom_check = check_numeric),
-        search = p_fct(levels = c("kdtree", "linear", "dist"), default = "kdtree", tags = "train"),
+        borderPoints = p_lgl(default = TRUE, tags = "train"),
+        search = p_fct(c("kdtree", "linear", "dist"), default = "kdtree", tags = "train"),
         bucketSize = p_int(1L, default = 10L, tags = "train", depends = quote(search == "kdtree")),
         splitRule = p_fct(
           levels = c("STD", "MIDPT", "FAIR", "SL_MIDPT", "SL_FAIR", "SUGGEST"),
@@ -49,6 +49,7 @@ LearnerClustDBSCAN = R6Class("LearnerClustDBSCAN",
       )
     }
   ),
+
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")

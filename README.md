@@ -97,9 +97,21 @@ library(mlr3)
 library(mlr3cluster)
 
 task = tsk("usarrests")
+task
+#> 
+#> ── <TaskClust> (50x4): US Arrests ──────────────────────────────────────────────
+#> • Target:
+#> • Properties: -
+#> • Features (4):
+#>   • int (2): Assault, UrbanPop
+#>   • dbl (2): Murder, Rape
+
 learner = lrn("clust.kmeans")
-learner$train(task)
-prediction = learner$predict(task = task)
+prediction = learner$train(task)$predict(task)
+measures = msrs(c("clust.wss", "clust.silhouette"))
+prediction$score(measures, task)
+#>        clust.wss clust.silhouette 
+#>     9.639903e+04     5.926554e-01
 ```
 
 ## More Resources

@@ -25,13 +25,11 @@ LearnerClustCMeans = R6Class("LearnerClustCMeans",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        centers = p_uty(
-          tags = c("required", "train"), custom_check = check_centers
-        ),
+        centers = p_uty(tags = c("train", "required"), custom_check = check_centers),
         iter.max = p_int(1L, default = 100L, tags = "train"),
         verbose = p_lgl(default = FALSE, tags = "train"),
-        dist = p_fct(levels = c("euclidean", "manhattan"), default = "euclidean", tags = "train"),
-        method = p_fct(levels = c("cmeans", "ufcl"), default = "cmeans", tags = "train"),
+        dist = p_fct(c("euclidean", "manhattan"), default = "euclidean", tags = "train"),
+        method = p_fct(c("cmeans", "ufcl"), default = "cmeans", tags = "train"),
         m = p_dbl(1, default = 2, tags = "train"),
         rate.par = p_dbl(0, 1, tags = "train", depends = quote(method == "ufcl")),
         weights = p_uty(default = 1L, tags = "train", custom_check = crate(function(x) {
@@ -58,6 +56,7 @@ LearnerClustCMeans = R6Class("LearnerClustCMeans",
       )
     }
   ),
+
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")

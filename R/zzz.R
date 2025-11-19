@@ -10,8 +10,8 @@
 #' @importFrom stats model.frame terms predict runif dist
 "_PACKAGE"
 
-mlr3cluster_tasks = new.env()
-mlr3cluster_learners = new.env()
+mlr3cluster_tasks = new.env(parent = emptyenv())
+mlr3cluster_learners = new.env(parent = emptyenv())
 
 register_task = function(name, constructor) {
   if (name %chin% names(mlr3cluster_tasks)) stopf("task %s registered twice.", name)
@@ -70,8 +70,12 @@ register_mlr3 = function() {
 
   mlr_reflections$task_types = mlr_reflections$task_types[!"clust"]
   reflections = c(
-    "measure_properties", "default_measures", "learner_properties",
-    "learner_predict_types",  "task_properties", "task_col_roles"
+    "measure_properties",
+    "default_measures",
+    "learner_properties",
+    "learner_predict_types",
+    "task_properties",
+    "task_col_roles"
   )
   walk(reflections, function(x) mlr_reflections[[x]] = remove_named(mlr_reflections[[x]], "clust"))
 }

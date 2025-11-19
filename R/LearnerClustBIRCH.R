@@ -14,7 +14,7 @@
 #'
 #' @export
 #' @template seealso_learner
-#' @template example
+#' @template simple_example
 LearnerClustBIRCH = R6Class("LearnerClustBIRCH",
   inherit = LearnerClust,
   public = list(
@@ -41,16 +41,17 @@ LearnerClustBIRCH = R6Class("LearnerClustBIRCH",
       )
     }
   ),
+
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      dt = task$data()
+      data = task$data()
       m = invoke(stream::DSC_BIRCH, .args = pv)
-      x = stream::DSD_Memory(dt)
-      stats::update(m, x, n = nrow(dt))
+      x = stream::DSD_Memory(data)
+      stats::update(m, x, n = nrow(data))
 
       if (self$save_assignments) {
-        self$assignments = as.integer(invoke(predict, m, newdata = dt)[[1L]])
+        self$assignments = as.integer(invoke(predict, m, newdata = data)[[1L]])
       }
       m
     },

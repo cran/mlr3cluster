@@ -14,7 +14,7 @@
 #'
 #' @export
 #' @template seealso_learner
-#' @template example
+#' @template simple_example
 LearnerClustOPTICS = R6Class("LearnerClustOPTICS",
   inherit = LearnerClust,
   public = list(
@@ -24,7 +24,7 @@ LearnerClustOPTICS = R6Class("LearnerClustOPTICS",
       param_set = ps(
         eps = p_dbl(0, special_vals = list(NULL), default = NULL, tags = "train"),
         minPts = p_int(0L, default = 5L, tags = "train"),
-        search = p_fct(levels = c("kdtree", "linear", "dist"), default = "kdtree", tags = "train"),
+        search = p_fct(c("kdtree", "linear", "dist"), default = "kdtree", tags = "train"),
         bucketSize = p_int(1L, default = 10L, tags = "train", depends = quote(search == "kdtree")),
         splitRule = p_fct(
           levels = c("STD", "MIDPT", "FAIR", "SL_MIDPT", "SL_FAIR", "SUGGEST"),
@@ -33,7 +33,7 @@ LearnerClustOPTICS = R6Class("LearnerClustOPTICS",
           depends = quote(search == "kdtree")
         ),
         approx = p_dbl(default = 0, tags = "train"),
-        eps_cl = p_dbl(0, tags = c("required", "train"))
+        eps_cl = p_dbl(0, tags = c("train", "required"))
       )
 
       super$initialize(
@@ -48,6 +48,7 @@ LearnerClustOPTICS = R6Class("LearnerClustOPTICS",
       )
     }
   ),
+
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")

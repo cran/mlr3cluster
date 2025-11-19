@@ -26,8 +26,8 @@ LearnerClustPAM = R6Class("LearnerClustPAM",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        k = p_int(1L, tags = c("required", "train")),
-        metric = p_fct(levels = c("euclidian", "manhattan"), tags = "train"),
+        k = p_int(1L, tags = c("train", "required")),
+        metric = p_fct(c("euclidian", "manhattan"), default = "euclidian", tags = "train"),
         medoids = p_uty(
           default = NULL, tags = "train", custom_check = crate(function(x) check_integerish(x, null.ok = TRUE))
         ),
@@ -51,6 +51,7 @@ LearnerClustPAM = R6Class("LearnerClustPAM",
       )
     }
   ),
+
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
@@ -59,9 +60,7 @@ LearnerClustPAM = R6Class("LearnerClustPAM",
           stopf("number of `medoids`' needs to match `k`!")
         }
         if (sum(pv$medoids <= task$nrow & pv$medoids >= 1L) != pv$k) {
-          stopf(
-            "`medoids` need to contain valid indices from 1 to %i (number of observations)!", pv$k
-          )
+          stopf("`medoids` need to contain valid indices from 1 to %i (number of observations)!", pv$k)
         }
       }
 

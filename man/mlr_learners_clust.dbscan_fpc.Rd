@@ -33,7 +33,7 @@ lrn("clust.dbscan_fpc")
    eps \tab numeric \tab - \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
    MinPts \tab integer \tab 5 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
    scale \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
-   method \tab character \tab - \tab hybrid, raw, dist \tab - \cr
+   method \tab character \tab hybrid \tab hybrid, raw, dist \tab - \cr
    seeds \tab logical \tab TRUE \tab TRUE, FALSE \tab - \cr
    showplot \tab untyped \tab FALSE \tab  \tab - \cr
    countmode \tab untyped \tab NULL \tab  \tab - \cr
@@ -41,13 +41,11 @@ lrn("clust.dbscan_fpc")
 }
 
 \examples{
-if (requireNamespace("fpc")) {
-  learner = mlr3::lrn("clust.dbscan_fpc")
-  print(learner)
-
-  # available parameters:
-  learner$param_set$ids()
-}
+\dontshow{if (mlr3misc::require_namespaces(lrn("clust.dbscan_fpc")$packages, quietly = TRUE)) withAutoprint(\{ # examplesIf}
+# Define the Learner and set parameter values
+learner = lrn("clust.dbscan_fpc")
+print(learner)
+\dontshow{\}) # examplesIf}
 }
 \references{
 Ester, Martin, Kriegel, Hans-Peter, Sander, Jörg, Xu, Xiaowei, others (1996).
@@ -111,12 +109,14 @@ Other Learner:
 <details><summary>Inherited methods</summary>
 <ul>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="base_learner"><a href='../../mlr3/html/Learner.html#method-Learner-base_learner'><code>mlr3::Learner$base_learner()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="configure"><a href='../../mlr3/html/Learner.html#method-Learner-configure'><code>mlr3::Learner$configure()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="encapsulate"><a href='../../mlr3/html/Learner.html#method-Learner-encapsulate'><code>mlr3::Learner$encapsulate()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="format"><a href='../../mlr3/html/Learner.html#method-Learner-format'><code>mlr3::Learner$format()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="help"><a href='../../mlr3/html/Learner.html#method-Learner-help'><code>mlr3::Learner$help()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="predict"><a href='../../mlr3/html/Learner.html#method-Learner-predict'><code>mlr3::Learner$predict()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="predict_newdata"><a href='../../mlr3/html/Learner.html#method-Learner-predict_newdata'><code>mlr3::Learner$predict_newdata()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="print"><a href='../../mlr3/html/Learner.html#method-Learner-print'><code>mlr3::Learner$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="selected_features"><a href='../../mlr3/html/Learner.html#method-Learner-selected_features'><code>mlr3::Learner$selected_features()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="train"><a href='../../mlr3/html/Learner.html#method-Learner-train'><code>mlr3::Learner$train()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3cluster" data-topic="LearnerClust" data-id="reset"><a href='../../mlr3cluster/html/LearnerClust.html#method-LearnerClust-reset'><code>mlr3cluster::LearnerClust$reset()</code></a></span></li>
 </ul>

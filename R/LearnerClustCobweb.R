@@ -3,7 +3,9 @@
 #' @name mlr_learners_clust.cobweb
 #'
 #' @description
-#' A [LearnerClust] for Cobweb clustering implemented in [RWeka::Cobweb()].
+#' Cobweb clustering.
+#' Calls [RWeka::Cobweb()] from package \CRANpkg{RWeka}.
+#'
 #' The predict method uses [RWeka::predict.Weka_clusterer()] to compute the
 #' cluster memberships for new data.
 #'
@@ -36,7 +38,7 @@ LearnerClustCobweb = R6Class("LearnerClustCobweb",
         properties = c("partitional", "exclusive", "complete"),
         packages = "RWeka",
         man = "mlr3cluster::mlr_learners_clust.cobweb",
-        label = "Cobweb Clustering"
+        label = "Cobweb"
       )
     }
   ),

@@ -3,8 +3,9 @@
 #' @name mlr_learners_clust.featureless
 #'
 #' @description
-#' A simple [LearnerClust] which randomly (but evenly) assigns observations to
-#' `num_clusters` partitions (default: 1 partition).
+#' Featureless clustering.
+#' Randomly (but evenly) assigns observations to `num_clusters` partitions
+#' (default: 1 partition).
 #'
 #' @templateVar id clust.featureless
 #' @template learner
@@ -28,7 +29,7 @@ LearnerClustFeatureless = R6Class("LearnerClustFeatureless",
         param_set = param_set,
         properties = c("partitional", "exclusive", "complete", "missings"),
         man = "mlr3cluster::mlr_learners_clust.featureless",
-        label = "Featureless Clustering"
+        label = "Featureless Clustering Learner"
       )
     }
   ),
@@ -40,7 +41,7 @@ LearnerClustFeatureless = R6Class("LearnerClustFeatureless",
       n = task$nrow
 
       if (k > n) {
-        stopf("number of clusters must lie between 1 and `nrow(data)`.")
+        error_input("number of clusters must lie between 1 and `nrow(data)`.")
       }
 
       partition = chunk(n, n_chunks = k)

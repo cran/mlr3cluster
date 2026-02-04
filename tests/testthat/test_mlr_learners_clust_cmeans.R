@@ -13,12 +13,12 @@ test_that("Learner properties are respected", {
   expect_learner(learner, task)
 
   # test on multiple paramsets
-  centers = data.frame(matrix(ncol = length(colnames(task$data())), nrow = 4L))
-  colnames(centers) = colnames(task$data())
-  centers$Assault = c(100, 200, 150, 300)
-  centers$Murder = c(11, 3, 10, 5)
-  centers$Rape = c(20, 18, 10, 26)
-  centers$UrbanPop = c(60, 54, 53, 69)
+  centers = data.table(
+    Assault = c(100L, 200L, 150L, 300L),
+    Murder = c(11, 3, 10, 5),
+    Rape = c(20, 18, 10, 26),
+    UrbanPop = c(60L, 54L, 53L, 69L)
+  )
 
   parset_list = list(
     list(centers = 2L),
@@ -26,21 +26,23 @@ test_that("Learner properties are respected", {
     list(centers = 2L, dist = "manhattan", m = 3)
   )
 
-  for (i in seq_along(parset_list)) {
-    parset = parset_list[[i]]
-    learner$param_set$values = parset
+  for (type in c("partition", "prob")) {
+    learner$predict_type = type
+    for (parset in parset_list) {
+      learner$param_set$values = parset
 
-    p = learner$train(task)$predict(task)
-    expect_prediction_clust(p)
+      p = learner$train(task)$predict(task)
+      expect_prediction_clust(p)
 
-    if ("complete" %chin% learner$properties) {
-      expect_prediction_complete(p, learner$predict_type)
-    }
-    if ("exclusive" %chin% learner$properties) {
-      expect_prediction_exclusive(p, learner$predict_type)
-    }
-    if ("fuzzy" %chin% learner$properties) {
-      expect_prediction_fuzzy(p)
+      if ("complete" %chin% learner$properties) {
+        expect_prediction_complete(p, learner$predict_type)
+      }
+      if ("exclusive" %chin% learner$properties) {
+        expect_prediction_exclusive(p, "partition")
+      }
+      if (learner$predict_type == "prob") {
+        expect_prediction_fuzzy(p)
+      }
     }
   }
 })

@@ -1,10 +1,10 @@
-#' @title Density-based Spatial Clustering of Applications with Noise (DBSCAN) Clustering Learner
+#' @title DBSCAN Clustering Learner (fpc)
 #'
 #' @name mlr_learners_clust.dbscan_fpc
 #'
 #' @description
-#' DBSCAN (Density-based spatial clustering of applications with noise) clustering.
-#' Calls [fpc::dbscan()] from \CRANpkg{fpc}.
+#' DBSCAN (density-based spatial clustering of applications with noise) clustering.
+#' Calls [fpc::dbscan()] from package \CRANpkg{fpc}.
 #'
 #' @templateVar id clust.dbscan_fpc
 #' @template learner
@@ -27,20 +27,14 @@ LearnerClustDBSCANfpc = R6Class("LearnerClustDBSCANfpc",
         scale = p_lgl(default = FALSE, tags = "train"),
         method = p_fct(c("hybrid", "raw", "dist"), default = "hybrid", tags = "train"),
         seeds = p_lgl(default = TRUE, tags = "train"),
-        showplot = p_uty(default = FALSE, tags = "train", custom_check = crate(function(x) {
-          if (test_flag(x) || test_int(x, lower = 0L, upper = 2L)) {
-            TRUE
-          } else {
-            "`showplot` need to be either logical or integer between 0 and 2"
-          }
-        })),
-        countmode = p_uty(default = NULL, tags = "train", custom_check = crate(function(x) {
-          if (test_integer(x, null.ok = TRUE)) {
-            TRUE
-          } else {
-            "`countmode` need to be NULL or vector of integers"
-          }
-        }))
+        showplot = p_uty(
+          default = FALSE,
+          tags = "train",
+          custom_check = crate(function(x) check_flag(x) %check||% check_int(x, lower = 0L, upper = 2L))
+        ),
+        countmode = p_uty(
+          default = NULL, tags = "train", custom_check = crate(function(x) check_integer(x, null.ok = TRUE))
+        )
       )
 
       super$initialize(
@@ -51,7 +45,7 @@ LearnerClustDBSCANfpc = R6Class("LearnerClustDBSCANfpc",
         param_set = param_set,
         properties = c("density", "exclusive", "complete"),
         man = "mlr3cluster::mlr_learners_clust.dbscan_fpc",
-        label = "Density-Based Clustering with fpc"
+        label = "DBSCAN (fpc)"
       )
     }
   ),

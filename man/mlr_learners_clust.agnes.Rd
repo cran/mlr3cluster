@@ -3,9 +3,11 @@
 \name{mlr_learners_clust.agnes}
 \alias{mlr_learners_clust.agnes}
 \alias{LearnerClustAgnes}
-\title{Agglomerative Hierarchical Clustering Learner}
+\title{Agglomerative Nesting Clustering Learner}
 \description{
-A \link{LearnerClust} for agglomerative hierarchical clustering implemented in \code{\link[cluster:agnes]{cluster::agnes()}}.
+Agglomerative hierarchical clustering.
+Calls \code{\link[cluster:agnes]{cluster::agnes()}} from package \CRANpkg{cluster}.
+
 The predict method uses \code{\link[stats:cutree]{stats::cutree()}} which cuts the tree resulting from
 hierarchical clustering into specified number of groups (see parameter \code{k}).
 The default number for \code{k} is 2.
@@ -108,6 +110,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
+\code{\link{mlr_learners_clust.protoclust}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}

@@ -5,8 +5,9 @@
 \alias{LearnerClustFeatureless}
 \title{Featureless Clustering Learner}
 \description{
-A simple \link{LearnerClust} which randomly (but evenly) assigns observations to
-\code{num_clusters} partitions (default: 1 partition).
+Featureless clustering.
+Randomly (but evenly) assigns observations to \code{num_clusters} partitions
+(default: 1 partition).
 }
 \section{Dictionary}{
 
@@ -96,6 +97,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
+\code{\link{mlr_learners_clust.protoclust}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}

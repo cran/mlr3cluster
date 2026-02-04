@@ -3,10 +3,10 @@
 \name{mlr_learners_clust.hdbscan}
 \alias{mlr_learners_clust.hdbscan}
 \alias{LearnerClustHDBSCAN}
-\title{Hierarchical DBSCAN (HDBSCAN) Clustering Learner}
+\title{HDBSCAN Clustering Learner}
 \description{
-HDBSCAN (Hierarchical DBSCAN) clustering.
-Calls \code{\link[dbscan:hdbscan]{dbscan::hdbscan()}} from \CRANpkg{dbscan}.
+HDBSCAN (hierarchical DBSCAN) clustering.
+Calls \code{\link[dbscan:hdbscan]{dbscan::hdbscan()}} from package \CRANpkg{dbscan}.
 }
 \section{Dictionary}{
 
@@ -111,6 +111,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
+\code{\link{mlr_learners_clust.protoclust}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}

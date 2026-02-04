@@ -5,10 +5,12 @@
 \alias{LearnerClustEM}
 \title{Expectation-Maximization Clustering Learner}
 \description{
-A \link{LearnerClust} for Expectation-Maximization clustering implemented in
-\code{\link[RWeka:Weka_interfaces]{RWeka::list_Weka_interfaces()}}.
+Expectation-Maximization clustering.
+Calls the EM Weka clusterer from package \CRANpkg{RWeka}.
+
 The predict method uses \code{\link[RWeka:predict_Weka_clusterer]{RWeka::predict.Weka_clusterer()}} to compute the
 cluster memberships for new data.
+The learner supports both partitional and fuzzy clustering.
 }
 \section{Dictionary}{
 
@@ -23,7 +25,7 @@ lrn("clust.em")
 
 \itemize{
 \item Task type: \dQuote{clust}
-\item Predict Types: \dQuote{partition}
+\item Predict Types: \dQuote{partition}, \dQuote{prob}
 \item Feature Types: \dQuote{logical}, \dQuote{integer}, \dQuote{numeric}
 \item Required Packages: \CRANpkg{mlr3}, \CRANpkg{mlr3cluster}, \CRANpkg{RWeka}
 }
@@ -118,6 +120,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
+\code{\link{mlr_learners_clust.protoclust}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}

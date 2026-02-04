@@ -5,9 +5,11 @@
 \alias{LearnerClustMeanShift}
 \title{Mean Shift Clustering Learner}
 \description{
-A \link{LearnerClust} for Mean Shift clustering implemented in \code{\link[LPCM:ms]{LPCM::ms()}}.
+Mean shift clustering.
+Calls \code{\link[LPCM:ms]{LPCM::ms()}} from package \CRANpkg{LPCM}.
+
 There is no predict method for \code{\link[LPCM:ms]{LPCM::ms()}}, so the method
-returns cluster labels for the 'training' data.
+returns cluster labels for the training data.
 }
 \section{Dictionary}{
 
@@ -29,13 +31,14 @@ lrn("clust.meanshift")
 }
 
 \section{Parameters}{
-\tabular{llll}{
-   Id \tab Type \tab Default \tab Range \cr
-   h \tab untyped \tab - \tab - \cr
-   subset \tab untyped \tab - \tab - \cr
-   scaled \tab integer \tab 1 \tab \eqn{[0, \infty)}{[0, Inf)} \cr
-   iter \tab integer \tab 200 \tab \eqn{[1, \infty)}{[1, Inf)} \cr
-   thr \tab numeric \tab 0.01 \tab \eqn{(-\infty, \infty)}{(-Inf, Inf)} \cr
+\tabular{lllll}{
+   Id \tab Type \tab Default \tab Levels \tab Range \cr
+   h \tab untyped \tab - \tab  \tab - \cr
+   subset \tab untyped \tab - \tab  \tab - \cr
+   thr \tab numeric \tab 0.01 \tab  \tab \eqn{(-\infty, \infty)}{(-Inf, Inf)} \cr
+   scaled \tab integer \tab 1 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
+   iter \tab integer \tab 200 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   plot \tab logical \tab TRUE \tab TRUE, FALSE \tab - \cr
 }
 }
 
@@ -106,6 +109,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
+\code{\link{mlr_learners_clust.protoclust}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}

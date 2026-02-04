@@ -1,9 +1,11 @@
-#' @title Agglomerative Hierarchical Clustering Learner
+#' @title Agglomerative Nesting Clustering Learner
 #'
 #' @name mlr_learners_clust.agnes
 #'
 #' @description
-#' A [LearnerClust] for agglomerative hierarchical clustering implemented in [cluster::agnes()].
+#' Agglomerative hierarchical clustering.
+#' Calls [cluster::agnes()] from package \CRANpkg{cluster}.
+#'
 #' The predict method uses [stats::cutree()] which cuts the tree resulting from
 #' hierarchical clustering into specified number of groups (see parameter `k`).
 #' The default number for `k` is 2.
@@ -55,7 +57,7 @@ LearnerClustAgnes = R6Class("LearnerClustAgnes",
         properties = c("hierarchical", "exclusive", "complete"),
         packages = "cluster",
         man = "mlr3cluster::mlr_learners_clust.agnes",
-        label = "Agglomerative Hierarchical Clustering"
+        label = "Agglomerative Nesting"
       )
     }
   ),
@@ -63,7 +65,8 @@ LearnerClustAgnes = R6Class("LearnerClustAgnes",
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      m = invoke(cluster::agnes,
+      m = invoke(
+        cluster::agnes,
         x = task$data(),
         diss = FALSE,
         .args = remove_named(pv, "k")
@@ -77,7 +80,7 @@ LearnerClustAgnes = R6Class("LearnerClustAgnes",
     .predict = function(task) {
       pv = self$param_set$get_values(tags = "predict")
       if (pv$k > task$nrow) {
-        stopf("`k` needs to be between 1 and %i.", task$nrow)
+        error_input("`k` needs to be between 1 and %i.", task$nrow)
       }
 
       warn_prediction_useless(self$id)

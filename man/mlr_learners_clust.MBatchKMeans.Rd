@@ -5,9 +5,11 @@
 \alias{LearnerClustMiniBatchKMeans}
 \title{Mini Batch K-Means Clustering Learner}
 \description{
-A \link{LearnerClust} for mini batch k-means clustering implemented in \code{\link[ClusterR:MiniBatchKmeans]{ClusterR::MiniBatchKmeans()}}.
-\code{\link[ClusterR:MiniBatchKmeans]{ClusterR::MiniBatchKmeans()}} doesn't have a default value for the number of clusters.
-Therefore, the \code{clusters} parameter here is set to 2 by default.
+Mini-batch k-means clustering.
+Calls \code{\link[ClusterR:MiniBatchKmeans]{ClusterR::MiniBatchKmeans()}} from package \CRANpkg{ClusterR}.
+
+The \code{clusters} parameter is set to 2 by default since \code{\link[ClusterR:MiniBatchKmeans]{ClusterR::MiniBatchKmeans()}}
+doesn't have a default value for the number of clusters.
 The predict method uses \code{\link[ClusterR:predict_MBatchKMeans]{ClusterR::predict_MBatchKMeans()}} to compute the
 cluster memberships for new data.
 The learner supports both partitional and fuzzy clustering.
@@ -116,6 +118,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
+\code{\link{mlr_learners_clust.protoclust}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}

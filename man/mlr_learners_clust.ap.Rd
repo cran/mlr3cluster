@@ -5,8 +5,10 @@
 \alias{LearnerClustAP}
 \title{Affinity Propagation Clustering Learner}
 \description{
-A \link{LearnerClust} for Affinity Propagation clustering implemented in \code{\link[apcluster:apcluster-methods]{apcluster::apcluster()}}.
-\code{\link[apcluster:apcluster-methods]{apcluster::apcluster()}} doesn't have set a default for similarity function.
+Affinity Propagation clustering.
+Calls \code{\link[apcluster:apcluster-methods]{apcluster::apcluster()}} from package \CRANpkg{apcluster}.
+
+Note that \code{\link[apcluster:apcluster-methods]{apcluster::apcluster()}} doesn't have a default for the similarity function.
 The predict method computes the closest cluster exemplar to find the
 cluster memberships for new data.
 The code is taken from
@@ -104,6 +106,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
+\code{\link{mlr_learners_clust.protoclust}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}

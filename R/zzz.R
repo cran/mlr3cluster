@@ -3,11 +3,10 @@
 #' @import mlr3
 #' @import mlr3misc
 #' @import paradox
-#' @importFrom R6 R6Class
-#' @importFrom clue cl_predict
 #' @importFrom cluster silhouette
 #' @importFrom fpc cluster.stats
-#' @importFrom stats model.frame terms predict runif dist
+#' @importFrom R6 R6Class
+#' @importFrom stats model.frame terms predict runif
 "_PACKAGE"
 
 mlr3cluster_tasks = new.env(parent = emptyenv())

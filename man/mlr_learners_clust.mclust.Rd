@@ -3,9 +3,11 @@
 \name{mlr_learners_clust.mclust}
 \alias{mlr_learners_clust.mclust}
 \alias{LearnerClustMclust}
-\title{Gaussian Mixture Models-Based Clustering Learner}
+\title{Gaussian Mixture Model Clustering Learner}
 \description{
-A \link{LearnerClust} for model-based clustering implemented in \code{\link[mclust:Mclust]{mclust::Mclust()}}.
+Gaussian mixture model-based clustering.
+Calls \code{\link[mclust:Mclust]{mclust::Mclust()}} from package \CRANpkg{mclust}.
+
 The predict method uses \code{\link[mclust:predict.Mclust]{mclust::predict.Mclust()}} to compute the
 cluster memberships for new data.
 }
@@ -29,14 +31,16 @@ lrn("clust.mclust")
 }
 
 \section{Parameters}{
-\tabular{lll}{
-   Id \tab Type \tab Default \cr
-   G \tab untyped \tab 1:9 \cr
-   modelNames \tab untyped \tab - \cr
-   prior \tab untyped \tab - \cr
-   control \tab untyped \tab - \cr
-   initialization \tab untyped \tab - \cr
-   x \tab untyped \tab - \cr
+\tabular{llll}{
+   Id \tab Type \tab Default \tab Levels \cr
+   G \tab untyped \tab 1:9 \tab  \cr
+   modelNames \tab untyped \tab - \tab  \cr
+   prior \tab untyped \tab - \tab  \cr
+   control \tab untyped \tab - \tab  \cr
+   initialization \tab untyped \tab - \tab  \cr
+   warn \tab logical \tab FALSE \tab TRUE, FALSE \cr
+   x \tab untyped \tab - \tab  \cr
+   verbose \tab logical \tab FALSE \tab TRUE, FALSE \cr
 }
 }
 
@@ -111,6 +115,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
+\code{\link{mlr_learners_clust.protoclust}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}

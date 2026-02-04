@@ -1,10 +1,10 @@
-#' @title Ordering Points to Identify the Clustering Structure (OPTICS) Clustering Learner
+#' @title OPTICS Clustering Learner
 #'
 #' @name mlr_learners_clust.optics
 #'
 #' @description
-#' OPTICS (Ordering points to identify the clustering structure) point ordering clustering.
-#' Calls [dbscan::optics()] from \CRANpkg{dbscan}.
+#' OPTICS (ordering points to identify the clustering structure) clustering.
+#' Calls [dbscan::optics()] from package \CRANpkg{dbscan}.
 #'
 #' @templateVar id clust.optics
 #' @template learner
@@ -22,7 +22,7 @@ LearnerClustOPTICS = R6Class("LearnerClustOPTICS",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        eps = p_dbl(0, special_vals = list(NULL), default = NULL, tags = "train"),
+        eps = p_dbl(0, default = NULL, special_vals = list(NULL), tags = "train"),
         minPts = p_int(0L, default = 5L, tags = "train"),
         search = p_fct(c("kdtree", "linear", "dist"), default = "kdtree", tags = "train"),
         bucketSize = p_int(1L, default = 10L, tags = "train", depends = quote(search == "kdtree")),
@@ -44,7 +44,7 @@ LearnerClustOPTICS = R6Class("LearnerClustOPTICS",
         properties = c("density", "exclusive", "complete"),
         packages = "dbscan",
         man = "mlr3cluster::mlr_learners_clust.optics",
-        label = "OPTICS Clustering"
+        label = "OPTICS"
       )
     }
   ),

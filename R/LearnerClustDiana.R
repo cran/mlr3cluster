@@ -1,9 +1,11 @@
-#' @title Divisive Hierarchical Clustering Learner
+#' @title Divisive Analysis Clustering Learner
 #'
 #' @name mlr_learners_clust.diana
 #'
 #' @description
-#' A [LearnerClust] for divisive hierarchical clustering implemented in [cluster::diana()].
+#' Divisive hierarchical clustering.
+#' Calls [cluster::diana()] from package \CRANpkg{cluster}.
+#'
 #' The predict method uses [stats::cutree()] which cuts the tree resulting from
 #' hierarchical clustering into specified number of groups (see parameter `k`).
 #' The default value for `k` is 2.
@@ -40,7 +42,7 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
         properties = c("hierarchical", "exclusive", "complete"),
         packages = "cluster",
         man = "mlr3cluster::mlr_learners_clust.diana",
-        label = "Divisive Hierarchical Clustering"
+        label = "Divisive Analysis"
       )
     }
   ),
@@ -48,7 +50,8 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      m = invoke(cluster::diana,
+      m = invoke(
+        cluster::diana,
         x = task$data(),
         diss = FALSE,
         .args = remove_named(pv, "k")
@@ -62,7 +65,7 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
     .predict = function(task) {
       pv = self$param_set$get_values(tags = "predict")
       if (pv$k > task$nrow) {
-        stopf("`k` needs to be between 1 and %i.", task$nrow)
+        error_input("`k` needs to be between 1 and %i.", task$nrow)
       }
 
       warn_prediction_useless(self$id)

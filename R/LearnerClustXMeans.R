@@ -1,9 +1,11 @@
-#' @title X-means Clustering Learner
+#' @title X-Means Clustering Learner
 #'
 #' @name mlr_learners_clust.xmeans
 #'
 #' @description
-#' A [LearnerClust] for X-means clustering implemented in [RWeka::XMeans()].
+#' X-means clustering.
+#' Calls [RWeka::XMeans()] from package \CRANpkg{RWeka}.
+#'
 #' The predict method uses [RWeka::predict.Weka_clusterer()] to compute the
 #' cluster memberships for new data.
 #'
@@ -49,7 +51,7 @@ LearnerClustXMeans = R6Class("LearnerClustXMeans",
         properties = c("partitional", "exclusive", "complete"),
         packages = "RWeka",
         man = "mlr3cluster::mlr_learners_clust.xmeans",
-        label = "X-means"
+        label = "X-Means"
       )
     }
   ),

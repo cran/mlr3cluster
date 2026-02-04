@@ -1,10 +1,10 @@
-#' @title Hierarchical DBSCAN (HDBSCAN) Clustering Learner
+#' @title HDBSCAN Clustering Learner
 #'
 #' @name mlr_learners_clust.hdbscan
 #'
 #' @description
-#' HDBSCAN (Hierarchical DBSCAN) clustering.
-#' Calls [dbscan::hdbscan()] from \CRANpkg{dbscan}.
+#' HDBSCAN (hierarchical DBSCAN) clustering.
+#' Calls [dbscan::hdbscan()] from package \CRANpkg{dbscan}.
 #'
 #' @templateVar id clust.hdbscan
 #' @template learner
@@ -39,7 +39,7 @@ LearnerClustHDBSCAN = R6Class("LearnerClustHDBSCAN",
         properties = c("density", "exclusive", "complete"),
         packages = "dbscan",
         man = "mlr3cluster::mlr_learners_clust.hdbscan",
-        label = "HDBSCAN Clustering"
+        label = "HDBSCAN"
       )
     }
   ),

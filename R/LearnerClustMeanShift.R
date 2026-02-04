@@ -3,9 +3,11 @@
 #' @name mlr_learners_clust.meanshift
 #'
 #' @description
-#' A [LearnerClust] for Mean Shift clustering implemented in [LPCM::ms()].
-#' There is no predict method for [`LPCM::ms()`], so the method
-#' returns cluster labels for the 'training' data.
+#' Mean shift clustering.
+#' Calls [LPCM::ms()] from package \CRANpkg{LPCM}.
+#'
+#' There is no predict method for [LPCM::ms()], so the method
+#' returns cluster labels for the training data.
 #'
 #' @templateVar id clust.meanshift
 #' @template learner
@@ -23,18 +25,15 @@ LearnerClustMeanShift = R6Class("LearnerClustMeanShift",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        h = p_uty(tags = "train", custom_check = crate(function(x) {
-          if (test_numeric(x) || test_int(x)) {
-            TRUE
-          } else {
-            "`h` must be either integer or numeric vector"
-          }
-        })),
+        h = p_uty(tags = "train", custom_check = crate(function(x) check_numeric(x) %check||% check_int(x))),
         subset = p_uty(tags = "train", custom_check = check_numeric),
-        scaled = p_int(0L, default = 1, tags = "train"),
+        thr = p_dbl(default = 0.01, tags = "train"),
+        scaled = p_int(0L, default = 1L, tags = "train"),
         iter = p_int(1L, default = 200L, tags = "train"),
-        thr = p_dbl(default = 0.01, tags = "train")
+        plot = p_lgl(default = TRUE, tags = "train")
       )
+
+      param_set$set_values(plot = FALSE)
 
       super$initialize(
         id = "clust.meanshift",
@@ -44,7 +43,7 @@ LearnerClustMeanShift = R6Class("LearnerClustMeanShift",
         properties = c("partitional", "exclusive", "complete"),
         packages = "LPCM",
         man = "mlr3cluster::mlr_learners_clust.meanshift",
-        label = "Mean Shift Clustering"
+        label = "Mean Shift"
       )
     }
   ),
@@ -53,7 +52,7 @@ LearnerClustMeanShift = R6Class("LearnerClustMeanShift",
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
       if (!is.null(pv$subset) && length(pv$subset) > task$nrow) {
-        stopf("`subset` length must be less than or equal to number of observations in task.")
+        error_config("`subset` length must be less than or equal to number of observations in task.")
       }
 
       m = invoke(LPCM::ms, X = task$data(), .args = pv)

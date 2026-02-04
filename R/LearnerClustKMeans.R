@@ -3,9 +3,11 @@
 #' @name mlr_learners_clust.kmeans
 #'
 #' @description
-#' A [LearnerClust] for k-means clustering implemented in [stats::kmeans()].
-#' [stats::kmeans()] doesn't have a default value for the number of clusters.
-#' Therefore, the `centers` parameter here is set to 2 by default.
+#' K-means clustering.
+#' Calls [stats::kmeans()] from package \pkg{stats}.
+#'
+#' The `centers` parameter is set to 2 by default since [stats::kmeans()]
+#' doesn't have a default value for the number of clusters.
 #' The predict method uses [clue::cl_predict()] to compute the
 #' cluster memberships for new data.
 #'
@@ -31,7 +33,7 @@ LearnerClustKMeans = R6Class("LearnerClustKMeans",
           c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"), default = "Hartigan-Wong", tags = "train"
         ),
         nstart = p_int(1L, default = 1L, tags = "train"),
-        trace = p_int(0L, default = 0L, tags = "train")
+        trace = p_lgl(default = FALSE, tags = "train")
       )
 
       param_set$set_values(centers = 2L)
@@ -53,7 +55,7 @@ LearnerClustKMeans = R6Class("LearnerClustKMeans",
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
       if (!is.null(pv$nstart) && !test_int(pv$centers)) {
-        warningf("`nstart` parameter is only relevant when `centers` is integer.")
+        warning_config("`nstart` parameter is only relevant when `centers` is integer.")
       }
 
       assert_centers_param(pv$centers, task, test_data_frame, "centers")
@@ -66,7 +68,7 @@ LearnerClustKMeans = R6Class("LearnerClustKMeans",
     },
 
     .predict = function(task) {
-      partition = unclass(invoke(cl_predict, self$model, newdata = task$data(), type = "class_ids"))
+      partition = unclass(invoke(clue::cl_predict, self$model, newdata = task$data(), type = "class_ids"))
       PredictionClust$new(task = task, partition = partition)
     }
   )

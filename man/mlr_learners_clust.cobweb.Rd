@@ -5,7 +5,9 @@
 \alias{LearnerClustCobweb}
 \title{Cobweb Clustering Learner}
 \description{
-A \link{LearnerClust} for Cobweb clustering implemented in \code{\link[RWeka:Weka_clusterers]{RWeka::Cobweb()}}.
+Cobweb clustering.
+Calls \code{\link[RWeka:Weka_clusterers]{RWeka::Cobweb()}} from package \CRANpkg{RWeka}.
+
 The predict method uses \code{\link[RWeka:predict_Weka_clusterer]{RWeka::predict.Weka_clusterer()}} to compute the
 cluster memberships for new data.
 }
@@ -112,6 +114,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
+\code{\link{mlr_learners_clust.protoclust}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}

@@ -3,7 +3,9 @@
 #' @name mlr_learners_clust.ff
 #'
 #' @description
-#' A [LearnerClust] for Farthest First clustering implemented in [RWeka::FarthestFirst()].
+#' Farthest First clustering.
+#' Calls [RWeka::FarthestFirst()] from package \CRANpkg{RWeka}.
+#'
 #' The predict method uses [RWeka::predict.Weka_clusterer()] to compute the
 #' cluster memberships for new data.
 #'
@@ -36,7 +38,7 @@ LearnerClustFarthestFirst = R6Class("LearnerClustFF",
         properties = c("partitional", "exclusive", "complete"),
         packages = "RWeka",
         man = "mlr3cluster::mlr_learners_clust.ff",
-        label = "Farthest First Clustering"
+        label = "Farthest First"
       )
     }
   ),

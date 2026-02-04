@@ -5,9 +5,11 @@
 \alias{LearnerClustKMeans}
 \title{K-Means Clustering Learner}
 \description{
-A \link{LearnerClust} for k-means clustering implemented in \code{\link[stats:kmeans]{stats::kmeans()}}.
-\code{\link[stats:kmeans]{stats::kmeans()}} doesn't have a default value for the number of clusters.
-Therefore, the \code{centers} parameter here is set to 2 by default.
+K-means clustering.
+Calls \code{\link[stats:kmeans]{stats::kmeans()}} from package \pkg{stats}.
+
+The \code{centers} parameter is set to 2 by default since \code{\link[stats:kmeans]{stats::kmeans()}}
+doesn't have a default value for the number of clusters.
 The predict method uses \code{\link[clue:cl_predict]{clue::cl_predict()}} to compute the
 cluster memberships for new data.
 }
@@ -37,7 +39,7 @@ lrn("clust.kmeans")
    iter.max \tab integer \tab 10 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
    algorithm \tab character \tab Hartigan-Wong \tab Hartigan-Wong, Lloyd, Forgy, MacQueen \tab - \cr
    nstart \tab integer \tab 1 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
-   trace \tab integer \tab 0 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
+   trace \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
 }
 }
 
@@ -121,6 +123,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
+\code{\link{mlr_learners_clust.protoclust}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}

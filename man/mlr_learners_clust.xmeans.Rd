@@ -3,9 +3,11 @@
 \name{mlr_learners_clust.xmeans}
 \alias{mlr_learners_clust.xmeans}
 \alias{LearnerClustXMeans}
-\title{X-means Clustering Learner}
+\title{X-Means Clustering Learner}
 \description{
-A \link{LearnerClust} for X-means clustering implemented in \code{\link[RWeka:Weka_clusterers]{RWeka::XMeans()}}.
+X-means clustering.
+Calls \code{\link[RWeka:Weka_clusterers]{RWeka::XMeans()}} from package \CRANpkg{RWeka}.
+
 The predict method uses \code{\link[RWeka:predict_Weka_clusterer]{RWeka::predict.Weka_clusterer()}} to compute the
 cluster memberships for new data.
 }
@@ -106,7 +108,8 @@ Other Learner:
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
-\code{\link{mlr_learners_clust.pam}}
+\code{\link{mlr_learners_clust.pam}},
+\code{\link{mlr_learners_clust.protoclust}}
 }
 \concept{Learner}
 \section{Super classes}{

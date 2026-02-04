@@ -5,10 +5,11 @@
 \alias{LearnerClustPAM}
 \title{Partitioning Around Medoids Clustering Learner}
 \description{
-A \link{LearnerClust} for PAM clustering implemented in \code{\link[cluster:pam]{cluster::pam()}}.
-\code{\link[cluster:pam]{cluster::pam()}} doesn't have a default value for the number of clusters.
-Therefore, the \code{k} parameter which corresponds to the number
-of clusters here is set to 2 by default.
+Partitioning Around Medoids (PAM) clustering.
+Calls \code{\link[cluster:pam]{cluster::pam()}} from package \CRANpkg{cluster}.
+
+The \code{k} parameter is set to 2 by default since \code{\link[cluster:pam]{cluster::pam()}}
+doesn't have a default value for the number of clusters.
 The predict method uses \code{\link[clue:cl_predict]{clue::cl_predict()}} to compute the
 cluster memberships for new data.
 }
@@ -27,7 +28,7 @@ lrn("clust.pam")
 \item Task type: \dQuote{clust}
 \item Predict Types: \dQuote{partition}
 \item Feature Types: \dQuote{logical}, \dQuote{integer}, \dQuote{numeric}
-\item Required Packages: \CRANpkg{mlr3}, \CRANpkg{mlr3cluster}, \CRANpkg{cluster}
+\item Required Packages: \CRANpkg{mlr3}, \CRANpkg{mlr3cluster}, \CRANpkg{cluster}, \CRANpkg{clue}
 }
 }
 
@@ -35,11 +36,13 @@ lrn("clust.pam")
 \tabular{lllll}{
    Id \tab Type \tab Default \tab Levels \tab Range \cr
    k \tab integer \tab - \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
-   metric \tab character \tab euclidian \tab euclidian, manhattan \tab - \cr
+   metric \tab character \tab euclidean \tab euclidean, manhattan \tab - \cr
    medoids \tab untyped \tab NULL \tab  \tab - \cr
+   nstart \tab integer \tab 1 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
    stand \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
    do.swap \tab logical \tab TRUE \tab TRUE, FALSE \tab - \cr
-   pamonce \tab integer \tab 0 \tab  \tab \eqn{[0, 5]}{[0, 5]} \cr
+   pamonce \tab untyped \tab FALSE \tab  \tab - \cr
+   variant \tab character \tab original \tab original, o_1, o_2, f_3, f_4, f_5, faster \tab - \cr
    trace.lev \tab integer \tab 0 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
 }
 }
@@ -116,6 +119,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
+\code{\link{mlr_learners_clust.protoclust}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}

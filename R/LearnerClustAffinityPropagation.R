@@ -3,8 +3,10 @@
 #' @name mlr_learners_clust.ap
 #'
 #' @description
-#' A [LearnerClust] for Affinity Propagation clustering implemented in [apcluster::apcluster()].
-#' [apcluster::apcluster()] doesn't have set a default for similarity function.
+#' Affinity Propagation clustering.
+#' Calls [apcluster::apcluster()] from package \CRANpkg{apcluster}.
+#'
+#' Note that [apcluster::apcluster()] doesn't have a default for the similarity function.
 #' The predict method computes the closest cluster exemplar to find the
 #' cluster memberships for new data.
 #' The code is taken from
@@ -28,9 +30,7 @@ LearnerClustAP = R6Class("LearnerClustAP",
     initialize = function() {
       param_set = ps(
         s = p_uty(tags = c("train", "required")),
-        p = p_uty(
-          default = NA_real_, special_vals = list(NA_real_), tags = "train", custom_check = check_numeric
-        ),
+        p = p_uty(default = NA_real_, special_vals = list(NA_real_), tags = "train", custom_check = check_numeric),
         q = p_dbl(0, 1, default = NA_real_, special_vals = list(NA_real_), tags = "train"),
         maxits = p_int(1L, default = 1000L, tags = "train"),
         convits = p_int(1L, default = 100L, tags = "train"),
@@ -49,7 +49,7 @@ LearnerClustAP = R6Class("LearnerClustAP",
         properties = c("partitional", "exclusive", "complete"),
         packages = "apcluster",
         man = "mlr3cluster::mlr_learners_clust.ap",
-        label = "Affinity Propagation Clustering"
+        label = "Affinity Propagation"
       )
     }
   ),

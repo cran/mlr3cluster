@@ -4,7 +4,7 @@ test_that("autotest", {
   learner = lrn("clust.MBatchKMeans")
   expect_learner(learner)
   task = generate_tasks(learner)
-  suppressWarnings(learner$train(task[[1]]))
+  suppressWarnings(learner$train(task[[1L]]))
   expect_class(learner$model, "MBatchKMeans")
 })
 
@@ -14,14 +14,12 @@ test_that("Learner properties are respected", {
   expect_learner(learner, task)
 
   # test on multiple paramsets
-  centers = data.frame(matrix(ncol = length(colnames(task$data())), nrow = 4L))
-  colnames(centers) = colnames(task$data())
-  centers$Assault = c(100, 200, 150, 300)
-  centers$Murder = c(11, 3, 10, 5)
-  centers$Rape = c(20, 18, 10, 26)
-  centers$UrbanPop = c(60, 54, 53, 69)
-  colnames(centers) = NULL
-  centers = as.matrix(centers)
+  centers = as.matrix(data.table(
+    Assault = c(100L, 200L, 150L, 300L),
+    Murder = c(11, 3, 10, 5),
+    Rape = c(20, 18, 10, 26),
+    UrbanPop = c(60L, 54L, 53L, 69L)
+  ))
 
   parset_list = list(
     list(clusters = 2L),
@@ -31,8 +29,7 @@ test_that("Learner properties are respected", {
 
   for (type in c("partition", "prob")) {
     learner$predict_type = type
-    for (i in seq_along(parset_list)) {
-      parset = parset_list[[i]]
+    for (parset in parset_list) {
       learner$param_set$values = parset
 
       p = learner$train(task)$predict(task)
@@ -47,8 +44,6 @@ test_that("Learner properties are respected", {
       if (learner$predict_type == "prob") {
         expect_prediction_fuzzy(p)
       }
-
-      learner$reset()
     }
   }
 })

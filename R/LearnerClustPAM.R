@@ -3,10 +3,11 @@
 #' @name mlr_learners_clust.pam
 #'
 #' @description
-#' A [LearnerClust] for PAM clustering implemented in [cluster::pam()].
-#' [cluster::pam()] doesn't have a default value for the number of clusters.
-#' Therefore, the `k` parameter which corresponds to the number
-#' of clusters here is set to 2 by default.
+#' Partitioning Around Medoids (PAM) clustering.
+#' Calls [cluster::pam()] from package \CRANpkg{cluster}.
+#'
+#' The `k` parameter is set to 2 by default since [cluster::pam()]
+#' doesn't have a default value for the number of clusters.
 #' The predict method uses [clue::cl_predict()] to compute the
 #' cluster memberships for new data.
 #'
@@ -27,13 +28,21 @@ LearnerClustPAM = R6Class("LearnerClustPAM",
     initialize = function() {
       param_set = ps(
         k = p_int(1L, tags = c("train", "required")),
-        metric = p_fct(c("euclidian", "manhattan"), default = "euclidian", tags = "train"),
+        metric = p_fct(c("euclidean", "manhattan"), default = "euclidean", tags = "train"),
         medoids = p_uty(
           default = NULL, tags = "train", custom_check = crate(function(x) check_integerish(x, null.ok = TRUE))
         ),
+        nstart = p_int(1L, default = 1L, tags = "train"),
         stand = p_lgl(default = FALSE, tags = "train"),
         do.swap = p_lgl(default = TRUE, tags = "train"),
-        pamonce = p_int(0L, 5L, default = 0L, tags = "train"),
+        pamonce = p_uty(
+          default = FALSE,
+          tags = "train",
+          custom_check = crate(function(x) check_flag(x) %check||% check_int(x, lower = 0L, upper = 6L))
+        ),
+        variant = p_fct(
+          c("original", "o_1", "o_2", "f_3", "f_4", "f_5", "faster"), default = "original", tags = "train"
+        ),
         trace.lev = p_int(0L, default = 0L, tags = "train")
       )
 
@@ -45,7 +54,7 @@ LearnerClustPAM = R6Class("LearnerClustPAM",
         predict_types = "partition",
         param_set = param_set,
         properties = c("partitional", "exclusive", "complete"),
-        packages = "cluster",
+        packages = c("cluster", "clue"),
         man = "mlr3cluster::mlr_learners_clust.pam",
         label = "Partitioning Around Medoids"
       )
@@ -57,10 +66,10 @@ LearnerClustPAM = R6Class("LearnerClustPAM",
       pv = self$param_set$get_values(tags = "train")
       if (!is.null(pv$medoids)) {
         if (length(pv$medoids) != pv$k) {
-          stopf("number of `medoids`' needs to match `k`!")
+          error_config("number of `medoids`' needs to match `k`!")
         }
         if (sum(pv$medoids <= task$nrow & pv$medoids >= 1L) != pv$k) {
-          stopf("`medoids` need to contain valid indices from 1 to %i (number of observations)!", pv$k)
+          error_input("`medoids` need to contain valid indices from 1 to %i (number of observations)!", pv$k)
         }
       }
 
@@ -72,7 +81,7 @@ LearnerClustPAM = R6Class("LearnerClustPAM",
     },
 
     .predict = function(task) {
-      partition = unclass(invoke(cl_predict, self$model, newdata = task$data(), type = "class_ids"))
+      partition = unclass(invoke(clue::cl_predict, self$model, newdata = task$data(), type = "class_ids"))
       PredictionClust$new(task = task, partition = partition)
     }
   )

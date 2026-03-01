@@ -1,3 +1,13 @@
+# mlr3cluster 0.3.0
+
+* feat: Add CLARA clustering learner `clust.clara` from the cluster package.
+* feat: Add k-prototypes clustering learner `clust.kproto` from the clustMixType package.
+* feat: Add spectral clustering learner `clust.specc` from the kernlab package.
+* fix: `LearnerClustDBSCANfpc` now correctly passes the `newdata` argument in the predict method.
+* fix: `LearnerClustKKMeans` now correctly passes kernel parameters via the `kpar` list to `kernlab::kkmeans()`.
+* fix: `clust.silhouette` measure now has the correct range of `[-1, 1]`.
+* docs: Fix typos in measure documentation.
+
 # mlr3cluster 0.2.0
 
 * feat: `Mlr3Error` and `Mlr3Warning` classes for errors and warnings.
@@ -44,7 +54,7 @@
 
 # mlr3cluster 0.1.6
 
-* feat: Add states as row names to `usarrest` task.
+* feat: Add states as row names to `usarrests` task.
 * fix: Remove dictionary items after unloading package.
 
 # mlr3cluster 0.1.5

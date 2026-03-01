@@ -82,6 +82,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.agnes}},
 \code{\link{mlr_learners_clust.ap}},
 \code{\link{mlr_learners_clust.bico}},
+\code{\link{mlr_learners_clust.clara}},
 \code{\link{mlr_learners_clust.cmeans}},
 \code{\link{mlr_learners_clust.cobweb}},
 \code{\link{mlr_learners_clust.dbscan}},
@@ -95,11 +96,13 @@ Other Learner:
 \code{\link{mlr_learners_clust.hdbscan}},
 \code{\link{mlr_learners_clust.kkmeans}},
 \code{\link{mlr_learners_clust.kmeans}},
+\code{\link{mlr_learners_clust.kproto}},
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
 \code{\link{mlr_learners_clust.protoclust}},
+\code{\link{mlr_learners_clust.specc}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}

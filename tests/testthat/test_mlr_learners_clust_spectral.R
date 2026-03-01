@@ -1,8 +1,7 @@
-skip_on_cran()
-skip_if_not_installed("RWeka")
+skip_if_not_installed("kernlab")
 
 test_that("autotest", {
-  learner = lrn("clust.xmeans")
+  learner = lrn("clust.specc")
   expect_learner(learner)
   result = run_autotest(learner)
   expect_true(result, info = result$error)
@@ -10,14 +9,13 @@ test_that("autotest", {
 
 test_that("Learner properties are respected", {
   task = tsk("usarrests")
-  learner = lrn("clust.xmeans")
+  learner = lrn("clust.specc")
   expect_learner(learner, task)
 
-  # test on multiple paramsets
   parset_list = list(
-    list(use_kdtree = TRUE),
-    list(L = 2L),
-    list(I = 5L)
+    list(centers = 2L, kernel = "polydot", degree = 2L),
+    list(centers = 3L, kernel = "rbfdot"),
+    list(centers = 3L, kernel = "vanilladot")
   )
 
   for (parset in parset_list) {

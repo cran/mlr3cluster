@@ -1,8 +1,7 @@
-skip_on_cran()
-skip_if_not_installed("RWeka")
+skip_if_not_installed("clue")
 
 test_that("autotest", {
-  learner = lrn("clust.xmeans")
+  learner = lrn("clust.clara")
   expect_learner(learner)
   result = run_autotest(learner)
   expect_true(result, info = result$error)
@@ -10,14 +9,14 @@ test_that("autotest", {
 
 test_that("Learner properties are respected", {
   task = tsk("usarrests")
-  learner = lrn("clust.xmeans")
+  learner = lrn("clust.clara")
   expect_learner(learner, task)
 
-  # test on multiple paramsets
   parset_list = list(
-    list(use_kdtree = TRUE),
-    list(L = 2L),
-    list(I = 5L)
+    list(k = 2L),
+    list(k = 5L),
+    list(k = 2L, metric = "manhattan"),
+    list(k = 3L, pamLike = TRUE)
   )
 
   for (parset in parset_list) {

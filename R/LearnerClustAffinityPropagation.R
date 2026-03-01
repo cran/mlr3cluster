@@ -59,7 +59,7 @@ LearnerClustAP = R6Class("LearnerClustAP",
       pv = self$param_set$get_values(tags = "train")
       data = task$data()
       m = invoke(apcluster::apcluster, x = data, .args = pv)
-      # add data points corresponding to examplars
+      # add data points corresponding to exemplars
       setattr(m, "exemplar_data", data[m@exemplars])
 
       if (self$save_assignments) {
@@ -78,7 +78,7 @@ LearnerClustAP = R6Class("LearnerClustAP",
         rbind(exemplar_data, data),
         sel = seq_len(nrow(data)) + nrow(exemplar_data)
       )[seq_len(nrow(exemplar_data)), ]
-      partition = unname(apply(sim_mat, 2L, which.max))
+      partition = unname(apply(sim_mat, 2L, which_max))
       PredictionClust$new(task = task, partition = partition)
     }
   )

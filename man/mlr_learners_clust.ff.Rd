@@ -94,6 +94,7 @@ Other Learner:
 \code{\link{mlr_learners_clust.ap}},
 \code{\link{mlr_learners_clust.bico}},
 \code{\link{mlr_learners_clust.birch}},
+\code{\link{mlr_learners_clust.clara}},
 \code{\link{mlr_learners_clust.cmeans}},
 \code{\link{mlr_learners_clust.cobweb}},
 \code{\link{mlr_learners_clust.dbscan}},
@@ -106,22 +107,24 @@ Other Learner:
 \code{\link{mlr_learners_clust.hdbscan}},
 \code{\link{mlr_learners_clust.kkmeans}},
 \code{\link{mlr_learners_clust.kmeans}},
+\code{\link{mlr_learners_clust.kproto}},
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
 \code{\link{mlr_learners_clust.protoclust}},
+\code{\link{mlr_learners_clust.specc}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}
 \section{Super classes}{
-\code{\link[mlr3:Learner]{mlr3::Learner}} -> \code{\link[mlr3cluster:LearnerClust]{mlr3cluster::LearnerClust}} -> \code{LearnerClustFF}
+\code{\link[mlr3:Learner]{mlr3::Learner}} -> \code{\link[mlr3cluster:LearnerClust]{mlr3cluster::LearnerClust}} -> \code{LearnerClustFarthestFirst}
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-LearnerClustFF-new}{\code{LearnerClustFarthestFirst$new()}}
-\item \href{#method-LearnerClustFF-clone}{\code{LearnerClustFarthestFirst$clone()}}
+\item \href{#method-LearnerClustFarthestFirst-new}{\code{LearnerClustFarthestFirst$new()}}
+\item \href{#method-LearnerClustFarthestFirst-clone}{\code{LearnerClustFarthestFirst$clone()}}
 }
 }
 \if{html}{\out{
@@ -142,8 +145,8 @@ Other Learner:
 </details>
 }}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-LearnerClustFF-new"></a>}}
-\if{latex}{\out{\hypertarget{method-LearnerClustFF-new}{}}}
+\if{html}{\out{<a id="method-LearnerClustFarthestFirst-new"></a>}}
+\if{latex}{\out{\hypertarget{method-LearnerClustFarthestFirst-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new instance of this \link[R6:R6Class]{R6} class.
 \subsection{Usage}{
@@ -152,8 +155,8 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-LearnerClustFF-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-LearnerClustFF-clone}{}}}
+\if{html}{\out{<a id="method-LearnerClustFarthestFirst-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-LearnerClustFarthestFirst-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

@@ -214,6 +214,13 @@ bibentries = c(
     year = "2008",
     publisher = "Citeseer"
   ),
+  ng2001spectral = bibentry("inproceedings",
+    title = "On Spectral Clustering: Analysis and an Algorithm",
+    author = "Ng, Andrew Y and Jordan, Michael I and Weiss, Yair",
+    booktitle = "Advances in Neural Information Processing Systems",
+    volume = "14",
+    year = "2001"
+  ),
   karatzoglou2004kernlab = bibentry("article",
     title = "kernlab-an S4 package for kernel methods in R",
     author = "Karatzoglou, Alexandros and Smola, Alexandros and Hornik, Kurt and Zeileis, Achim",
@@ -366,6 +373,16 @@ bibentries = c(
     volume = "28",
     pages = "181",
     year = "1979"
+  ),
+  huang1998extensions = bibentry("article",
+    title = "Extensions to the k-Means Algorithm for Clustering Large Data Sets with Categorical Values",
+    author = "Huang, Zhexue",
+    journal = "Data Mining and Knowledge Discovery",
+    volume = "2",
+    number = "3",
+    pages = "283--304",
+    year = "1998",
+    publisher = "Springer"
   ),
   bien2011hierarchical = bibentry("article",
     title = "Hierarchical Clustering with Prototypes via Minimax Linkage",

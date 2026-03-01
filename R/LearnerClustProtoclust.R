@@ -6,6 +6,9 @@
 #' Hierarchical clustering using minimax linkage with prototypes.
 #' Calls [protoclust::protoclust()] from package \CRANpkg{protoclust}.
 #'
+#' There is no predict method for [protoclust::protoclust()], so the method
+#' returns cluster labels for the training data.
+#'
 #' @templateVar id clust.protoclust
 #' @template learner
 #'
@@ -72,8 +75,13 @@ LearnerClustProtoclust = R6Class(
       }
 
       warn_prediction_useless(self$id)
+      partition = self$assignments %??% invoke(
+        protoclust::protocut,
+        hc = self$model,
+        .args = self$param_set$get_values(tags = c("train", "protocut"))
+      )$cl
 
-      PredictionClust$new(task = task, partition = self$assignments)
+      PredictionClust$new(task = task, partition = partition)
     }
   )
 )

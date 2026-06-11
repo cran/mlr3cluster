@@ -6,8 +6,8 @@
 #' Hierarchical clustering using minimax linkage with prototypes.
 #' Calls [protoclust::protoclust()] from package \CRANpkg{protoclust}.
 #'
-#' There is no predict method for [protoclust::protoclust()], so the method
-#' returns cluster labels for the training data.
+#' There is no predict method for [protoclust::protoclust()], so the method returns cluster labels for the training
+#' data.
 #'
 #' @templateVar id clust.protoclust
 #' @template learner
@@ -35,7 +35,7 @@ LearnerClustProtoclust = R6Class(
         upper = p_lgl(default = FALSE, tags = c("train", "dist")),
         p = p_dbl(default = 2, tags = c("train", "dist"), depends = quote(method == "minkowski")),
         verb = p_lgl(default = FALSE, tags = c("train", "protoclust")),
-        k = p_int(1L, default = NULL, special_vals = list(NULL), tags = c("train", "protocut", "predict"))
+        k = p_int(1L, tags = c("train", "protocut", "predict"))
       )
 
       param_set$set_values(k = 2L)
@@ -75,12 +75,12 @@ LearnerClustProtoclust = R6Class(
       }
 
       warn_prediction_useless(self$id)
-      partition = self$assignments %??% invoke(
-        protoclust::protocut,
-        hc = self$model,
-        .args = self$param_set$get_values(tags = c("train", "protocut"))
-      )$cl
-
+      partition = self$assignments %??%
+        invoke(
+          protoclust::protocut,
+          hc = self$model,
+          .args = self$param_set$get_values(tags = c("train", "protocut"))
+        )$cl
       PredictionClust$new(task = task, partition = partition)
     }
   )

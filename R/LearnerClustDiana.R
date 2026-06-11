@@ -6,9 +6,18 @@
 #' Divisive hierarchical clustering.
 #' Calls [cluster::diana()] from package \CRANpkg{cluster}.
 #'
-#' The predict method uses [stats::cutree()] which cuts the tree resulting from
-#' hierarchical clustering into specified number of groups (see parameter `k`).
-#' The default value for `k` is 2.
+#' The predict method uses [stats::cutree()] which cuts the tree resulting from hierarchical clustering into specified
+#' number of groups (see parameter `k`). The default value for `k` is 2.
+#'
+#' @section Initial parameter values:
+#' - `keep.diss`:
+#'   - Actual default: `n < 100`, where `n` is the number of observations.
+#'   - Adjusted default: `FALSE`.
+#'   - Reason for change: Avoid storing the dissimilarity matrix in the model to save memory.
+#' - `keep.data`:
+#'   - Actual default: `TRUE`.
+#'   - Adjusted default: `FALSE`.
+#'   - Reason for change: Avoid storing the training data in the model to save memory.
 #'
 #' @templateVar id clust.diana
 #' @template learner
@@ -19,7 +28,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustDiana = R6Class("LearnerClustDiana",
+LearnerClustDiana = R6Class(
+  "LearnerClustDiana",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -28,11 +38,18 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
       param_set = ps(
         metric = p_fct(c("euclidean", "manhattan"), default = "euclidean", tags = "train"),
         stand = p_lgl(default = FALSE, tags = "train"),
+        stop.at.k = p_uty(
+          default = FALSE,
+          tags = "train",
+          custom_check = crate(function(x) check_false(x) %check||% check_int(x, lower = 1L))
+        ),
+        keep.diss = p_lgl(tags = "train"),
+        keep.data = p_lgl(default = TRUE, tags = "train"),
         trace.lev = p_int(0L, default = 0L, tags = "train"),
-        k = p_int(1L, default = 2L, tags = c("train", "predict"))
+        k = p_int(1L, tags = c("train", "cutree", "predict"))
       )
 
-      param_set$set_values(k = 2L)
+      param_set$set_values(k = 2L, keep.diss = FALSE, keep.data = FALSE)
 
       super$initialize(
         id = "clust.diana",
@@ -49,15 +66,15 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
 
   private = list(
     .train = function(task) {
-      pv = self$param_set$get_values(tags = "train")
+      ps = self$param_set
       m = invoke(
         cluster::diana,
         x = task$data(),
         diss = FALSE,
-        .args = remove_named(pv, "k")
+        .args = remove_named(ps$get_values(tags = "train"), "k")
       )
       if (self$save_assignments) {
-        self$assignments = stats::cutree(m, pv$k)
+        self$assignments = invoke(stats::cutree, tree = m, .args = ps$get_values(tags = c("train", "cutree")))
       }
       m
     },
@@ -69,7 +86,8 @@ LearnerClustDiana = R6Class("LearnerClustDiana",
       }
 
       warn_prediction_useless(self$id)
-      partition = self$assignments %??% stats::cutree(self$model, pv$k)
+      partition = self$assignments %??%
+        invoke(stats::cutree, tree = self$model, .args = self$param_set$get_values(tags = c("train", "cutree")))
 
       PredictionClust$new(task = task, partition = partition)
     }

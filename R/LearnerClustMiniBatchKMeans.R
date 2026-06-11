@@ -6,11 +6,9 @@
 #' Mini-batch k-means clustering.
 #' Calls [ClusterR::MiniBatchKmeans()] from package \CRANpkg{ClusterR}.
 #'
-#' The `clusters` parameter is set to 2 by default since [ClusterR::MiniBatchKmeans()]
-#' doesn't have a default value for the number of clusters.
-#' The predict method uses [ClusterR::predict_MBatchKMeans()] to compute the
-#' cluster memberships for new data.
-#' The learner supports both partitional and fuzzy clustering.
+#' The `clusters` parameter is set to 2 by default since [ClusterR::MiniBatchKmeans()] doesn't have a default value for
+#' the number of clusters. The predict method uses [ClusterR::predict_MBatchKMeans()] to compute the cluster memberships
+#' for new data. The learner supports both partitional and fuzzy clustering.
 #'
 #' @templateVar id clust.MBatchKMeans
 #' @template learner
@@ -21,22 +19,29 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustMiniBatchKMeans = R6Class("LearnerClustMiniBatchKMeans",
+LearnerClustMiniBatchKMeans = R6Class(
+  "LearnerClustMiniBatchKMeans",
   inherit = LearnerClust,
   public = list(
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        clusters = p_int(1L, default = 2L, tags = "train"),
+        clusters = p_int(1L, tags = c("train", "required")),
         batch_size = p_int(1L, default = 10L, tags = "train"),
         num_init = p_int(1L, default = 1L, tags = "train"),
         max_iters = p_int(1L, default = 100L, tags = "train"),
         init_fraction = p_dbl(
-          0, 1, default = 1, tags = "train", depends = quote(initializer %in% c("kmeans++", "optimal_init"))
+          lower = 0,
+          upper = 1,
+          default = 1,
+          tags = "train",
+          depends = quote(initializer %in% c("kmeans++", "optimal_init"))
         ),
         initializer = p_fct(
-          c("optimal_init", "quantile_init", "kmeans++", "random"), default = "kmeans++", tags = "train"
+          c("optimal_init", "quantile_init", "kmeans++", "random"),
+          default = "kmeans++",
+          tags = "train"
         ),
         early_stop_iter = p_int(1L, default = 10L, tags = "train"),
         verbose = p_lgl(default = FALSE, tags = "train"),
@@ -53,7 +58,7 @@ LearnerClustMiniBatchKMeans = R6Class("LearnerClustMiniBatchKMeans",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = c("partition", "prob"),
         param_set = param_set,
-        properties = c("partitional", "fuzzy", "exclusive", "complete"),
+        properties = c("partitional", "exclusive", "complete"),
         packages = "ClusterR",
         man = "mlr3cluster::mlr_learners_clust.MBatchKMeans",
         label = "Mini Batch K-Means"
@@ -64,7 +69,7 @@ LearnerClustMiniBatchKMeans = R6Class("LearnerClustMiniBatchKMeans",
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      assert_centers_param(pv$CENTROIDS, task, test_matrix, "CENTROIDS")
+      assert_centers_param(pv$CENTROIDS, task, "CENTROIDS")
       if (test_matrix(pv$CENTROIDS) && nrow(pv$CENTROIDS) != pv$clusters) {
         error_config("`CENTROIDS` must have same number of rows as `clusters`.")
       }
@@ -83,7 +88,7 @@ LearnerClustMiniBatchKMeans = R6Class("LearnerClustMiniBatchKMeans",
       prob = NULL
       if (self$predict_type == "prob") {
         prob = invoke(predict, self$model, newdata = data, fuzzy = TRUE)
-        colnames(prob) = seq_len(ncol(prob))
+        colnames(prob) = seq_col(prob)
       }
       PredictionClust$new(task = task, partition = partition, prob = prob)
     }

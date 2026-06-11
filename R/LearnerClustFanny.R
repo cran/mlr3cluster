@@ -6,10 +6,19 @@
 #' Fuzzy Analysis (FANNY) clustering.
 #' Calls [cluster::fanny()] from package \CRANpkg{cluster}.
 #'
-#' The `k` parameter is set to 2 by default since [cluster::fanny()]
-#' doesn't have a default value for the number of clusters.
-#' The predict method copies cluster assignments and memberships
-#' generated for train data. The predict does not work for new data.
+#' The `k` parameter is set to 2 by default since [cluster::fanny()] doesn't have a default value for the number of
+#' clusters. The predict method copies cluster assignments and memberships generated for train data. The predict does
+#' not work for new data.
+#'
+#' @section Initial parameter values:
+#' - `keep.diss`:
+#'   - Actual default: `n < 100`, where `n` is the number of observations.
+#'   - Adjusted default: `FALSE`.
+#'   - Reason for change: Avoid storing the dissimilarity matrix in the model to save memory.
+#' - `keep.data`:
+#'   - Actual default: `TRUE`.
+#'   - Adjusted default: `FALSE`.
+#'   - Reason for change: Avoid storing the training data in the model to save memory.
 #'
 #' @templateVar id clust.fanny
 #' @template learner
@@ -20,7 +29,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustFanny = R6Class("LearnerClustFanny",
+LearnerClustFanny = R6Class(
+  "LearnerClustFanny",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -36,12 +46,14 @@ LearnerClustFanny = R6Class("LearnerClustFanny",
           tags = "train",
           custom_check = crate(function(x) check_matrix(x, mode = "numeric", null.ok = TRUE))
         ),
+        keep.diss = p_lgl(tags = "train"),
+        keep.data = p_lgl(default = TRUE, tags = "train"),
         maxit = p_int(0L, default = 500L, tags = "train"),
         tol = p_dbl(0, default = 1e-15, tags = "train"),
         trace.lev = p_int(0L, default = 0L, tags = "train")
       )
 
-      param_set$set_values(k = 2L)
+      param_set$set_values(k = 2L, keep.diss = FALSE, keep.data = FALSE)
 
       super$initialize(
         id = "clust.fanny",
@@ -72,7 +84,7 @@ LearnerClustFanny = R6Class("LearnerClustFanny",
       prob = NULL
       if (self$predict_type == "prob") {
         prob = self$model$membership
-        colnames(prob) = seq_len(ncol(prob))
+        colnames(prob) = seq_col(prob)
       }
       PredictionClust$new(task = task, partition = partition, prob = prob)
     }

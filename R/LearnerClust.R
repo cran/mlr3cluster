@@ -2,11 +2,26 @@
 #'
 #' @description
 #' This Learner specializes [mlr3::Learner] for cluster problems:
+#'
 #' * `task_type` is set to `"clust"`.
 #' * Creates [mlr3::Prediction]s of class [PredictionClust].
 #' * Possible values for `predict_types` are:
 #'   - `"partition"`: Integer indicating the cluster membership.
 #'   - `"prob"`: Probability for belonging to each cluster.
+#' * Additional learner properties include:
+#'   - `"exclusive"`: The method natively assigns each observation to exactly one cluster.
+#'   - `"overlapping"`: The method natively assigns observations to multiple clusters.
+#'   - `"fuzzy"`: The method natively produces soft cluster memberships, e.g. fuzzy or probabilistic model-based
+#'     methods. The hard partition is derived from the memberships.
+#'   - `"complete"`: Every observation is assigned to a cluster.
+#'   - `"partial"`: Observations may be left unassigned, e.g. as noise points.
+#'   - `"partitional"`: The method divides the data into non-nested clusters.
+#'   - `"hierarchical"`: The method produces a nested hierarchy of clusters.
+#'   - `"density"`: The method finds clusters as dense regions in the feature space.
+#'
+#'   These properties describe the nature of the underlying method, not its interface capabilities: whether a learner
+#'   can return soft memberships is encoded by the `"prob"` predict type, which `"exclusive"` learners may also
+#'   support via derived scores.
 #'
 #' Predefined learners can be found in the [mlr3misc::Dictionary] [mlr3::mlr_learners].
 #'
@@ -29,7 +44,8 @@
 #' # get a specific learner from mlr_learners:
 #' learner = lrn("clust.kmeans")
 #' print(learner)
-LearnerClust = R6Class("LearnerClust",
+LearnerClust = R6Class(
+  "LearnerClust",
   inherit = Learner,
   public = list(
     #' @field assignments (`NULL` | `vector()`)\cr

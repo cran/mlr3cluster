@@ -17,7 +17,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustHclust = R6Class("LearnerClustHclust",
+LearnerClustHclust = R6Class(
+  "LearnerClustHclust",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -38,7 +39,7 @@ LearnerClustHclust = R6Class("LearnerClustHclust",
         diag = p_lgl(default = FALSE, tags = c("train", "dist")),
         upper = p_lgl(default = FALSE, tags = c("train", "dist")),
         p = p_dbl(default = 2, tags = c("train", "dist"), depends = quote(distmethod == "minkowski")),
-        k = p_int(1L, default = NULL, special_vals = list(NULL), tags = c("train", "cutree", "predict"))
+        k = p_int(1L, tags = c("train", "cutree", "predict"))
       )
 
       param_set$set_values(k = 2L)
@@ -87,11 +88,12 @@ LearnerClustHclust = R6Class("LearnerClustHclust",
       }
 
       warn_prediction_useless(self$id)
-      partition = self$assignments %??% invoke(
-        stats::cutree,
-        tree = self$model,
-        .args = self$param_set$get_values(tags = c("train", "cutree"))
-      )
+      partition = self$assignments %??%
+        invoke(
+          stats::cutree,
+          tree = self$model,
+          .args = self$param_set$get_values(tags = c("train", "cutree"))
+        )
 
       PredictionClust$new(task = task, partition = partition)
     }

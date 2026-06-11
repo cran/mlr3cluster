@@ -6,10 +6,8 @@
 #' K-means clustering.
 #' Calls [stats::kmeans()] from package \pkg{stats}.
 #'
-#' The `centers` parameter is set to 2 by default since [stats::kmeans()]
-#' doesn't have a default value for the number of clusters.
-#' The predict method uses [clue::cl_predict()] to compute the
-#' cluster memberships for new data.
+#' The `centers` parameter is set to 2 by default since [stats::kmeans()] doesn't have a default value for the number of
+#' clusters. The predict method uses [clue::cl_predict()] to compute the cluster memberships for new data.
 #'
 #' @templateVar id clust.kmeans
 #' @template learner
@@ -20,7 +18,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustKMeans = R6Class("LearnerClustKMeans",
+LearnerClustKMeans = R6Class(
+  "LearnerClustKMeans",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -30,7 +29,9 @@ LearnerClustKMeans = R6Class("LearnerClustKMeans",
         centers = p_uty(tags = c("train", "required"), custom_check = check_centers),
         iter.max = p_int(1L, default = 10L, tags = "train"),
         algorithm = p_fct(
-          c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"), default = "Hartigan-Wong", tags = "train"
+          c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),
+          default = "Hartigan-Wong",
+          tags = "train"
         ),
         nstart = p_int(1L, default = 1L, tags = "train"),
         trace = p_lgl(default = FALSE, tags = "train")
@@ -58,7 +59,7 @@ LearnerClustKMeans = R6Class("LearnerClustKMeans",
         warning_config("`nstart` parameter is only relevant when `centers` is integer.")
       }
 
-      assert_centers_param(pv$centers, task, test_data_frame, "centers")
+      assert_centers_param(pv$centers, task, "centers")
 
       m = invoke(stats::kmeans, x = task$data(), .args = pv)
       if (self$save_assignments) {

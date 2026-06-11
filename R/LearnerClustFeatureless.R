@@ -4,8 +4,7 @@
 #'
 #' @description
 #' Featureless clustering.
-#' Randomly (but evenly) assigns observations to `num_clusters` partitions
-#' (default: 1 partition).
+#' Randomly (but evenly) assigns observations to `num_clusters` partitions (default: 1 partition).
 #'
 #' @templateVar id clust.featureless
 #' @template learner
@@ -13,7 +12,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustFeatureless = R6Class("LearnerClustFeatureless",
+LearnerClustFeatureless = R6Class(
+  "LearnerClustFeatureless",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -50,10 +50,7 @@ LearnerClustFeatureless = R6Class("LearnerClustFeatureless",
         self$assignments = partition
       }
 
-      set_class(
-        list(clustering = partition, features = task$feature_names),
-        "clust.featureless_model"
-      )
+      set_class(list(clustering = partition, features = task$feature_names), "clust.featureless_model")
     },
 
     .predict = function(task) {
@@ -70,11 +67,15 @@ LearnerClustFeatureless = R6Class("LearnerClustFeatureless",
 
         # reorder rows so that the max probability corresponds to
         # the selected partition in `partition`
-        prob = do.call(rbind, map(seq_along(partition), function(i) {
-          x = prob[i, , drop = TRUE]
-          pos = which_max(x)
-          if (pos == i) x else append(x[-pos], x[pos], after = partition[i] - 1L)
-        }))
+        prob = do.call(
+          rbind,
+          map(seq_along(partition), function(i) {
+            x = prob[i, , drop = TRUE]
+            pos = which_max(x)
+            if (pos == partition[i]) x else append(x[-pos], x[pos], after = partition[i] - 1L)
+          })
+        )
+        colnames(prob) = seq_col(prob)
       }
 
       PredictionClust$new(task = task, partition = partition, prob = prob)

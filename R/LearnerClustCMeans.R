@@ -6,10 +6,8 @@
 #' Fuzzy c-means clustering.
 #' Calls [e1071::cmeans()] from package \CRANpkg{e1071}.
 #'
-#' The `centers` parameter is set to 2 by default since [e1071::cmeans()]
-#' doesn't have a default value for the number of clusters.
-#' The predict method uses [clue::cl_predict()] to compute the
-#' cluster memberships for new data.
+#' The `centers` parameter is set to 2 by default since [e1071::cmeans()] doesn't have a default value for the number of
+#' clusters. The predict method uses [clue::cl_predict()] to compute the cluster memberships for new data.
 #'
 #' @templateVar id clust.cmeans
 #' @template learner
@@ -20,7 +18,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustCMeans = R6Class("LearnerClustCMeans",
+LearnerClustCMeans = R6Class(
+  "LearnerClustCMeans",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -34,13 +33,17 @@ LearnerClustCMeans = R6Class("LearnerClustCMeans",
         method = p_fct(c("cmeans", "ufcl"), default = "cmeans", tags = "train"),
         m = p_dbl(1, default = 2, tags = "train"),
         rate.par = p_dbl(0, 1, tags = "train", depends = quote(method == "ufcl")),
-        weights = p_uty(default = 1L, tags = "train", custom_check = crate(function(x) {
-          if (test_numeric(x) && all(x > 0) || check_count(x, positive = TRUE)) {
-            TRUE
-          } else {
-            "`weights` must be positive numeric vector or a single positive number"
-          }
-        })),
+        weights = p_uty(
+          default = 1L,
+          tags = "train",
+          custom_check = crate(function(x) {
+            if (test_numeric(x, any.missing = FALSE, min.len = 1L) && all(x > 0)) {
+              TRUE
+            } else {
+              "`weights` must be positive numeric vector or a single positive number"
+            }
+          })
+        ),
         control = p_uty(tags = "train")
       )
 
@@ -62,7 +65,7 @@ LearnerClustCMeans = R6Class("LearnerClustCMeans",
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      assert_centers_param(pv$centers, task, test_data_frame, "centers")
+      assert_centers_param(pv$centers, task, "centers")
 
       m = invoke(e1071::cmeans, x = task$data(), .args = pv, .opts = allow_partial_matching)
       if (self$save_assignments) {
@@ -76,7 +79,7 @@ LearnerClustCMeans = R6Class("LearnerClustCMeans",
       prob = NULL
       if (self$predict_type == "prob") {
         prob = unclass(invoke(clue::cl_predict, self$model, newdata = task$data(), type = "memberships"))
-        colnames(prob) = seq_len(ncol(prob))
+        colnames(prob) = seq_col(prob)
       }
       PredictionClust$new(task = task, partition = partition, prob = prob)
     }

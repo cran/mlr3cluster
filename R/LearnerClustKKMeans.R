@@ -6,11 +6,9 @@
 #' Kernel k-means clustering.
 #' Calls [kernlab::kkmeans()] from package \CRANpkg{kernlab}.
 #'
-#' The `centers` parameter is set to 2 by default since [kernlab::kkmeans()]
-#' doesn't have a default value for the number of clusters.
-#' Kernel parameters have to be passed directly and not by using the `kpar` list in [kernlab::kkmeans()].
-#' The predict method finds the nearest center in kernel distance to
-#' assign clusters for new data points.
+#' The `centers` parameter is set to 2 by default since [kernlab::kkmeans()] doesn't have a default value for the number
+#' of clusters. Kernel parameters have to be passed directly and not by using the `kpar` list in [kernlab::kkmeans()].
+#' The predict method finds the nearest center in kernel distance to assign clusters for new data points.
 #'
 #' @templateVar id clust.kkmeans
 #' @template learner
@@ -21,7 +19,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustKKMeans = R6Class("LearnerClustKKMeans",
+LearnerClustKKMeans = R6Class(
+  "LearnerClustKKMeans",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -35,10 +34,14 @@ LearnerClustKKMeans = R6Class("LearnerClustKKMeans",
           tags = "train"
         ),
         sigma = p_dbl(
-          0, tags = c("train", "kpar"), depends = quote(kernel %in% c("rbfdot", "anovadot", "besseldot", "laplacedot"))
+          0,
+          tags = c("train", "kpar"),
+          depends = quote(kernel %in% c("rbfdot", "anovadot", "besseldot", "laplacedot"))
         ),
         degree = p_int(
-          1L, default = 3L, tags = c("train", "kpar"),
+          1L,
+          default = 3L,
+          tags = c("train", "kpar"),
           depends = quote(kernel %in% c("polydot", "anovadot", "besseldot"))
         ),
         scale = p_dbl(0, default = 1, tags = c("train", "kpar"), depends = quote(kernel %in% c("polydot", "tanhdot"))),
@@ -66,7 +69,7 @@ LearnerClustKKMeans = R6Class("LearnerClustKKMeans",
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      assert_centers_param(pv$centers, task, test_data_frame, "centers")
+      assert_centers_param(pv$centers, task, "centers")
 
       kpar = self$param_set$get_values(tags = c("train", "kpar"))
       if (length(kpar) > 0L) {
@@ -82,27 +85,16 @@ LearnerClustKKMeans = R6Class("LearnerClustKKMeans",
     },
 
     .predict = function(task) {
-      # all of predict is taken from mlr2
-
-      c = kernlab::centers(self$model)
+      centers = kernlab::centers(self$model)
       K = kernlab::kernelf(self$model)
-      data = task$data()
+      x = as.matrix(task$data())
 
-      # kernel product between each new datapoint and the centers
-      d_xc = matrix(kernlab::kernelMatrix(K, as.matrix(data), c), ncol = nrow(c))
-      # kernel product between each new datapoint and itself: rows are identical
-      d_xx = matrix(
-        rep(diag(kernlab::kernelMatrix(K, as.matrix(data))), each = ncol(d_xc)),
-        ncol = ncol(d_xc), byrow = TRUE
-      )
-      # kernel product between each center and itself: columns are identical
-      d_cc = matrix(
-        rep(diag(kernlab::kernelMatrix(K, as.matrix(c))), each = nrow(d_xc)), nrow = nrow(d_xc)
-      )
-      # this is the squared kernel distance to the centers
-      d2 = d_xx + d_cc - 2 * d_xc
-      # the nearest center determines cluster assignment
-      partition = apply(d2, 1L, which_min)
+      # squared kernel distance: ||phi(x) - phi(c)||^2 = K(x,x) + K(c,c) - 2 K(x,c)
+      kxc = kernlab::kernelMatrix(K, x, centers)
+      kxx = diag(kernlab::kernelMatrix(K, x))
+      kcc = diag(kernlab::kernelMatrix(K, centers))
+      d2 = outer(kxx, kcc, `+`) - 2 * kxc
+      partition = max.col(-d2, ties.method = "random")
 
       PredictionClust$new(task = task, partition = partition)
     }

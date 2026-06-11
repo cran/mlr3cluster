@@ -6,6 +6,9 @@
 #' HDBSCAN (hierarchical DBSCAN) clustering.
 #' Calls [dbscan::hdbscan()] from package \CRANpkg{dbscan}.
 #'
+#' The `minPts` parameter is set to 5 by default since [dbscan::hdbscan()] doesn't have a default value for the minimum
+#' size of clusters.
+#'
 #' @templateVar id clust.hdbscan
 #' @template learner
 #'
@@ -15,7 +18,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustHDBSCAN = R6Class("LearnerClustHDBSCAN",
+LearnerClustHDBSCAN = R6Class(
+  "LearnerClustHDBSCAN",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -36,7 +40,7 @@ LearnerClustHDBSCAN = R6Class("LearnerClustHDBSCAN",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
         param_set = param_set,
-        properties = c("density", "exclusive", "complete"),
+        properties = c("density", "exclusive", "partial"),
         packages = "dbscan",
         man = "mlr3cluster::mlr_learners_clust.hdbscan",
         label = "HDBSCAN"

@@ -15,7 +15,8 @@
 #' @export
 #' @template seealso_learner
 #' @template simple_example
-LearnerClustDBSCAN = R6Class("LearnerClustDBSCAN",
+LearnerClustDBSCAN = R6Class(
+  "LearnerClustDBSCAN",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -42,7 +43,7 @@ LearnerClustDBSCAN = R6Class("LearnerClustDBSCAN",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
         param_set = param_set,
-        properties = c("density", "exclusive", "complete"),
+        properties = c("density", "exclusive", "partial"),
         packages = "dbscan",
         man = "mlr3cluster::mlr_learners_clust.dbscan",
         label = "DBSCAN"

@@ -1,10 +1,10 @@
 #' @export
-as_prediction.PredictionDataClust = function(x, check = TRUE, ...) { # nolint
+as_prediction.PredictionDataClust = function(x, check = TRUE, ...) {
   invoke(PredictionClust$new, check = check, .args = x)
 }
 
 #' @export
-check_prediction_data.PredictionDataClust = function(pdata, ...) { # nolint
+check_prediction_data.PredictionDataClust = function(pdata, ...) {
   pdata$row_ids = assert_row_ids(pdata$row_ids)
   n = length(pdata$row_ids)
   assert_integer(pdata$partition, len = n, any.missing = FALSE, null.ok = TRUE)
@@ -29,7 +29,7 @@ check_prediction_data.PredictionDataClust = function(pdata, ...) { # nolint
 }
 
 #' @export
-is_missing_prediction_data.PredictionDataClust = function(pdata, ...) { # nolint
+is_missing_prediction_data.PredictionDataClust = function(pdata, ...) {
   miss = logical(length(pdata$row_ids))
 
   if (!is.null(pdata$partition)) {
@@ -37,7 +37,7 @@ is_missing_prediction_data.PredictionDataClust = function(pdata, ...) { # nolint
   }
 
   if (!is.null(pdata$prob)) {
-    miss = miss | apply(pdata$prob, 1L, anyMissing)
+    miss = miss | row_any_na(pdata$prob)
   }
 
   pdata$row_ids[miss]

@@ -1,5 +1,5 @@
 test_that("autotest", {
-  learner = lrn("clust.featureless")
+  learner = lrn("clust.featureless", num_clusters = 2L)
   expect_learner(learner)
   result = run_autotest(learner)
   expect_true(result, info = result$error)
@@ -23,4 +23,11 @@ test_that("Learner properties are respected", {
     p = learner$train(task)$predict(task)
     expect_prediction_clust(p, learner)
   }
+})
+
+test_that("prob predictions are consistent with the partition", {
+  task = tsk("usarrests")
+  learner = lrn("clust.featureless", predict_type = "prob", num_clusters = 3L)
+  p = learner$train(task)$predict(task)
+  expect_equal(max.col(p$prob, ties.method = "first"), p$partition)
 })

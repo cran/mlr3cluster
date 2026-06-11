@@ -6,8 +6,13 @@
 #' Mean shift clustering.
 #' Calls [LPCM::ms()] from package \CRANpkg{LPCM}.
 #'
-#' There is no predict method for [LPCM::ms()], so the method
-#' returns cluster labels for the training data.
+#' There is no predict method for [LPCM::ms()], so the method returns cluster labels for the training data.
+#'
+#' @section Initial parameter values:
+#' - `plot`:
+#'   - Actual default: `TRUE`.
+#'   - Adjusted default: `FALSE`.
+#'   - Reason for change: Suppress plotting during training.
 #'
 #' @templateVar id clust.meanshift
 #' @template learner
@@ -18,14 +23,15 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustMeanShift = R6Class("LearnerClustMeanShift",
+LearnerClustMeanShift = R6Class(
+  "LearnerClustMeanShift",
   inherit = LearnerClust,
   public = list(
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        h = p_uty(tags = "train", custom_check = crate(function(x) check_numeric(x) %check||% check_int(x))),
+        h = p_uty(tags = "train", custom_check = check_numeric),
         subset = p_uty(tags = "train", custom_check = check_numeric),
         thr = p_dbl(default = 0.01, tags = "train"),
         scaled = p_int(0L, default = 1L, tags = "train"),
@@ -40,7 +46,7 @@ LearnerClustMeanShift = R6Class("LearnerClustMeanShift",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
         param_set = param_set,
-        properties = c("partitional", "exclusive", "complete"),
+        properties = c("density", "exclusive", "complete"),
         packages = "LPCM",
         man = "mlr3cluster::mlr_learners_clust.meanshift",
         label = "Mean Shift"

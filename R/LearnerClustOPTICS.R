@@ -15,7 +15,8 @@
 #' @export
 #' @template seealso_learner
 #' @template simple_example
-LearnerClustOPTICS = R6Class("LearnerClustOPTICS",
+LearnerClustOPTICS = R6Class(
+  "LearnerClustOPTICS",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -41,7 +42,7 @@ LearnerClustOPTICS = R6Class("LearnerClustOPTICS",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
         param_set = param_set,
-        properties = c("density", "exclusive", "complete"),
+        properties = c("density", "exclusive", "partial"),
         packages = "dbscan",
         man = "mlr3cluster::mlr_learners_clust.optics",
         label = "OPTICS"

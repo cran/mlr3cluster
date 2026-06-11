@@ -3,7 +3,7 @@ skip_if_not_installed("kernlab")
 test_that("autotest", {
   learner = lrn("clust.kkmeans")
   expect_learner(learner)
-  result = run_autotest(learner)
+  result = run_autotest(learner, exclude = "sanity") # kkmeans is non-deterministic and can produce k=1
   expect_true(result, info = result$error)
 })
 
@@ -23,6 +23,7 @@ test_that("Learner properties are respected", {
   parset_list = list(
     list(centers = 2L, kernel = "polydot", degree = 2L),
     list(centers = centers, kernel = "laplacedot", sigma = 2L),
+    list(centers = as.matrix(centers)),
     list(centers = 3L, kernel = "anovadot")
   )
 

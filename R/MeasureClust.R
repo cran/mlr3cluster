@@ -11,11 +11,9 @@
 #' @template param_id
 #' @template param_range
 #' @template param_minimize
-#' @template param_average
 #' @template param_aggregator
 #' @template param_predict_type
 #' @template param_measure_properties
-#' @template param_predict_sets
 #' @template param_task_properties
 #' @template param_packages
 #' @template param_label
@@ -24,7 +22,8 @@
 #' @seealso
 #' Example cluster measures: [`clust.dunn`][mlr_measures_clust.dunn]
 #' @export
-MeasureClust = R6Class("MeasureClust",
+MeasureClust = R6Class(
+  "MeasureClust",
   inherit = Measure,
   cloneable = FALSE,
   public = list(

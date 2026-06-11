@@ -6,12 +6,17 @@
 #' Affinity Propagation clustering.
 #' Calls [apcluster::apcluster()] from package \CRANpkg{apcluster}.
 #'
-#' Note that [apcluster::apcluster()] doesn't have a default for the similarity function.
-#' The predict method computes the closest cluster exemplar to find the
-#' cluster memberships for new data.
+#' Note that [apcluster::apcluster()] doesn't have a default for the similarity function. The predict method computes
+#' the closest cluster exemplar to find the cluster memberships for new data.
 #' The code is taken from
 #' [StackOverflow](https://stackoverflow.com/questions/34932692/using-the-apcluster-package-in-r-it-is-possible-to-score-unclustered-data-poi)
 #' answer by the `apcluster` package maintainer.
+#'
+#' @section Initial parameter values:
+#' - `includeSim`:
+#'   - Actual default: `TRUE`.
+#'   - Adjusted default: `FALSE`.
+#'   - Reason for change: Avoid storing the n x n similarity matrix in the model.
 #'
 #' @templateVar id clust.ap
 #' @template learner
@@ -22,7 +27,8 @@
 #' @export
 #' @template seealso_learner
 #' @template simple_example
-LearnerClustAP = R6Class("LearnerClustAP",
+LearnerClustAP = R6Class(
+  "LearnerClustAP",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -35,11 +41,13 @@ LearnerClustAP = R6Class("LearnerClustAP",
         maxits = p_int(1L, default = 1000L, tags = "train"),
         convits = p_int(1L, default = 100L, tags = "train"),
         lam = p_dbl(0.5, 1, default = 0.9, tags = "train"),
-        includeSim = p_lgl(default = FALSE, tags = "train"),
+        includeSim = p_lgl(default = TRUE, tags = "train"),
         details = p_lgl(default = FALSE, tags = "train"),
         nonoise = p_lgl(default = FALSE, tags = "train"),
         seed = p_int(default = NA_integer_, special_vals = list(NA_integer_), tags = "train")
       )
+
+      param_set$set_values(includeSim = FALSE)
 
       super$initialize(
         id = "clust.ap",
@@ -76,9 +84,9 @@ LearnerClustAP = R6Class("LearnerClustAP",
       data = task$data()
       sim_mat = sim_func(
         rbind(exemplar_data, data),
-        sel = seq_len(nrow(data)) + nrow(exemplar_data)
-      )[seq_len(nrow(exemplar_data)), ]
-      partition = unname(apply(sim_mat, 2L, which_max))
+        sel = seq_row(data) + nrow(exemplar_data)
+      )[seq_row(exemplar_data), ]
+      partition = max.col(t(sim_mat), ties.method = "random")
       PredictionClust$new(task = task, partition = partition)
     }
   )

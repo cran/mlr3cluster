@@ -6,8 +6,7 @@
 #' X-means clustering.
 #' Calls [RWeka::XMeans()] from package \CRANpkg{RWeka}.
 #'
-#' The predict method uses [RWeka::predict.Weka_clusterer()] to compute the
-#' cluster memberships for new data.
+#' The predict method uses [RWeka::predict.Weka_clusterer()] to compute the cluster memberships for new data.
 #'
 #' @templateVar id clust.xmeans
 #' @template learner
@@ -18,7 +17,8 @@
 #' @export
 #' @template seealso_learner
 #' @template simple_example
-LearnerClustXMeans = R6Class("LearnerClustXMeans",
+LearnerClustXMeans = R6Class(
+  "LearnerClustXMeans",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -48,7 +48,7 @@ LearnerClustXMeans = R6Class("LearnerClustXMeans",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
         param_set = param_set,
-        properties = c("partitional", "exclusive", "complete"),
+        properties = c("partitional", "exclusive", "complete", "missings"),
         packages = "RWeka",
         man = "mlr3cluster::mlr_learners_clust.xmeans",
         label = "X-Means"
@@ -59,8 +59,7 @@ LearnerClustXMeans = R6Class("LearnerClustXMeans",
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      names(pv) = chartr("_", "-", names(pv))
-      ctrl = invoke(RWeka::Weka_control, .args = pv)
+      ctrl = weka_control(pv)
       m = invoke(RWeka::XMeans, x = task$data(), control = ctrl)
       if (self$save_assignments) {
         self$assignments = unname(m$class_ids + 1L)

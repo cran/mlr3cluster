@@ -15,7 +15,8 @@
 #' @export
 #' @template seealso_learner
 #' @template simple_example
-LearnerClustDBSCANfpc = R6Class("LearnerClustDBSCANfpc",
+LearnerClustDBSCANfpc = R6Class(
+  "LearnerClustDBSCANfpc",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -33,7 +34,9 @@ LearnerClustDBSCANfpc = R6Class("LearnerClustDBSCANfpc",
           custom_check = crate(function(x) check_flag(x) %check||% check_int(x, lower = 0L, upper = 2L))
         ),
         countmode = p_uty(
-          default = NULL, tags = "train", custom_check = crate(function(x) check_integer(x, null.ok = TRUE))
+          default = NULL,
+          tags = "train",
+          custom_check = crate(function(x) check_integer(x, null.ok = TRUE))
         )
       )
 
@@ -43,7 +46,7 @@ LearnerClustDBSCANfpc = R6Class("LearnerClustDBSCANfpc",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
         param_set = param_set,
-        properties = c("density", "exclusive", "complete"),
+        properties = c("density", "exclusive", "partial"),
         man = "mlr3cluster::mlr_learners_clust.dbscan_fpc",
         label = "DBSCAN (fpc)"
       )

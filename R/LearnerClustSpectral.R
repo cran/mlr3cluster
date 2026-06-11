@@ -6,12 +6,10 @@
 #' Spectral clustering.
 #' Calls [kernlab::specc()] from package \CRANpkg{kernlab}.
 #'
-#' The `centers` parameter is set to 2 by default since [kernlab::specc()]
-#' doesn't have a default value for the number of clusters.
-#' Kernel parameters have to be passed directly and not by using the `kpar` list in [kernlab::specc()].
+#' The `centers` parameter is set to 2 by default since [kernlab::specc()] doesn't have a default value for the number
+#' of clusters. Kernel parameters have to be passed directly and not by using the `kpar` list in [kernlab::specc()].
 #'
-#' There is no predict method for [kernlab::specc()], so the method
-#' returns cluster labels for the training data.
+#' There is no predict method for [kernlab::specc()], so the method returns cluster labels for the training data.
 #'
 #' @templateVar id clust.specc
 #' @template learner
@@ -22,7 +20,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustSpectral = R6Class("LearnerClustSpectral",
+LearnerClustSpectral = R6Class(
+  "LearnerClustSpectral",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -36,10 +35,14 @@ LearnerClustSpectral = R6Class("LearnerClustSpectral",
           tags = "train"
         ),
         sigma = p_dbl(
-          0, tags = c("train", "kpar"), depends = quote(kernel %in% c("rbfdot", "anovadot", "besseldot", "laplacedot"))
+          0,
+          tags = c("train", "kpar"),
+          depends = quote(kernel %in% c("rbfdot", "anovadot", "besseldot", "laplacedot"))
         ),
         degree = p_int(
-          1L, default = 3L, tags = c("train", "kpar"),
+          1L,
+          default = 3L,
+          tags = c("train", "kpar"),
           depends = quote(kernel %in% c("polydot", "anovadot", "besseldot"))
         ),
         scale = p_dbl(0, default = 1, tags = c("train", "kpar"), depends = quote(kernel %in% c("polydot", "tanhdot"))),

@@ -20,29 +20,28 @@ Example cluster measures: \code{\link[=mlr_measures_clust.dunn]{clust.dunn}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-MeasureClust-new}{\code{MeasureClust$new()}}
+  \itemize{
+    \item \href{#method-MeasureClust-initialize}{\code{MeasureClust$new()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Measure" data-id="aggregate"><a href='../../mlr3/html/Measure.html#method-Measure-aggregate'><code>mlr3::Measure$aggregate()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Measure" data-id="format"><a href='../../mlr3/html/Measure.html#method-Measure-format'><code>mlr3::Measure$format()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Measure" data-id="help"><a href='../../mlr3/html/Measure.html#method-Measure-help'><code>mlr3::Measure$help()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Measure" data-id="obs_loss"><a href='../../mlr3/html/Measure.html#method-Measure-obs_loss'><code>mlr3::Measure$obs_loss()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Measure" data-id="print"><a href='../../mlr3/html/Measure.html#method-Measure-print'><code>mlr3::Measure$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Measure" data-id="score"><a href='../../mlr3/html/Measure.html#method-Measure-score'><code>mlr3::Measure$score()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Measure" data-id="aggregate"><a href='../../mlr3/html/Measure.html#method-Measure-aggregate'><code>mlr3::Measure$aggregate()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Measure" data-id="format"><a href='../../mlr3/html/Measure.html#method-Measure-format'><code>mlr3::Measure$format()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Measure" data-id="help"><a href='../../mlr3/html/Measure.html#method-Measure-help'><code>mlr3::Measure$help()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Measure" data-id="obs_loss"><a href='../../mlr3/html/Measure.html#method-Measure-obs_loss'><code>mlr3::Measure$obs_loss()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Measure" data-id="print"><a href='../../mlr3/html/Measure.html#method-Measure-print'><code>mlr3::Measure$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Measure" data-id="score"><a href='../../mlr3/html/Measure.html#method-Measure-score'><code>mlr3::Measure$score()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-MeasureClust-new"></a>}}
-\if{latex}{\out{\hypertarget{method-MeasureClust-new}{}}}
-\subsection{Method \code{new()}}{
-Creates a new instance of this \link[R6:R6Class]{R6} class.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MeasureClust$new(
+\if{html}{\out{<a id="method-MeasureClust-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-MeasureClust-initialize}{}}}
+\subsection{\code{MeasureClust$new()}}{
+  Creates a new instance of this \link[R6:R6Class]{R6} class.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MeasureClust$new(
   id,
   range,
   minimize = NA,
@@ -53,59 +52,65 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
   packages = character(),
   label = NA_character_,
   man = NA_character_
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{id}}{(\code{character(1)})\cr
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{id}}{(\code{character(1)})\cr
 Identifier for the new instance.}
-
-\item{\code{range}}{(\code{numeric(2)})\cr
+      \item{\code{range}}{(\code{numeric(2)})\cr
 Feasible range for this measure as \code{c(lower_bound, upper_bound)}.
 Both bounds may be infinite.}
-
-\item{\code{minimize}}{(\code{logical(1)})\cr
+      \item{\code{minimize}}{(\code{logical(1)})\cr
 Set to \code{TRUE} if good predictions correspond to small values,
 and to \code{FALSE} if good predictions correspond to large values.
 If set to \code{NA} (default), tuning this measure is not possible.}
-
-\item{\code{aggregator}}{(\verb{function(x)} | \code{NULL})\cr
-Function to aggregate individual performance scores \code{x} where \code{x} is a numeric vector.
-If \code{NULL}, defaults to \code{\link[=mean]{mean()}}.}
-
-\item{\code{properties}}{(\code{character()})\cr
+      \item{\code{aggregator}}{(\verb{function()} | \code{NULL})\cr
+Function to aggregate over multiple iterations. The role of this function depends on
+the value of field \code{"average"}:
+\itemize{
+\item \code{"macro"}: A numeric vector of scores (one per iteration) is passed.
+The aggregate function defaults to \code{\link[=mean]{mean()}} in this case.
+\item \code{"micro"}: The \code{aggregator} function is not used.
+Instead, predictions from multiple iterations are first combined and then
+scored in one go.
+\item \code{"custom"}: A \link[mlr3:ResampleResult]{ResampleResult} is passed to the aggregate function.
+}}
+      \item{\code{properties}}{(\code{character()})\cr
 Properties of the measure.
 Must be a subset of \link[mlr3:mlr_reflections]{mlr_reflections$measure_properties}.
 Supported by \code{mlr3}:
 \itemize{
 \item \code{"requires_task"} (requires the complete \link[mlr3:Task]{mlr3::Task}),
 \item \code{"requires_learner"} (requires the trained \link[mlr3:Learner]{mlr3::Learner}),
-\item \code{"requires_train_set"} (requires the training indices from the \link[mlr3:Resampling]{mlr3::Resampling}), and
-\item \code{"na_score"} (the measure is expected to occasionally return \code{NA} or \code{NaN}).
+\item \code{"requires_model"} (requires the trained \link[mlr3:Learner]{mlr3::Learner}, including the fitted model),
+\item \code{"requires_train_set"} (requires the training indices from the \link[mlr3:Resampling]{mlr3::Resampling}),
+\item \code{"na_score"} (the measure is expected to occasionally return \code{NA} or \code{NaN}),
+\item \code{"weights"} (support weighted scoring using sample weights from task, column role \code{weights_measure}),
+\item \code{"primary_iters"} (the measure explicitly handles resamplings
+that only use a subset of their iterations for the point estimate), and
+\item \code{"requires_no_prediction"} (No prediction is required;
+This usually means that the measure extracts some information from the learner state.).
 }}
-
-\item{\code{predict_type}}{(\code{character(1)})\cr
+      \item{\code{predict_type}}{(\code{character(1)})\cr
 Required predict type of the \link[mlr3:Learner]{mlr3::Learner}.
 Possible values are stored in \link[mlr3:mlr_reflections]{mlr_reflections$learner_predict_types}.}
-
-\item{\code{task_properties}}{(\code{character()})\cr
+      \item{\code{task_properties}}{(\code{character()})\cr
 Required task properties, see \link[mlr3:Task]{mlr3::Task}.}
-
-\item{\code{packages}}{(\code{character()})\cr
+      \item{\code{packages}}{(\code{character()})\cr
 Set of required packages.
 A warning is signaled by the constructor if at least one of the packages is not installed,
 but loaded (not attached) later on-demand via \code{\link[=requireNamespace]{requireNamespace()}}.}
-
-\item{\code{label}}{(\code{character(1)})\cr
+      \item{\code{label}}{(\code{character(1)})\cr
 Label for the new instance.}
-
-\item{\code{man}}{(\code{character(1)})\cr
+      \item{\code{man}}{(\code{character(1)})\cr
 String in the format \verb{[pkg]::[topic]} pointing to a manual page for this object.
 The referenced help package can be opened via method \verb{$help()}.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
-\if{html}{\out{</div>}}
-}
-}
+
 }

@@ -6,8 +6,7 @@
 #' Cobweb clustering.
 #' Calls [RWeka::Cobweb()] from package \CRANpkg{RWeka}.
 #'
-#' The predict method uses [RWeka::predict.Weka_clusterer()] to compute the
-#' cluster memberships for new data.
+#' The predict method uses [RWeka::predict.Weka_clusterer()] to compute the cluster memberships for new data.
 #'
 #' @templateVar id clust.cobweb
 #' @template learner
@@ -18,7 +17,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustCobweb = R6Class("LearnerClustCobweb",
+LearnerClustCobweb = R6Class(
+  "LearnerClustCobweb",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -35,7 +35,7 @@ LearnerClustCobweb = R6Class("LearnerClustCobweb",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
         param_set = param_set,
-        properties = c("partitional", "exclusive", "complete"),
+        properties = c("hierarchical", "exclusive", "complete", "missings"),
         packages = "RWeka",
         man = "mlr3cluster::mlr_learners_clust.cobweb",
         label = "Cobweb"
@@ -46,7 +46,7 @@ LearnerClustCobweb = R6Class("LearnerClustCobweb",
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      ctrl = invoke(RWeka::Weka_control, .args = pv)
+      ctrl = weka_control(pv)
       m = invoke(RWeka::Cobweb, x = task$data(), control = ctrl)
       if (self$save_assignments) {
         self$assignments = unname(m$class_ids + 1L)

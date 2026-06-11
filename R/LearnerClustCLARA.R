@@ -6,11 +6,15 @@
 #' Clustering Large Applications (CLARA) clustering.
 #' Calls [cluster::clara()] from package \CRANpkg{cluster}.
 #'
-#' CLARA extends the PAM algorithm to handle larger datasets by working on sub-datasets of fixed size.
-#' The `k` parameter is set to 2 by default since [cluster::clara()]
-#' doesn't have a default value for the number of clusters.
-#' The predict method uses [clue::cl_predict()] to compute the
-#' cluster memberships for new data.
+#' CLARA extends the PAM algorithm to handle larger datasets by working on sub-datasets of fixed size. The `k` parameter
+#' is set to 2 by default since [cluster::clara()] doesn't have a default value for the number of clusters. The predict
+#' method uses [clue::cl_predict()] to compute the cluster memberships for new data.
+#'
+#' @section Initial parameter values:
+#' - `keep.data`:
+#'   - Actual default: `TRUE`.
+#'   - Adjusted default: `FALSE`.
+#'   - Reason for change: Avoid storing the training data in the model to save memory.
 #'
 #' @templateVar id clust.clara
 #' @template learner
@@ -21,7 +25,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustCLARA = R6Class("LearnerClustCLARA",
+LearnerClustCLARA = R6Class(
+  "LearnerClustCLARA",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -41,7 +46,7 @@ LearnerClustCLARA = R6Class("LearnerClustCLARA",
         correct.d = p_lgl(default = TRUE, tags = "train")
       )
 
-      param_set$set_values(k = 2L)
+      param_set$set_values(k = 2L, keep.data = FALSE)
 
       super$initialize(
         id = "clust.clara",

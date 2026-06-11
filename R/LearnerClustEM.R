@@ -6,8 +6,7 @@
 #' Expectation-Maximization clustering.
 #' Calls the EM Weka clusterer from package \CRANpkg{RWeka}.
 #'
-#' The predict method uses [RWeka::predict.Weka_clusterer()] to compute the
-#' cluster memberships for new data.
+#' The predict method uses [RWeka::predict.Weka_clusterer()] to compute the cluster memberships for new data.
 #' The learner supports both partitional and fuzzy clustering.
 #'
 #' @templateVar id clust.em
@@ -19,7 +18,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustEM = R6Class("LearnerClustEM",
+LearnerClustEM = R6Class(
+  "LearnerClustEM",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -45,7 +45,7 @@ LearnerClustEM = R6Class("LearnerClustEM",
         feature_types = c("logical", "integer", "numeric"),
         predict_types = c("partition", "prob"),
         param_set = param_set,
-        properties = c("partitional", "fuzzy", "exclusive", "complete"),
+        properties = c("partitional", "fuzzy", "complete", "missings"),
         packages = "RWeka",
         man = "mlr3cluster::mlr_learners_clust.em",
         label = "Expectation-Maximization"
@@ -56,8 +56,7 @@ LearnerClustEM = R6Class("LearnerClustEM",
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      names(pv) = chartr("_", "-", names(pv))
-      ctrl = invoke(RWeka::Weka_control, .args = pv)
+      ctrl = weka_control(pv)
       m = invoke(RWeka::make_Weka_clusterer("weka/clusterers/EM"), x = task$data(), control = ctrl)
       if (self$save_assignments) {
         self$assignments = unname(m$class_ids + 1L)
@@ -71,7 +70,7 @@ LearnerClustEM = R6Class("LearnerClustEM",
       prob = NULL
       if (self$predict_type == "prob") {
         prob = invoke(predict, self$model, newdata = data, type = "memberships")
-        colnames(prob) = seq_len(ncol(prob))
+        colnames(prob) = seq_col(prob)
       }
       PredictionClust$new(task = task, partition = partition, prob = prob)
     }

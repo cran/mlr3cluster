@@ -8,14 +8,12 @@
 K-means clustering.
 Calls \code{\link[stats:kmeans]{stats::kmeans()}} from package \pkg{stats}.
 
-The \code{centers} parameter is set to 2 by default since \code{\link[stats:kmeans]{stats::kmeans()}}
-doesn't have a default value for the number of clusters.
-The predict method uses \code{\link[clue:cl_predict]{clue::cl_predict()}} to compute the
-cluster memberships for new data.
+The \code{centers} parameter is set to 2 by default since \code{\link[stats:kmeans]{stats::kmeans()}} doesn't have a default value for the number of
+clusters. The predict method uses \code{\link[clue:cl_predict]{clue::cl_predict()}} to compute the cluster memberships for new data.
 }
 \section{Dictionary}{
 
-This \link[mlr3:Learner]{mlr3::Learner} can be instantiated via the \link[mlr3misc:Dictionary]{dictionary} \link[mlr3:mlr_learners]{mlr3::mlr_learners} or with the associated sugar function \code{\link[mlr3:mlr_sugar]{mlr3::lrn()}}:
+This \link[mlr3:Learner]{mlr3::Learner} can be instantiated via the \link[mlr3misc:Dictionary]{dictionary} \link[mlr3:mlr_learners]{mlr3::mlr_learners} or with the associated sugar function \code{\link[mlr3:lrn]{mlr3::lrn()}}:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{mlr_learners$get("clust.kmeans")
 lrn("clust.kmeans")
@@ -91,6 +89,7 @@ In \emph{Proceedings of the Fifth Berkeley Symposium on Mathematical Statistics 
 \item \link[mlr3misc:Dictionary]{Dictionary} of \link[mlr3:Learner]{Learners}: \link[mlr3:mlr_learners]{mlr3::mlr_learners}
 \item \code{as.data.table(mlr_learners)} for a table of available \link[mlr3:Learner]{Learners} in the running session (depending on the loaded packages).
 \item \CRANpkg{mlr3pipelines} to combine learners with pre- and postprocessing steps.
+\item Package \CRANpkg{mlr3viz} for some generic visualizations.
 \item Extension packages for additional task types:
 \itemize{
 \item \CRANpkg{mlr3proba} for probabilistic supervised regression and survival analysis.
@@ -100,7 +99,7 @@ In \emph{Proceedings of the Fifth Berkeley Symposium on Mathematical Statistics 
 for established default tuning spaces.
 }
 
-Other Learner: 
+Other Learner:
 \code{\link{mlr_learners_clust.MBatchKMeans}},
 \code{\link{mlr_learners_clust.SimpleKMeans}},
 \code{\link{mlr_learners_clust.agnes}},
@@ -117,71 +116,81 @@ Other Learner:
 \code{\link{mlr_learners_clust.fanny}},
 \code{\link{mlr_learners_clust.featureless}},
 \code{\link{mlr_learners_clust.ff}},
+\code{\link{mlr_learners_clust.flexmix}},
+\code{\link{mlr_learners_clust.genie}},
 \code{\link{mlr_learners_clust.hclust}},
 \code{\link{mlr_learners_clust.hdbscan}},
+\code{\link{mlr_learners_clust.kcca}},
 \code{\link{mlr_learners_clust.kkmeans}},
 \code{\link{mlr_learners_clust.kproto}},
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},
+\code{\link{mlr_learners_clust.movMF}},
 \code{\link{mlr_learners_clust.optics}},
 \code{\link{mlr_learners_clust.pam}},
 \code{\link{mlr_learners_clust.protoclust}},
+\code{\link{mlr_learners_clust.skmeans}},
+\code{\link{mlr_learners_clust.som}},
 \code{\link{mlr_learners_clust.specc}},
+\code{\link{mlr_learners_clust.stdbscan}},
+\code{\link{mlr_learners_clust.tclust}},
 \code{\link{mlr_learners_clust.xmeans}}
 }
 \concept{Learner}
 \section{Super classes}{
-\code{\link[mlr3:Learner]{mlr3::Learner}} -> \code{\link[mlr3cluster:LearnerClust]{mlr3cluster::LearnerClust}} -> \code{LearnerClustKMeans}
+\code{\link[mlr3:Learner]{mlr3::Learner}} -> \code{\link[mlr3cluster:LearnerClust]{LearnerClust}} -> \code{LearnerClustKMeans}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-LearnerClustKMeans-new}{\code{LearnerClustKMeans$new()}}
-\item \href{#method-LearnerClustKMeans-clone}{\code{LearnerClustKMeans$clone()}}
+  \itemize{
+    \item \href{#method-LearnerClustKMeans-initialize}{\code{LearnerClustKMeans$new()}}
+    \item \href{#method-LearnerClustKMeans-clone}{\code{LearnerClustKMeans$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="base_learner"><a href='../../mlr3/html/Learner.html#method-Learner-base_learner'><code>mlr3::Learner$base_learner()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="configure"><a href='../../mlr3/html/Learner.html#method-Learner-configure'><code>mlr3::Learner$configure()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="encapsulate"><a href='../../mlr3/html/Learner.html#method-Learner-encapsulate'><code>mlr3::Learner$encapsulate()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="format"><a href='../../mlr3/html/Learner.html#method-Learner-format'><code>mlr3::Learner$format()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="help"><a href='../../mlr3/html/Learner.html#method-Learner-help'><code>mlr3::Learner$help()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="predict"><a href='../../mlr3/html/Learner.html#method-Learner-predict'><code>mlr3::Learner$predict()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="predict_newdata"><a href='../../mlr3/html/Learner.html#method-Learner-predict_newdata'><code>mlr3::Learner$predict_newdata()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="print"><a href='../../mlr3/html/Learner.html#method-Learner-print'><code>mlr3::Learner$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="selected_features"><a href='../../mlr3/html/Learner.html#method-Learner-selected_features'><code>mlr3::Learner$selected_features()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="train"><a href='../../mlr3/html/Learner.html#method-Learner-train'><code>mlr3::Learner$train()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3cluster" data-topic="LearnerClust" data-id="reset"><a href='../../mlr3cluster/html/LearnerClust.html#method-LearnerClust-reset'><code>mlr3cluster::LearnerClust$reset()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="base_learner"><a href='../../mlr3/html/Learner.html#method-Learner-base_learner'><code>mlr3::Learner$base_learner()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="configure"><a href='../../mlr3/html/Learner.html#method-Learner-configure'><code>mlr3::Learner$configure()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="encapsulate"><a href='../../mlr3/html/Learner.html#method-Learner-encapsulate'><code>mlr3::Learner$encapsulate()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="format"><a href='../../mlr3/html/Learner.html#method-Learner-format'><code>mlr3::Learner$format()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="help"><a href='../../mlr3/html/Learner.html#method-Learner-help'><code>mlr3::Learner$help()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="predict"><a href='../../mlr3/html/Learner.html#method-Learner-predict'><code>mlr3::Learner$predict()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="predict_newdata"><a href='../../mlr3/html/Learner.html#method-Learner-predict_newdata'><code>mlr3::Learner$predict_newdata()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="print"><a href='../../mlr3/html/Learner.html#method-Learner-print'><code>mlr3::Learner$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="selected_features"><a href='../../mlr3/html/Learner.html#method-Learner-selected_features'><code>mlr3::Learner$selected_features()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3" data-topic="Learner" data-id="train"><a href='../../mlr3/html/Learner.html#method-Learner-train'><code>mlr3::Learner$train()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3cluster" data-topic="LearnerClust" data-id="reset"><a href='../../mlr3cluster/html/LearnerClust.html#method-LearnerClust-reset'><code>LearnerClust$reset()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-LearnerClustKMeans-new"></a>}}
-\if{latex}{\out{\hypertarget{method-LearnerClustKMeans-new}{}}}
-\subsection{Method \code{new()}}{
-Creates a new instance of this \link[R6:R6Class]{R6} class.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{LearnerClustKMeans$new()}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-LearnerClustKMeans-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-LearnerClustKMeans-initialize}{}}}
+\subsection{\code{LearnerClustKMeans$new()}}{
+  Creates a new instance of this \link[R6:R6Class]{R6} class.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LearnerClustKMeans$new()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-LearnerClustKMeans-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-LearnerClustKMeans-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{LearnerClustKMeans$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{LearnerClustKMeans$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LearnerClustKMeans$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

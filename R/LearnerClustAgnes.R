@@ -6,9 +6,18 @@
 #' Agglomerative hierarchical clustering.
 #' Calls [cluster::agnes()] from package \CRANpkg{cluster}.
 #'
-#' The predict method uses [stats::cutree()] which cuts the tree resulting from
-#' hierarchical clustering into specified number of groups (see parameter `k`).
-#' The default number for `k` is 2.
+#' The predict method uses [stats::cutree()] which cuts the tree resulting from hierarchical clustering into specified
+#' number of groups (see parameter `k`). The default number for `k` is 2.
+#'
+#' @section Initial parameter values:
+#' - `keep.diss`:
+#'   - Actual default: `n < 100`, where `n` is the number of observations.
+#'   - Adjusted default: `FALSE`.
+#'   - Reason for change: Avoid storing the dissimilarity matrix in the model to save memory.
+#' - `keep.data`:
+#'   - Actual default: `TRUE`.
+#'   - Adjusted default: `FALSE`.
+#'   - Reason for change: Avoid storing the training data in the model to save memory.
 #'
 #' @templateVar id clust.agnes
 #' @template learner
@@ -19,7 +28,8 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-LearnerClustAgnes = R6Class("LearnerClustAgnes",
+LearnerClustAgnes = R6Class(
+  "LearnerClustAgnes",
   inherit = LearnerClust,
   public = list(
     #' @description
@@ -33,8 +43,10 @@ LearnerClustAgnes = R6Class("LearnerClustAgnes",
           default = "average",
           tags = "train"
         ),
+        keep.diss = p_lgl(tags = "train"),
+        keep.data = p_lgl(default = TRUE, tags = "train"),
         trace.lev = p_int(0L, default = 0L, tags = "train"),
-        k = p_int(1L, default = 2L, tags = c("train", "predict")),
+        k = p_int(1L, tags = c("train", "cutree", "predict")),
         par.method = p_uty(
           tags = "train",
           depends = quote(method %in% c("flexible", "gaverage")),
@@ -47,7 +59,7 @@ LearnerClustAgnes = R6Class("LearnerClustAgnes",
         )
       )
 
-      param_set$set_values(k = 2L)
+      param_set$set_values(k = 2L, keep.diss = FALSE, keep.data = FALSE)
 
       super$initialize(
         id = "clust.agnes",
@@ -64,15 +76,15 @@ LearnerClustAgnes = R6Class("LearnerClustAgnes",
 
   private = list(
     .train = function(task) {
-      pv = self$param_set$get_values(tags = "train")
+      ps = self$param_set
       m = invoke(
         cluster::agnes,
         x = task$data(),
         diss = FALSE,
-        .args = remove_named(pv, "k")
+        .args = remove_named(ps$get_values(tags = "train"), "k")
       )
       if (self$save_assignments) {
-        self$assignments = stats::cutree(m, pv$k)
+        self$assignments = invoke(stats::cutree, tree = m, .args = ps$get_values(tags = c("train", "cutree")))
       }
       m
     },
@@ -84,7 +96,8 @@ LearnerClustAgnes = R6Class("LearnerClustAgnes",
       }
 
       warn_prediction_useless(self$id)
-      partition = self$assignments %??% stats::cutree(self$model, pv$k)
+      partition = self$assignments %??%
+        invoke(stats::cutree, tree = self$model, .args = self$param_set$get_values(tags = c("train", "cutree")))
 
       PredictionClust$new(task = task, partition = partition)
     }

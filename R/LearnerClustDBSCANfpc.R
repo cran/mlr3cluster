@@ -66,7 +66,15 @@ LearnerClustDBSCANfpc = R6Class(
     },
 
     .predict = function(task) {
-      partition = as.integer(invoke(predict, self$model, data = self$model$data, newdata = task$data()))
+      if (isFALSE(self$param_set$values$seeds)) {
+        error_config("Predicting requires seed points, train with `seeds = TRUE`.")
+      }
+      partition = as.integer(invoke(
+        predict,
+        self$model,
+        data = self$model$data,
+        newdata = ordered_features(task, self)
+      ))
       PredictionClust$new(task = task, partition = partition)
     }
   )

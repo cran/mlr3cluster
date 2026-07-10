@@ -6,6 +6,9 @@
 #' BICO (fast computation of k-means coresets in a data stream) clustering.
 #' Calls [stream::DSC_BICO()] from package \CRANpkg{stream}.
 #'
+#' [stream::DSC_BICO()] only computes the coreset (micro-clusters), so the coreset is reclustered with k-means via
+#' [stream::DSC_TwoStage()] and [stream::DSC_Kmeans()] to obtain the final partition with `k` clusters.
+#'
 #' @templateVar id clust.bico
 #' @template learner
 #'
@@ -45,10 +48,25 @@ LearnerClustBICO = R6Class(
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
+      k = pv$k %??% 5L
       data = task$data()
-      m = invoke(stream::DSC_BICO, .args = pv)
+      # DSC_BICO only builds the coreset, so the k-means macro stage is needed for `k` to determine the partition
+      m = stream::DSC_TwoStage(
+        micro = invoke(stream::DSC_BICO, .args = pv),
+        macro = stream::DSC_Kmeans(k = k)
+      )
       x = stream::DSD_Memory(data)
       stats::update(m, x, n = nrow(data))
+
+      n_centers = nrow(stream::get_centers(m, type = "macro"))
+      if (n_centers < k) {
+        warning_input(
+          "Learner '%s' found only %i of %i clusters because the coreset is too small, increase `space`.",
+          self$id,
+          n_centers,
+          k
+        )
+      }
 
       if (self$save_assignments) {
         self$assignments = as.integer(invoke(predict, m, newdata = data)[[1L]])
@@ -57,7 +75,7 @@ LearnerClustBICO = R6Class(
     },
 
     .predict = function(task) {
-      partition = as.integer(invoke(predict, self$model, newdata = task$data())[[1L]])
+      partition = as.integer(invoke(predict, self$model, newdata = ordered_features(task, self))[[1L]])
       PredictionClust$new(task = task, partition = partition)
     }
   )

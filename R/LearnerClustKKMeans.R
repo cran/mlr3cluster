@@ -8,7 +8,10 @@
 #'
 #' The `centers` parameter is set to 2 by default since [kernlab::kkmeans()] doesn't have a default value for the number
 #' of clusters. Kernel parameters have to be passed directly and not by using the `kpar` list in [kernlab::kkmeans()].
-#' The predict method finds the nearest center in kernel distance to assign clusters for new data points.
+#' The predict method assigns each new observation to the cluster whose centroid is nearest in the kernel-induced
+#' feature space, computed from the stored training data. The model is therefore a list containing the fitted
+#' [kernlab::kkmeans()] object along with the training data and per-cluster kernel statistics.
+#' The task must have at least 2 features.
 #'
 #' @templateVar id clust.kkmeans
 #' @template learner
@@ -40,7 +43,7 @@ LearnerClustKKMeans = R6Class(
         ),
         degree = p_int(
           1L,
-          default = 3L,
+          default = 1L,
           tags = c("train", "kpar"),
           depends = quote(kernel %in% c("polydot", "anovadot", "besseldot"))
         ),
@@ -66,8 +69,20 @@ LearnerClustKKMeans = R6Class(
     }
   ),
 
+  active = list(
+    #' @field native_model (any)\cr
+    #' The fitted model.
+    native_model = function(rhs) {
+      assert_ro_binding(rhs)
+      self$model$model
+    }
+  ),
+
   private = list(
     .train = function(task) {
+      if (task$n_features < 2L) {
+        error_input("Task must have at least 2 features, but has %i.", task$n_features)
+      }
       pv = self$param_set$get_values(tags = "train")
       assert_centers_param(pv$centers, task, "centers")
 
@@ -77,24 +92,35 @@ LearnerClustKKMeans = R6Class(
         pv$kpar = kpar
       }
 
-      m = invoke(kernlab::kkmeans, x = as.matrix(task$data()), .args = pv)
+      data = as.matrix(task$data())
+      m = invoke(kernlab::kkmeans, x = data, .args = pv)
       if (self$save_assignments) {
         self$assignments = as.integer(m)
       }
-      m
+
+      # predict needs the training data and per-cluster kernel means to compute feature-space centroid distances
+      cl = as.integer(m)
+      clusters = sort(unique(cl))
+      # per-cluster kernel blocks avoid materializing the full n x n training kernel matrix
+      within = map_dbl(clusters, function(cc) {
+        mean(kernlab::kernelMatrix(kernlab::kernelf(m), data[cl == cc, , drop = FALSE]))
+      })
+      list(model = m, data = data, clusters = clusters, within = within)
     },
 
     .predict = function(task) {
-      centers = kernlab::centers(self$model)
-      K = kernlab::kernelf(self$model)
-      x = as.matrix(task$data())
+      m = self$model
+      K = kernlab::kernelf(m$model)
+      cl = as.integer(m$model)
+      x = as.matrix(ordered_features(task, self))
 
-      # squared kernel distance: ||phi(x) - phi(c)||^2 = K(x,x) + K(c,c) - 2 K(x,c)
-      kxc = kernlab::kernelMatrix(K, x, centers)
-      kxx = diag(kernlab::kernelMatrix(K, x))
-      kcc = diag(kernlab::kernelMatrix(K, centers))
-      d2 = outer(kxx, kcc, `+`) - 2 * kxc
-      partition = max.col(-d2, ties.method = "random")
+      # squared feature-space distance to each cluster centroid, dropping the K(x, x) term that is constant per row
+      kxt = kernlab::kernelMatrix(K, x, m$data)
+      # count-normalized cluster indicator, so one matrix product yields the per-cluster kernel row means
+      w = outer(cl, m$clusters, "==")
+      w = w / rep(colSums(w), each = length(cl))
+      d2 = rep(m$within, each = nrow(kxt)) - 2 * kxt %*% w
+      partition = m$clusters[max.col(-d2, ties.method = "random")]
 
       PredictionClust$new(task = task, partition = partition)
     }

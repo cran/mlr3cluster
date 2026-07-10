@@ -36,7 +36,7 @@ LearnerClustMovMF = R6Class(
         maxiter = p_int(1L, default = 100L, tags = c("train", "control")),
         reltol = p_dbl(0, tags = c("train", "control")),
         minalpha = p_dbl(0, default = 0, tags = c("train", "control")),
-        converge = p_lgl(default = TRUE, tags = c("train", "control")),
+        converge = p_lgl(tags = c("train", "control")),
         verbose = p_lgl(default = FALSE, tags = c("train", "control"))
       )
 
@@ -62,15 +62,16 @@ LearnerClustMovMF = R6Class(
       pv$control = ps$get_values(tags = "control")
       pv = remove_named(pv, names(pv$control))
 
-      m = invoke(movMF::movMF, x = as.matrix(task$data()), .args = pv)
+      data = as.matrix(task$data())
+      m = invoke(movMF::movMF, x = data, .args = pv)
       if (self$save_assignments) {
-        self$assignments = max.col(m$P)
+        self$assignments = as.integer(invoke(predict, m, newdata = data, type = "class_ids"))
       }
       m
     },
 
     .predict = function(task) {
-      newdata = as.matrix(task$data())
+      newdata = as.matrix(ordered_features(task, self))
       partition = as.integer(invoke(predict, self$model, newdata = newdata, type = "class_ids"))
       prob = NULL
       if (self$predict_type == "prob") {

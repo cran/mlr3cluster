@@ -28,7 +28,7 @@ LearnerClustSimpleKMeans = R6Class(
         A = p_uty(default = "weka.core.EuclideanDistance", tags = "train"),
         C = p_lgl(default = FALSE, tags = "train"),
         fast = p_lgl(default = FALSE, tags = "train"),
-        I = p_int(1L, default = 100L, tags = "train"),
+        I = p_int(1L, default = 500L, tags = "train"),
         init = p_int(0L, 3L, default = 0L, tags = "train"),
         M = p_lgl(default = FALSE, tags = "train"),
         max_candidates = p_int(1L, default = 100L, tags = "train"),
@@ -39,7 +39,7 @@ LearnerClustSimpleKMeans = R6Class(
         periodic_pruning = p_int(1L, default = 10000L, tags = "train"),
         S = p_int(0L, default = 10L, tags = "train"),
         t2 = p_dbl(default = -1, tags = "train"),
-        t1 = p_dbl(default = -1.5, tags = "train"),
+        t1 = p_dbl(default = -1.25, tags = "train"),
         V = p_lgl(default = FALSE, tags = "train"),
         output_debug_info = p_lgl(default = FALSE, tags = "train")
       )
@@ -69,7 +69,7 @@ LearnerClustSimpleKMeans = R6Class(
     },
 
     .predict = function(task) {
-      partition = invoke(predict, self$model, newdata = task$data(), type = "class") + 1L
+      partition = invoke(predict, self$model, newdata = ordered_features(task, self), type = "class") + 1L
       PredictionClust$new(task = task, partition = partition)
     }
   )

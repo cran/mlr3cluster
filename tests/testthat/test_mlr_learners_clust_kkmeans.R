@@ -7,6 +7,12 @@ test_that("autotest", {
   expect_true(result, info = result$error)
 })
 
+test_that("single-feature task errors", {
+  task = as_task_clust(data.frame(x = rnorm(20L)))
+  learner = lrn("clust.kkmeans")
+  expect_snapshot(learner$train(task), error = TRUE)
+})
+
 test_that("Learner properties are respected", {
   task = tsk("usarrests")
   learner = lrn("clust.kkmeans")
@@ -33,4 +39,27 @@ test_that("Learner properties are respected", {
     p = learner$train(task)$predict(task)
     expect_prediction_clust(p, learner)
   }
+})
+
+test_that("predict aligns features by name", {
+  withr::local_seed(42L)
+  task = tsk("usarrests")
+  learner = lrn("clust.kkmeans", centers = 2L)
+  learner$train(task)
+  p = learner$predict(task)
+
+  data = task$data()
+  setcolorder(data, rev(names(data)))
+  p_reordered = learner$predict(as_task_clust(data))
+  expect_identical(p_reordered$partition, p$partition)
+})
+
+test_that("predict matches training assignments for nonlinear kernels", {
+  withr::local_seed(42L)
+  task = tsk("usarrests")
+  learner = lrn("clust.kkmeans", centers = 3L, kernel = "rbfdot")
+  learner$train(task)
+  p = learner$predict(task)
+  # kkmeans terminates on stale bound estimates, so a perfect match is not guaranteed
+  expect_gte(mean(p$partition == learner$assignments), 0.95)
 })

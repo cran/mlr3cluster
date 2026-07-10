@@ -27,3 +27,21 @@ test_that("Learner properties are respected", {
     expect_prediction_clust(p, learner)
   }
 })
+
+test_that("small coreset warns when k clusters cannot be found", {
+  withr::local_seed(42L)
+  task = tsk("usarrests")
+  # space = 1L triggers an infinite loop in stream::DSC_BICO() on some platforms, space = 2L still underfills k
+  learner = lrn("clust.bico", k = 5L, space = 2L)
+  expect_snapshot(learner$train(task))
+})
+
+test_that("k determines the number of clusters", {
+  withr::local_seed(42L)
+  task = tsk("usarrests")
+  for (k in c(2L, 3L)) {
+    learner = lrn("clust.bico", k = k)
+    p = learner$train(task)$predict(task)
+    expect_set_equal(unique(p$partition), seq_len(k))
+  }
+})

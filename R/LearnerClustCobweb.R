@@ -26,7 +26,7 @@ LearnerClustCobweb = R6Class(
     initialize = function() {
       param_set = ps(
         A = p_dbl(0, default = 1, tags = "train"),
-        C = p_dbl(0, default = 0.002, tags = "train"),
+        C = p_dbl(0, default = 0.0028209479177387815, tags = "train"),
         S = p_int(1L, default = 42L, tags = "train")
       )
 
@@ -55,7 +55,7 @@ LearnerClustCobweb = R6Class(
     },
 
     .predict = function(task) {
-      partition = invoke(predict, self$model, newdata = task$data(), type = "class") + 1L
+      partition = invoke(predict, self$model, newdata = ordered_features(task, self), type = "class") + 1L
       PredictionClust$new(task = task, partition = partition)
     }
   )

@@ -35,7 +35,7 @@ lrn("clust.SimpleKMeans")
    A \tab untyped \tab "weka.core.EuclideanDistance" \tab  \tab - \cr
    C \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
    fast \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
-   I \tab integer \tab 100 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   I \tab integer \tab 500 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
    init \tab integer \tab 0 \tab  \tab \eqn{[0, 3]}{[0, 3]} \cr
    M \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
    max_candidates \tab integer \tab 100 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
@@ -46,7 +46,7 @@ lrn("clust.SimpleKMeans")
    periodic_pruning \tab integer \tab 10000 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
    S \tab integer \tab 10 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
    t2 \tab numeric \tab -1 \tab  \tab \eqn{(-\infty, \infty)}{(-Inf, Inf)} \cr
-   t1 \tab numeric \tab -1.5 \tab  \tab \eqn{(-\infty, \infty)}{(-Inf, Inf)} \cr
+   t1 \tab numeric \tab -1.25 \tab  \tab \eqn{(-\infty, \infty)}{(-Inf, Inf)} \cr
    V \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
    output_debug_info \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
 }

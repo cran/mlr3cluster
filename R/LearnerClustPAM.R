@@ -41,9 +41,9 @@ LearnerClustPAM = R6Class(
         medoids = p_uty(
           default = NULL,
           tags = "train",
-          custom_check = crate(function(x) check_integerish(x, null.ok = TRUE))
+          custom_check = crate(function(x) check_integerish(x, any.missing = FALSE, null.ok = TRUE))
         ),
-        nstart = p_int(1L, default = 1L, tags = "train"),
+        nstart = p_int(1L, tags = "train"),
         stand = p_lgl(default = FALSE, tags = "train"),
         do.swap = p_lgl(default = TRUE, tags = "train"),
         keep.diss = p_lgl(tags = "train"),

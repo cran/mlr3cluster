@@ -10,7 +10,10 @@ Calls \code{\link[kernlab:kkmeans]{kernlab::kkmeans()}} from package \CRANpkg{ke
 
 The \code{centers} parameter is set to 2 by default since \code{\link[kernlab:kkmeans]{kernlab::kkmeans()}} doesn't have a default value for the number
 of clusters. Kernel parameters have to be passed directly and not by using the \code{kpar} list in \code{\link[kernlab:kkmeans]{kernlab::kkmeans()}}.
-The predict method finds the nearest center in kernel distance to assign clusters for new data points.
+The predict method assigns each new observation to the cluster whose centroid is nearest in the kernel-induced
+feature space, computed from the stored training data. The model is therefore a list containing the fitted
+\code{\link[kernlab:kkmeans]{kernlab::kkmeans()}} object along with the training data and per-cluster kernel statistics.
+The task must have at least 2 features.
 }
 \section{Dictionary}{
 
@@ -37,7 +40,7 @@ lrn("clust.kkmeans")
    centers \tab untyped \tab - \tab  \tab - \cr
    kernel \tab character \tab rbfdot \tab rbfdot, polydot, vanilladot, tanhdot, laplacedot, besseldot, anovadot, splinedot \tab - \cr
    sigma \tab numeric \tab - \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
-   degree \tab integer \tab 3 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   degree \tab integer \tab 1 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
    scale \tab numeric \tab 1 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
    offset \tab numeric \tab 1 \tab  \tab \eqn{(-\infty, \infty)}{(-Inf, Inf)} \cr
    order \tab integer \tab 1 \tab  \tab \eqn{(-\infty, \infty)}{(-Inf, Inf)} \cr
@@ -135,6 +138,14 @@ Other Learner:
 \concept{Learner}
 \section{Super classes}{
 \code{\link[mlr3:Learner]{mlr3::Learner}} -> \code{\link[mlr3cluster:LearnerClust]{LearnerClust}} -> \code{LearnerClustKKMeans}
+}
+\section{Active bindings}{
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{native_model}}{(any)\cr
+The fitted model.}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{

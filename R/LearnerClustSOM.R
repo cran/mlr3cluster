@@ -8,7 +8,7 @@
 #'
 #' Each map unit corresponds to a cluster, so the number of clusters is `xdim * ydim`. Grid dimensions, topology, and
 #' neighbourhood function are exposed directly as parameters and forwarded to [kohonen::somgrid()]. The predict method
-#' uses [kohonen::predict.kohonen()] to assign new data to the closest unit.
+#' uses [kohonen::map()] to assign new data to the closest unit.
 #'
 #' @templateVar id clust.som
 #' @template learner
@@ -69,15 +69,16 @@ LearnerClustSOM = R6Class(
       pv = remove_named(pv, names(grid_args))
       pv$grid = invoke(kohonen::somgrid, .args = grid_args)
 
-      m = invoke(kohonen::som, X = as.matrix(task$data()), .args = pv)
+      data = as.matrix(task$data())
+      m = invoke(kohonen::som, X = data, .args = pv)
       if (self$save_assignments) {
-        self$assignments = as.integer(m$unit.classif)
+        self$assignments = as.integer(m$unit.classif %??% invoke(kohonen::map, m, newdata = data)$unit.classif)
       }
       m
     },
 
     .predict = function(task) {
-      p = invoke(predict, self$model, newdata = as.matrix(task$data()))
+      p = invoke(kohonen::map, self$model, newdata = as.matrix(ordered_features(task, self)))
       PredictionClust$new(task = task, partition = as.integer(p$unit.classif))
     }
   )

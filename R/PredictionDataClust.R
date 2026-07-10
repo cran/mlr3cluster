@@ -20,8 +20,10 @@ check_prediction_data.PredictionDataClust = function(pdata, ...) {
     }
 
     if (is.null(pdata$partition)) {
-      # calculate partition from prob
-      pdata$partition = max.col(prob, ties.method = "first")
+      # fall back to the column position if the names are not integer labels
+      ids = max.col(prob, ties.method = "first")
+      labels = suppressWarnings(as.integer(colnames(prob)))
+      pdata$partition = if (length(labels) && !anyNA(labels)) labels[ids] else ids
     }
   }
 
@@ -60,7 +62,16 @@ c.PredictionDataClust = function(..., keep_duplicates = TRUE) {
 
   elems = c("row_ids", "partition")
   tab = map_dtr(dots, function(x) x[elems], .fill = FALSE)
-  prob = do.call(rbind, map(dots, "prob"))
+  probs = map(dots, "prob")
+  # empty predictions carry a 0-column prob placeholder (k is unknown), so drop 0-row matrices before rbind
+  non_empty = compact(probs)
+  prob = if (length(non_empty)) {
+    do.call(rbind, non_empty)
+  } else {
+    # only the 0-column placeholder means unknown k, real 0-row matrices must still agree on their columns
+    known = discard(probs, function(p) is.null(p) || ncol(p) == 0L)
+    if (length(known)) do.call(rbind, known) else probs[[1L]]
+  }
 
   if (!keep_duplicates) {
     keep = !duplicated(tab, by = "row_ids", fromLast = TRUE)
@@ -71,7 +82,7 @@ c.PredictionDataClust = function(..., keep_duplicates = TRUE) {
   result = as.list(tab)
   result$prob = prob
 
-  set_class(result, "PredictionDataClust")
+  set_class(result, c("PredictionDataClust", "PredictionData"))
 }
 
 #' @export
@@ -100,8 +111,9 @@ create_empty_prediction_data.TaskClust = function(task, learner) {
   )
 
   if ("prob" %chin% predict_types) {
-    pdata$prob = matrix(integer())
+    # the number of clusters is unknown here, so use a prob matrix without columns
+    pdata$prob = matrix(numeric(), nrow = 0L, ncol = 0L)
   }
 
-  set_class(pdata, "PredictionDataClust")
+  set_class(pdata, c("PredictionDataClust", "PredictionData"))
 }

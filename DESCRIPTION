@@ -1,6 +1,6 @@
 Package: mlr3cluster
 Title: Cluster Extension for 'mlr3'
-Version: 0.4.0
+Version: 0.4.1
 Authors@R: c(
     person("Maximilian", "Mücke", , "muecke.maximilian@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0000-9432-9795")),
@@ -15,7 +15,7 @@ License: LGPL-3
 URL: https://mlr3cluster.mlr-org.com,
         https://github.com/mlr-org/mlr3cluster
 BugReports: https://github.com/mlr-org/mlr3cluster/issues
-Depends: mlr3 (>= 1.5.0), R (>= 3.4.0)
+Depends: mlr3 (>= 1.5.0), R (>= 3.5.0)
 Imports: backports (>= 1.5.0), checkmate (>= 2.0.0), cluster,
         data.table (>= 1.15.0), mlr3misc (>= 0.21.0), paradox (>=
         1.0.1), R6 (>= 2.4.1), stats
@@ -54,7 +54,7 @@ Collate: 'LearnerClust.R' 'zzz.R' 'LearnerClustAffinityPropagation.R'
         'as_prediction_clust.R' 'as_task_clust.R' 'bibentries.R'
         'helper.R'
 NeedsCompilation: no
-Packaged: 2026-06-11 11:19:00 UTC; mmuecke
+Packaged: 2026-07-10 15:38:10 UTC; mmuecke
 Author: Maximilian Mücke [aut, cre] (ORCID:
     <https://orcid.org/0009-0000-9432-9795>),
   Damir Pulatov [aut],
@@ -62,4 +62,4 @@ Author: Maximilian Mücke [aut, cre] (ORCID:
   Marc Becker [ctb] (ORCID: <https://orcid.org/0000-0002-8115-0400>)
 Maintainer: Maximilian Mücke <muecke.maximilian@gmail.com>
 Repository: CRAN
-Date/Publication: 2026-06-11 11:50:15 UTC
+Date/Publication: 2026-07-10 16:20:11 UTC

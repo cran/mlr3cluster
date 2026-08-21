@@ -45,11 +45,35 @@ LearnerClustEM = R6Class(
         feature_types = c("logical", "integer", "numeric"),
         predict_types = c("partition", "prob"),
         param_set = param_set,
-        properties = c("partitional", "fuzzy", "complete", "missings"),
+        properties = c("partitional", "fuzzy", "complete", "missings", "marshal"),
         packages = "RWeka",
         man = "mlr3cluster::mlr_learners_clust.em",
         label = "Expectation-Maximization"
       )
+    },
+
+    #' @description
+    #' Marshal the learner's model.
+    #' @param ... (any)\cr
+    #'   Additional arguments passed to [mlr3::marshal_model()].
+    marshal = function(...) {
+      learner_marshal(.learner = self, ...)
+    },
+
+    #' @description
+    #' Unmarshal the learner's model.
+    #' @param ... (any)\cr
+    #'   Additional arguments passed to [mlr3::unmarshal_model()].
+    unmarshal = function(...) {
+      learner_unmarshal(.learner = self, ...)
+    }
+  ),
+
+  active = list(
+    #' @field marshaled (`logical(1)`)\cr
+    #' Whether the learner's model is marshaled.
+    marshaled = function() {
+      learner_marshaled(self)
     }
   ),
 
@@ -66,13 +90,13 @@ LearnerClustEM = R6Class(
 
     .predict = function(task) {
       data = ordered_features(task, self)
-      partition = invoke(predict, self$model, newdata = data, type = "class") + 1L
+      partition = invoke(predict, self$model, newdata = data, type = "class_ids") + 1L
       prob = NULL
       if (self$predict_type == "prob") {
         prob = invoke(predict, self$model, newdata = data, type = "memberships")
         colnames(prob) = seq_col(prob)
       }
-      PredictionClust$new(task = task, partition = partition, prob = prob)
+      list(partition = partition, prob = prob)
     }
   )
 )

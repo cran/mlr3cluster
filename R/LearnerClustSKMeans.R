@@ -33,8 +33,10 @@ LearnerClustSKMeans = R6Class(
         method = p_fct(c("genetic", "pclust", "CLUTO", "gmeans", "kmndirs", "LIH", "LIHC"), tags = "train"),
         m = p_dbl(1, default = 1, tags = "train"),
         weights = p_uty(default = 1, tags = "train"),
+        start = p_uty(default = "p", tags = c("train", "control")),
         maxiter = p_int(1L, tags = c("train", "control")),
         nruns = p_int(1L, tags = c("train", "control")),
+        maxchains = p_int(0L, tags = c("train", "control"), depends = quote(method %in% c("pclust", "LIHC"))),
         popsize = p_int(1L, tags = c("train", "control")),
         mutations = p_dbl(0, 1, tags = c("train", "control")),
         reltol = p_dbl(0, tags = c("train", "control")),
@@ -73,7 +75,7 @@ LearnerClustSKMeans = R6Class(
     .predict = function(task) {
       d = skmeans::skmeans_xdist(as.matrix(ordered_features(task, self)), self$model$prototypes)
       partition = max.col(-d, ties.method = "first")
-      PredictionClust$new(task = task, partition = partition)
+      list(partition = partition)
     }
   )
 )

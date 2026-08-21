@@ -40,8 +40,10 @@ lrn("clust.skmeans")
    method \tab character \tab - \tab genetic, pclust, CLUTO, gmeans, kmndirs, LIH, LIHC \tab - \cr
    m \tab numeric \tab 1 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
    weights \tab untyped \tab 1 \tab  \tab - \cr
+   start \tab untyped \tab "p" \tab  \tab - \cr
    maxiter \tab integer \tab - \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
    nruns \tab integer \tab - \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   maxchains \tab integer \tab - \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
    popsize \tab integer \tab - \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
    mutations \tab numeric \tab - \tab  \tab \eqn{[0, 1]}{[0, 1]} \cr
    reltol \tab numeric \tab - \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
@@ -119,11 +121,14 @@ Other Learner:
 \code{\link{mlr_learners_clust.ff}},
 \code{\link{mlr_learners_clust.flexmix}},
 \code{\link{mlr_learners_clust.genie}},
+\code{\link{mlr_learners_clust.gmeans}},
 \code{\link{mlr_learners_clust.hclust}},
 \code{\link{mlr_learners_clust.hdbscan}},
 \code{\link{mlr_learners_clust.kcca}},
 \code{\link{mlr_learners_clust.kkmeans}},
 \code{\link{mlr_learners_clust.kmeans}},
+\code{\link{mlr_learners_clust.kmeans_rcpp}},
+\code{\link{mlr_learners_clust.kmodes}},
 \code{\link{mlr_learners_clust.kproto}},
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},

@@ -69,13 +69,18 @@ LearnerClustDBSCANfpc = R6Class(
       if (isFALSE(self$param_set$values$seeds)) {
         error_config("Predicting requires seed points, train with `seeds = TRUE`.")
       }
+      if (isTRUE(self$param_set$values$scale)) {
+        error_config(
+          "Predicting is not supported for `scale = TRUE` since `fpc:::predict.dbscan()` ignores the scaling."
+        )
+      }
       partition = as.integer(invoke(
         predict,
         self$model,
         data = self$model$data,
         newdata = ordered_features(task, self)
       ))
-      PredictionClust$new(task = task, partition = partition)
+      list(partition = partition)
     }
   )
 )

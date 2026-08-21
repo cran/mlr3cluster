@@ -68,7 +68,8 @@ LearnerClustAP = R6Class(
       data = task$data()
       m = invoke(apcluster::apcluster, x = data, .args = pv)
       # add data points corresponding to exemplars
-      setattr(m, "exemplar_data", data[m@exemplars])
+      exemplars = m@exemplars
+      setattr(m, "exemplar_data", data[exemplars])
 
       if (self$save_assignments) {
         self$assignments = apcluster::labels(m, type = "enum")
@@ -81,13 +82,13 @@ LearnerClustAP = R6Class(
       sim_func = pv$s
       exemplar_data = attr(self$model, "exemplar_data")
 
-      data = task$data()
+      data = ordered_features(task, self)
       sim_mat = sim_func(
         rbind(exemplar_data, data),
         sel = seq_row(data) + nrow(exemplar_data)
       )[seq_row(exemplar_data), , drop = FALSE]
-      partition = max.col(t(sim_mat), ties.method = "random")
-      PredictionClust$new(task = task, partition = partition)
+      partition = max.col(t(sim_mat), ties.method = "first")
+      list(partition = partition)
     }
   )
 )

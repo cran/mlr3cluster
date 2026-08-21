@@ -7,6 +7,14 @@ ordered_features = function(task, learner) {
   task$data(cols = intersect(cols, task$feature_names))
 }
 
+as_numeric_matrix = function(x) {
+  x = as.matrix(x)
+  if (is.logical(x)) {
+    storage.mode(x) = "double"
+  }
+  x
+}
+
 allow_partial_matching = list(
   warnPartialMatchArgs = FALSE,
   warnPartialMatchAttr = FALSE,
@@ -34,7 +42,16 @@ row_any_na = function(x) {
   rowSums(is.na(x)) > 0L
 }
 
-weka_control = function(pv) {
-  names(pv) = chartr("_", "-", names(pv))
-  invoke(RWeka::Weka_control, .args = pv)
+task_dist = function(task, rows) {
+  data = task$data(rows = rows)
+  if (any(task$feature_types$type %in% c("character", "factor", "ordered"))) {
+    chr_cols = task$feature_types[get("type") == "character", "id", with = FALSE][[1L]]
+    if (length(chr_cols) > 0L) {
+      # daisy() rejects bare character columns
+      data[, (chr_cols) := map(.SD, factor), .SDcols = chr_cols]
+    }
+    cluster::daisy(data, metric = "gower")
+  } else {
+    stats::dist(data)
+  }
 }

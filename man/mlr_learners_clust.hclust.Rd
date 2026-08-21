@@ -37,7 +37,7 @@ lrn("clust.hclust")
    distmethod \tab character \tab euclidean \tab euclidean, maximum, manhattan, canberra, binary, minkowski \tab - \cr
    diag \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
    upper \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
-   p \tab numeric \tab 2 \tab  \tab \eqn{(-\infty, \infty)}{(-Inf, Inf)} \cr
+   p \tab numeric \tab 2 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
    k \tab integer \tab - \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
 }
 }
@@ -145,10 +145,13 @@ Other Learner:
 \code{\link{mlr_learners_clust.ff}},
 \code{\link{mlr_learners_clust.flexmix}},
 \code{\link{mlr_learners_clust.genie}},
+\code{\link{mlr_learners_clust.gmeans}},
 \code{\link{mlr_learners_clust.hdbscan}},
 \code{\link{mlr_learners_clust.kcca}},
 \code{\link{mlr_learners_clust.kkmeans}},
 \code{\link{mlr_learners_clust.kmeans}},
+\code{\link{mlr_learners_clust.kmeans_rcpp}},
+\code{\link{mlr_learners_clust.kmodes}},
 \code{\link{mlr_learners_clust.kproto}},
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},

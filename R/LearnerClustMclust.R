@@ -67,7 +67,7 @@ LearnerClustMclust = R6Class(
         m = invoke(mclust::Mclust, data = task$data(), .args = pv)
       })
       if (self$save_assignments) {
-        self$assignments = m$classification
+        self$assignments = as.integer(m$classification)
       }
       m
     },
@@ -79,7 +79,7 @@ LearnerClustMclust = R6Class(
       if (self$predict_type == "prob") {
         prob = predictions$z
       }
-      PredictionClust$new(task = task, partition = partition, prob = prob)
+      list(partition = partition, prob = prob)
     }
   )
 )

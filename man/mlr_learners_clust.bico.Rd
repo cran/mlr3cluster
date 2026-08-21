@@ -33,7 +33,7 @@ lrn("clust.bico")
 \section{Parameters}{
 \tabular{llll}{
    Id \tab Type \tab Default \tab Range \cr
-   k \tab integer \tab 5 \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   k \tab integer \tab 5 \tab \eqn{[2, \infty)}{[2, Inf)} \cr
    space \tab integer \tab 10 \tab \eqn{[1, \infty)}{[1, Inf)} \cr
    p \tab integer \tab 10 \tab \eqn{[1, \infty)}{[1, Inf)} \cr
    iterations \tab integer \tab 10 \tab \eqn{[1, \infty)}{[1, Inf)} \cr
@@ -109,11 +109,14 @@ Other Learner:
 \code{\link{mlr_learners_clust.ff}},
 \code{\link{mlr_learners_clust.flexmix}},
 \code{\link{mlr_learners_clust.genie}},
+\code{\link{mlr_learners_clust.gmeans}},
 \code{\link{mlr_learners_clust.hclust}},
 \code{\link{mlr_learners_clust.hdbscan}},
 \code{\link{mlr_learners_clust.kcca}},
 \code{\link{mlr_learners_clust.kkmeans}},
 \code{\link{mlr_learners_clust.kmeans}},
+\code{\link{mlr_learners_clust.kmeans_rcpp}},
+\code{\link{mlr_learners_clust.kmodes}},
 \code{\link{mlr_learners_clust.kproto}},
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},

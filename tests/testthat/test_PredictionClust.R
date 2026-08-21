@@ -21,6 +21,26 @@ test_that("partition derived from prob falls back to positions for non-integer l
   expect_identical(p$partition, c(2L, 1L))
 })
 
+test_that("partition labels must appear among the prob column labels", {
+  prob = matrix(c(0.1, 0.9, 0.8, 0.2), nrow = 2L, byrow = TRUE, dimnames = list(NULL, c("3", "7")))
+  p = PredictionClust$new(row_ids = 1:2, partition = c(7L, 3L), prob = prob)
+  expect_prediction_clust(p)
+
+  expect_snapshot(error = TRUE, {
+    PredictionClust$new(row_ids = 1:2, partition = c(1L, 2L), prob = prob)
+  })
+})
+
+test_that("partition check falls back to positions for non-integer prob labels", {
+  prob = matrix(c(0.1, 0.9, 0.8, 0.2), nrow = 2L, byrow = TRUE, dimnames = list(NULL, c("a", "b")))
+  p = PredictionClust$new(row_ids = 1:2, partition = c(2L, 1L), prob = prob)
+  expect_prediction_clust(p)
+
+  expect_snapshot(error = TRUE, {
+    PredictionClust$new(row_ids = 1:2, partition = c(2L, 3L), prob = prob)
+  })
+})
+
 test_that("Internally constructed Prediction", {
   task = tsk("usarrests")
   learner = lrn("clust.featureless", num_clusters = 1L)
@@ -66,6 +86,20 @@ test_that("as_prediction_clust", {
   # extra columns not prefixed with 'prob.' are rejected
   bad = data.frame(row_ids = 1L, partition = 1L, garbage = 0.5)
   expect_error(as_prediction_clust(bad), "prob")
+})
+
+test_that("as_prediction_clust() coerces a whole-numbered partition to integer", {
+  df = data.frame(row_ids = c(1, 2, 3), partition = c(1, 2, 1))
+  p = as_prediction_clust(df)
+  expect_integer(p$partition, len = 3L)
+  expect_identical(p$partition, c(1L, 2L, 1L))
+})
+
+test_that("as_prediction_clust() rejects a non-integral partition", {
+  expect_snapshot(
+    error = TRUE,
+    as_prediction_clust(data.frame(row_ids = 1:3, partition = c(1.5, 2, 3)))
+  )
 })
 
 test_that("combining empty and non-empty prob predictions works", {
@@ -150,4 +184,49 @@ test_that("construction of empty PredictionDataClust", {
   expect_matrix(pred$prob, nrows = 0L, ncols = 0L)
   expect_data_table(as.data.table(pred), nrows = 0L, ncols = 2L)
   expect_named(as.data.table(pred), c("row_ids", "partition"))
+})
+
+test_that("measure weights are carried through the prediction", {
+  withr::local_seed(1)
+  data = as.data.frame(datasets::USArrests)
+  data$w = runif(nrow(data), 1, 2)
+  task = as_task_clust(data)
+  task$set_col_roles("w", "weights_measure")
+
+  learner = lrn("clust.featureless", predict_type = "prob")
+  p = learner$train(task)$predict(task)
+  expect_numeric(p$weights, len = task$nrow, any.missing = FALSE)
+  expect_equal(p$weights, data$w)
+  expect_named(as.data.table(p), c("row_ids", "partition", "prob.1", "weights"))
+
+  # filtering keeps the weights aligned with the retained rows
+  pf = p$filter(p$row_ids[c(3L, 7L, 11L)])
+  expect_numeric(pf$weights, len = 3L)
+  expect_equal(pf$weights, data$w[c(3L, 7L, 11L)])
+
+  # combining preserves the weights
+  pc = c(learner$predict(task, 1:10), learner$predict(task, 11:20))
+  expect_numeric(pc$weights, len = 20L)
+  expect_equal(pc$weights, data$w[1:20])
+
+  # round trip via data.table
+  expect_identical(as_prediction_clust(as.data.table(p))$data, p$data)
+
+  # empty predict sets carry a zero-length weights vector
+  pe = learner$predict(task, row_ids = integer())
+  expect_numeric(pe$weights, len = 0L)
+})
+
+test_that("combining weighted and unweighted predictions errors", {
+  withr::local_seed(1)
+  data = as.data.frame(datasets::USArrests)
+  data$w = runif(nrow(data), 1, 2)
+  task_weighted = as_task_clust(data)
+  task_weighted$set_col_roles("w", "weights_measure")
+  task = as_task_clust(as.data.frame(datasets::USArrests))
+
+  learner = lrn("clust.featureless")
+  a = learner$train(task_weighted)$predict(task_weighted)
+  b = learner$train(task)$predict(task)
+  expect_snapshot(error = TRUE, c(a, b))
 })

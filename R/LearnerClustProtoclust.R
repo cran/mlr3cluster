@@ -6,8 +6,9 @@
 #' Hierarchical clustering using minimax linkage with prototypes.
 #' Calls [protoclust::protoclust()] from package \CRANpkg{protoclust}.
 #'
-#' There is no predict method for [protoclust::protoclust()], so the method returns cluster labels for the training
-#' data.
+#' The predict method cuts the tree at the current `k` via [protoclust::protocut()] and assigns each new observation
+#' to the cluster of its nearest prototype, using the same distance method as during training. The model is therefore
+#' a list containing the fitted [protoclust::protoclust()] object along with the training data.
 #'
 #' @templateVar id clust.protoclust
 #' @template learner
@@ -33,7 +34,7 @@ LearnerClustProtoclust = R6Class(
         ),
         diag = p_lgl(default = FALSE, tags = c("train", "dist")),
         upper = p_lgl(default = FALSE, tags = c("train", "dist")),
-        p = p_dbl(default = 2, tags = c("train", "dist"), depends = quote(method == "minkowski")),
+        p = p_dbl(0, default = 2, tags = c("train", "dist"), depends = quote(method == "minkowski")),
         verb = p_lgl(default = FALSE, tags = c("train", "protoclust")),
         k = p_int(1L, tags = c("train", "protocut", "predict"))
       )
@@ -53,10 +54,20 @@ LearnerClustProtoclust = R6Class(
     }
   ),
 
+  active = list(
+    #' @field native_model (any)\cr
+    #' The fitted model.
+    native_model = function(rhs) {
+      assert_ro_binding(rhs)
+      self$model$model
+    }
+  ),
+
   private = list(
     .train = function(task) {
       ps = self$param_set
-      d = invoke(stats::dist, x = task$data(), .args = ps$get_values(tags = c("train", "dist")))
+      data = as.matrix(task$data())
+      d = invoke(stats::dist, x = data, .args = ps$get_values(tags = c("train", "dist")))
       m = invoke(protoclust::protoclust, d = d, .args = ps$get_values(tags = c("train", "protoclust")))
       if (self$save_assignments) {
         self$assignments = invoke(
@@ -65,22 +76,29 @@ LearnerClustProtoclust = R6Class(
           .args = ps$get_values(tags = c("train", "protocut"))
         )$cl
       }
-      m
+      # predict needs the training data to compute distances to the prototype observations
+      list(model = m, data = data)
     },
 
     .predict = function(task) {
+      m = self$model
       pv = self$param_set$get_values(tags = "predict")
-      if (pv$k > task$nrow) {
-        error_input("`k` needs to be between 1 and %i.", task$nrow)
+      if (pv$k > nrow(m$data)) {
+        error_input("`k` needs to be between 1 and %i.", nrow(m$data))
       }
 
-      warn_prediction_useless(self$id)
-      partition = invoke(
+      pc = invoke(
         protoclust::protocut,
-        hc = self$model,
+        hc = m$model,
         .args = self$param_set$get_values(tags = c("train", "protocut"))
-      )$cl
-      PredictionClust$new(task = task, partition = partition)
+      )
+      x = as.matrix(ordered_features(task, self))
+      protos = m$data[pc$protos, , drop = FALSE]
+      d = invoke(stats::dist, x = rbind(protos, x), .args = self$param_set$get_values(tags = c("train", "dist")))
+      d = as.matrix(d)[-seq_len(nrow(protos)), seq_len(nrow(protos)), drop = FALSE]
+      partition = pc$cl[pc$protos][max.col(-d, ties.method = "first")]
+
+      list(partition = partition)
     }
   )
 )

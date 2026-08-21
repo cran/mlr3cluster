@@ -36,6 +36,7 @@ lrn("clust.stdbscan")
    eps_spatial \tab numeric \tab - \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
    eps_temporal \tab numeric \tab - \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
    min_pts \tab integer \tab - \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   weights \tab untyped \tab - \tab  \tab - \cr
    borderPoints \tab logical \tab TRUE \tab TRUE, FALSE \tab - \cr
    search \tab character \tab kdtree \tab kdtree, linear, dist \tab - \cr
    bucketSize \tab integer \tab 10 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
@@ -94,11 +95,14 @@ Other Learner:
 \code{\link{mlr_learners_clust.ff}},
 \code{\link{mlr_learners_clust.flexmix}},
 \code{\link{mlr_learners_clust.genie}},
+\code{\link{mlr_learners_clust.gmeans}},
 \code{\link{mlr_learners_clust.hclust}},
 \code{\link{mlr_learners_clust.hdbscan}},
 \code{\link{mlr_learners_clust.kcca}},
 \code{\link{mlr_learners_clust.kkmeans}},
 \code{\link{mlr_learners_clust.kmeans}},
+\code{\link{mlr_learners_clust.kmeans_rcpp}},
+\code{\link{mlr_learners_clust.kmodes}},
 \code{\link{mlr_learners_clust.kproto}},
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},

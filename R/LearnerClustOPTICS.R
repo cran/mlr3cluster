@@ -53,7 +53,7 @@ LearnerClustOPTICS = R6Class(
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      data = task$data()
+      data = as_numeric_matrix(task$data())
       m = invoke(dbscan::optics, x = data, .args = remove_named(pv, "eps_cl"))
       m = insert_named(m, list(data = data))
       m = invoke(dbscan::extractDBSCAN, object = m, eps_cl = pv$eps_cl)
@@ -65,8 +65,13 @@ LearnerClustOPTICS = R6Class(
     },
 
     .predict = function(task) {
-      partition = invoke(predict, self$model, newdata = ordered_features(task, self), data = self$model$data)
-      PredictionClust$new(task = task, partition = partition)
+      partition = invoke(
+        predict,
+        self$model,
+        newdata = as_numeric_matrix(ordered_features(task, self)),
+        data = self$model$data
+      )
+      list(partition = partition)
     }
   )
 )

@@ -181,6 +181,23 @@ bibentries = c(
     pages = "1--30",
     doi = "10.18637/jss.v091.i01",
   ),
+  hamerly2003learning = bibentry(
+    "inproceedings",
+    title = "Learning the k in k-means",
+    author = "Hamerly, Greg and Elkan, Charles",
+    booktitle = "Advances in Neural Information Processing Systems",
+    volume = "16",
+    year = "2003",
+    publisher = "MIT Press"
+  ),
+  arthur2007kmeans = bibentry(
+    "inproceedings",
+    title = "k-means++: the advantages of careful seeding",
+    author = "Arthur, David and Vassilvitskii, Sergei",
+    booktitle = "Proceedings of the Eighteenth Annual ACM-SIAM Symposium on Discrete Algorithms",
+    pages = "1027--1035",
+    year = "2007"
+  ),
   sculley2010web = bibentry(
     "inproceedings",
     title = "Web-scale k-means clustering",
@@ -428,6 +445,15 @@ bibentries = c(
     pages = "283--304",
     year = "1998",
     publisher = "Springer"
+  ),
+  huang1997fast = bibentry(
+    "inproceedings",
+    title = "A Fast Clustering Algorithm to Cluster Very Large Categorical Data Sets in Data Mining",
+    author = "Huang, Zhexue",
+    booktitle = "Data Mining: Techniques and Applications",
+    pages = "21--34",
+    year = "1997",
+    publisher = "World Scientific"
   ),
   birant2007stdbscan = bibentry(
     "article",

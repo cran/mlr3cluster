@@ -69,8 +69,13 @@ LearnerClustKMeans = R6Class(
     },
 
     .predict = function(task) {
-      partition = unclass(invoke(clue::cl_predict, self$model, newdata = task$data(), type = "class_ids"))
-      PredictionClust$new(task = task, partition = partition)
+      partition = unclass(invoke(
+        clue::cl_predict,
+        self$model,
+        newdata = ordered_features(task, self),
+        type = "class_ids"
+      ))
+      list(partition = partition)
     }
   )
 )

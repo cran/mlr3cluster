@@ -32,7 +32,7 @@ LearnerClustSimpleKMeans = R6Class(
         init = p_int(0L, 3L, default = 0L, tags = "train"),
         M = p_lgl(default = FALSE, tags = "train"),
         max_candidates = p_int(1L, default = 100L, tags = "train"),
-        min_density = p_int(1L, default = 2L, tags = "train"),
+        min_density = p_dbl(0, default = 2, tags = "train"),
         N = p_int(1L, default = 2L, tags = "train"),
         num_slots = p_int(1L, default = 1L, tags = "train"),
         O = p_lgl(default = FALSE, tags = "train"),
@@ -49,11 +49,35 @@ LearnerClustSimpleKMeans = R6Class(
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
         param_set = param_set,
-        properties = c("partitional", "exclusive", "complete", "missings"),
+        properties = c("partitional", "exclusive", "complete", "missings", "marshal"),
         packages = "RWeka",
         man = "mlr3cluster::mlr_learners_clust.SimpleKMeans",
         label = "K-Means (Weka)"
       )
+    },
+
+    #' @description
+    #' Marshal the learner's model.
+    #' @param ... (any)\cr
+    #'   Additional arguments passed to [mlr3::marshal_model()].
+    marshal = function(...) {
+      learner_marshal(.learner = self, ...)
+    },
+
+    #' @description
+    #' Unmarshal the learner's model.
+    #' @param ... (any)\cr
+    #'   Additional arguments passed to [mlr3::unmarshal_model()].
+    unmarshal = function(...) {
+      learner_unmarshal(.learner = self, ...)
+    }
+  ),
+
+  active = list(
+    #' @field marshaled (`logical(1)`)\cr
+    #' Whether the learner's model is marshaled.
+    marshaled = function() {
+      learner_marshaled(self)
     }
   ),
 
@@ -69,8 +93,8 @@ LearnerClustSimpleKMeans = R6Class(
     },
 
     .predict = function(task) {
-      partition = invoke(predict, self$model, newdata = ordered_features(task, self), type = "class") + 1L
-      PredictionClust$new(task = task, partition = partition)
+      partition = invoke(predict, self$model, newdata = ordered_features(task, self), type = "class_ids") + 1L
+      list(partition = partition)
     }
   )
 )

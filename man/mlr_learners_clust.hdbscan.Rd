@@ -33,7 +33,7 @@ lrn("clust.hdbscan")
 \section{Parameters}{
 \tabular{lllll}{
    Id \tab Type \tab Default \tab Levels \tab Range \cr
-   minPts \tab integer \tab - \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
+   minPts \tab integer \tab - \tab  \tab \eqn{[2, \infty)}{[2, Inf)} \cr
    cluster_selection_epsilon \tab numeric \tab 0 \tab  \tab \eqn{(-\infty, \infty)}{(-Inf, Inf)} \cr
    gen_hdbscan_tree \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
    gen_simplified_tree \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
@@ -111,10 +111,13 @@ Other Learner:
 \code{\link{mlr_learners_clust.ff}},
 \code{\link{mlr_learners_clust.flexmix}},
 \code{\link{mlr_learners_clust.genie}},
+\code{\link{mlr_learners_clust.gmeans}},
 \code{\link{mlr_learners_clust.hclust}},
 \code{\link{mlr_learners_clust.kcca}},
 \code{\link{mlr_learners_clust.kkmeans}},
 \code{\link{mlr_learners_clust.kmeans}},
+\code{\link{mlr_learners_clust.kmeans_rcpp}},
+\code{\link{mlr_learners_clust.kmodes}},
 \code{\link{mlr_learners_clust.kproto}},
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},

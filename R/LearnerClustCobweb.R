@@ -27,7 +27,8 @@ LearnerClustCobweb = R6Class(
       param_set = ps(
         A = p_dbl(0, default = 1, tags = "train"),
         C = p_dbl(0, default = 0.0028209479177387815, tags = "train"),
-        S = p_int(1L, default = 42L, tags = "train")
+        S = p_int(0L, default = 42L, tags = "train"),
+        output_debug_info = p_lgl(default = FALSE, tags = "train")
       )
 
       super$initialize(
@@ -35,11 +36,35 @@ LearnerClustCobweb = R6Class(
         feature_types = c("logical", "integer", "numeric"),
         predict_types = "partition",
         param_set = param_set,
-        properties = c("hierarchical", "exclusive", "complete", "missings"),
+        properties = c("hierarchical", "exclusive", "complete", "missings", "marshal"),
         packages = "RWeka",
         man = "mlr3cluster::mlr_learners_clust.cobweb",
         label = "Cobweb"
       )
+    },
+
+    #' @description
+    #' Marshal the learner's model.
+    #' @param ... (any)\cr
+    #'   Additional arguments passed to [mlr3::marshal_model()].
+    marshal = function(...) {
+      learner_marshal(.learner = self, ...)
+    },
+
+    #' @description
+    #' Unmarshal the learner's model.
+    #' @param ... (any)\cr
+    #'   Additional arguments passed to [mlr3::unmarshal_model()].
+    unmarshal = function(...) {
+      learner_unmarshal(.learner = self, ...)
+    }
+  ),
+
+  active = list(
+    #' @field marshaled (`logical(1)`)\cr
+    #' Whether the learner's model is marshaled.
+    marshaled = function() {
+      learner_marshaled(self)
     }
   ),
 
@@ -55,8 +80,8 @@ LearnerClustCobweb = R6Class(
     },
 
     .predict = function(task) {
-      partition = invoke(predict, self$model, newdata = ordered_features(task, self), type = "class") + 1L
-      PredictionClust$new(task = task, partition = partition)
+      partition = invoke(predict, self$model, newdata = ordered_features(task, self), type = "class_ids") + 1L
+      list(partition = partition)
     }
   )
 )

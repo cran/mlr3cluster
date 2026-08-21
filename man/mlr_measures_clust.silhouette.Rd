@@ -15,7 +15,7 @@ observations on cluster boundaries, and negative values indicate possible miscla
 The score function calls \code{\link[cluster:silhouette]{cluster::silhouette()}} from package \CRANpkg{cluster}.
 }
 \details{
-If the task contains factor or ordered features, Gower distances (\code{\link[cluster:daisy]{cluster::daisy()}}) are used instead of
+If the task contains character, factor, or ordered features, Gower distances (\code{\link[cluster:daisy]{cluster::daisy()}}) are used instead of
 Euclidean distances.
 }
 \section{Dictionary}{
@@ -60,6 +60,7 @@ Other cluster measures:
 \code{\link{mlr_measures_clust.dunn2}},
 \code{\link{mlr_measures_clust.entropy}},
 \code{\link{mlr_measures_clust.pearsongamma}},
+\code{\link{mlr_measures_clust.sse_ratio}},
 \code{\link{mlr_measures_clust.wb_ratio}},
 \code{\link{mlr_measures_clust.wss}}
 }

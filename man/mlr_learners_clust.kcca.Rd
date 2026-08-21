@@ -36,7 +36,7 @@ lrn("clust.kcca")
 \section{Parameters}{
 \tabular{lllll}{
    Id \tab Type \tab Default \tab Levels \tab Range \cr
-   k \tab integer \tab - \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   k \tab integer \tab - \tab  \tab \eqn{[2, \infty)}{[2, Inf)} \cr
    family \tab character \tab kmeans \tab kmeans, kmedians, angle, jaccard, ejaccard \tab - \cr
    weights \tab untyped \tab - \tab  \tab - \cr
    group \tab untyped \tab - \tab  \tab - \cr
@@ -45,11 +45,10 @@ lrn("clust.kcca")
    iter.max \tab integer \tab 200 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
    tolerance \tab numeric \tab 1e-06 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
    verbose \tab integer \tab 0 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
-   classify \tab character \tab auto \tab auto, weighted, hard \tab - \cr
-   initcent \tab untyped \tab - \tab  \tab - \cr
+   classify \tab character \tab auto \tab auto, weighted, hard, simann \tab - \cr
+   initcent \tab untyped \tab "randomcent" \tab  \tab - \cr
    gamma \tab numeric \tab 1 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
-   ntry \tab integer \tab 5 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
-   min.size \tab integer \tab 2 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+   simann \tab untyped \tab c(0.3, 0.95, 10) \tab  \tab - \cr
 }
 }
 
@@ -118,10 +117,13 @@ Other Learner:
 \code{\link{mlr_learners_clust.ff}},
 \code{\link{mlr_learners_clust.flexmix}},
 \code{\link{mlr_learners_clust.genie}},
+\code{\link{mlr_learners_clust.gmeans}},
 \code{\link{mlr_learners_clust.hclust}},
 \code{\link{mlr_learners_clust.hdbscan}},
 \code{\link{mlr_learners_clust.kkmeans}},
 \code{\link{mlr_learners_clust.kmeans}},
+\code{\link{mlr_learners_clust.kmeans_rcpp}},
+\code{\link{mlr_learners_clust.kmodes}},
 \code{\link{mlr_learners_clust.kproto}},
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},

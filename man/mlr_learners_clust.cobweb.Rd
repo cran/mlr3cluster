@@ -30,11 +30,12 @@ lrn("clust.cobweb")
 }
 
 \section{Parameters}{
-\tabular{llll}{
-   Id \tab Type \tab Default \tab Range \cr
-   A \tab numeric \tab 1 \tab \eqn{[0, \infty)}{[0, Inf)} \cr
-   C \tab numeric \tab 0.002820948 \tab \eqn{[0, \infty)}{[0, Inf)} \cr
-   S \tab integer \tab 42 \tab \eqn{[1, \infty)}{[1, Inf)} \cr
+\tabular{lllll}{
+   Id \tab Type \tab Default \tab Levels \tab Range \cr
+   A \tab numeric \tab 1 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
+   C \tab numeric \tab 0.002820948 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
+   S \tab integer \tab 42 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
+   output_debug_info \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
 }
 }
 
@@ -109,11 +110,14 @@ Other Learner:
 \code{\link{mlr_learners_clust.ff}},
 \code{\link{mlr_learners_clust.flexmix}},
 \code{\link{mlr_learners_clust.genie}},
+\code{\link{mlr_learners_clust.gmeans}},
 \code{\link{mlr_learners_clust.hclust}},
 \code{\link{mlr_learners_clust.hdbscan}},
 \code{\link{mlr_learners_clust.kcca}},
 \code{\link{mlr_learners_clust.kkmeans}},
 \code{\link{mlr_learners_clust.kmeans}},
+\code{\link{mlr_learners_clust.kmeans_rcpp}},
+\code{\link{mlr_learners_clust.kmodes}},
 \code{\link{mlr_learners_clust.kproto}},
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},
@@ -132,10 +136,20 @@ Other Learner:
 \section{Super classes}{
 \code{\link[mlr3:Learner]{mlr3::Learner}} -> \code{\link[mlr3cluster:LearnerClust]{LearnerClust}} -> \code{LearnerClustCobweb}
 }
+\section{Active bindings}{
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{marshaled}}{(\code{logical(1)})\cr
+Whether the learner's model is marshaled.}
+  }
+  \if{html}{\out{</div>}}
+}
 \section{Methods}{
 \subsection{Public methods}{
   \itemize{
     \item \href{#method-LearnerClustCobweb-initialize}{\code{LearnerClustCobweb$new()}}
+    \item \href{#method-LearnerClustCobweb-marshal}{\code{LearnerClustCobweb$marshal()}}
+    \item \href{#method-LearnerClustCobweb-unmarshal}{\code{LearnerClustCobweb$unmarshal()}}
     \item \href{#method-LearnerClustCobweb-clone}{\code{LearnerClustCobweb$clone()}}
   }
 }
@@ -162,6 +176,46 @@ Other Learner:
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{LearnerClustCobweb$new()}
+    \if{html}{\out{</div>}}
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-LearnerClustCobweb-marshal"></a>}}
+\if{latex}{\out{\hypertarget{method-LearnerClustCobweb-marshal}{}}}
+\subsection{\code{LearnerClustCobweb$marshal()}}{
+  Marshal the learner's model.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LearnerClustCobweb$marshal(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{(any)\cr
+Additional arguments passed to \code{\link[mlr3:marshal_model]{mlr3::marshal_model()}}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-LearnerClustCobweb-unmarshal"></a>}}
+\if{latex}{\out{\hypertarget{method-LearnerClustCobweb-unmarshal}{}}}
+\subsection{\code{LearnerClustCobweb$unmarshal()}}{
+  Unmarshal the learner's model.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LearnerClustCobweb$unmarshal(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{(any)\cr
+Additional arguments passed to \code{\link[mlr3:unmarshal_model]{mlr3::unmarshal_model()}}.}
+    }
     \if{html}{\out{</div>}}
   }
 }

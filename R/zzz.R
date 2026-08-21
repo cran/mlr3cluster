@@ -39,6 +39,7 @@ register_mlr3 = function(...) {
   mlr_reflections$task_properties$clust = mlr_reflections$task_properties$regr
   mlr_reflections$learner_properties$clust = c(
     "missings",
+    "marshal",
     "partitional",
     "hierarchical",
     "exclusive",
@@ -67,6 +68,7 @@ register_mlr3 = function(...) {
   mlr_measures$add("clust.ch", MeasureClustSimple, name = "ch", label = "Calinski Harabasz")
   mlr_measures$add("clust.dunn", MeasureClustSimple, name = "dunn", label = "Dunn")
   mlr_measures$add("clust.wss", MeasureClustSimple, name = "wss", label = "Within Sum of Squares")
+  mlr_measures$add("clust.sse_ratio", MeasureClustSimple, name = "sse_ratio", label = "Within/Total Ratio")
   mlr_measures$add("clust.dunn2", MeasureClustSimple, name = "dunn2", label = "Dunn2")
   mlr_measures$add("clust.wb_ratio", MeasureClustSimple, name = "wb_ratio", label = "Within/Between Ratio")
   mlr_measures$add("clust.entropy", MeasureClustSimple, name = "entropy", label = "Entropy")
@@ -82,7 +84,7 @@ register_mlr3 = function(...) {
   register_namespace_callback(pkgname, "mlr3", register_mlr3)
 }
 
-.onUnload = function(libpaths) {
+.onUnload = function(libpath) {
   walk(names(mlr3cluster_tasks), function(id) mlr_tasks$remove(id))
   walk(names(mlr3cluster_learners), function(id) mlr_learners$remove(id))
   mlr_measures$remove("clust.silhouette")

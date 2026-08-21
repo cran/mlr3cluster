@@ -9,7 +9,7 @@ values indicate more compact clusters. This measure is scale-dependent and is mo
 clusterings of the same dataset.
 }
 \details{
-If the task contains factor or ordered features, Gower distances (\code{\link[cluster:daisy]{cluster::daisy()}}) are used instead of
+If the task contains character, factor, or ordered features, Gower distances (\code{\link[cluster:daisy]{cluster::daisy()}}) are used instead of
 Euclidean distances.
 }
 \section{Dictionary}{
@@ -48,6 +48,7 @@ Other cluster measures:
 \code{\link{mlr_measures_clust.entropy}},
 \code{\link{mlr_measures_clust.pearsongamma}},
 \code{\link{mlr_measures_clust.silhouette}},
+\code{\link{mlr_measures_clust.sse_ratio}},
 \code{\link{mlr_measures_clust.wb_ratio}},
 \code{\link{mlr_measures_clust.wss}}
 }

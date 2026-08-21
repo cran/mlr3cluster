@@ -115,11 +115,14 @@ Other Learner:
 \code{\link{mlr_learners_clust.ff}},
 \code{\link{mlr_learners_clust.flexmix}},
 \code{\link{mlr_learners_clust.genie}},
+\code{\link{mlr_learners_clust.gmeans}},
 \code{\link{mlr_learners_clust.hclust}},
 \code{\link{mlr_learners_clust.hdbscan}},
 \code{\link{mlr_learners_clust.kcca}},
 \code{\link{mlr_learners_clust.kkmeans}},
 \code{\link{mlr_learners_clust.kmeans}},
+\code{\link{mlr_learners_clust.kmeans_rcpp}},
+\code{\link{mlr_learners_clust.kmodes}},
 \code{\link{mlr_learners_clust.kproto}},
 \code{\link{mlr_learners_clust.mclust}},
 \code{\link{mlr_learners_clust.meanshift}},
@@ -138,10 +141,20 @@ Other Learner:
 \section{Super classes}{
 \code{\link[mlr3:Learner]{mlr3::Learner}} -> \code{\link[mlr3cluster:LearnerClust]{LearnerClust}} -> \code{LearnerClustEM}
 }
+\section{Active bindings}{
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{marshaled}}{(\code{logical(1)})\cr
+Whether the learner's model is marshaled.}
+  }
+  \if{html}{\out{</div>}}
+}
 \section{Methods}{
 \subsection{Public methods}{
   \itemize{
     \item \href{#method-LearnerClustEM-initialize}{\code{LearnerClustEM$new()}}
+    \item \href{#method-LearnerClustEM-marshal}{\code{LearnerClustEM$marshal()}}
+    \item \href{#method-LearnerClustEM-unmarshal}{\code{LearnerClustEM$unmarshal()}}
     \item \href{#method-LearnerClustEM-clone}{\code{LearnerClustEM$clone()}}
   }
 }
@@ -168,6 +181,46 @@ Other Learner:
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{LearnerClustEM$new()}
+    \if{html}{\out{</div>}}
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-LearnerClustEM-marshal"></a>}}
+\if{latex}{\out{\hypertarget{method-LearnerClustEM-marshal}{}}}
+\subsection{\code{LearnerClustEM$marshal()}}{
+  Marshal the learner's model.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LearnerClustEM$marshal(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{(any)\cr
+Additional arguments passed to \code{\link[mlr3:marshal_model]{mlr3::marshal_model()}}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-LearnerClustEM-unmarshal"></a>}}
+\if{latex}{\out{\hypertarget{method-LearnerClustEM-unmarshal}{}}}
+\subsection{\code{LearnerClustEM$unmarshal()}}{
+  Unmarshal the learner's model.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LearnerClustEM$unmarshal(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{(any)\cr
+Additional arguments passed to \code{\link[mlr3:unmarshal_model]{mlr3::unmarshal_model()}}.}
+    }
     \if{html}{\out{</div>}}
   }
 }

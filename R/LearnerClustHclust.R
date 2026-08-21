@@ -38,7 +38,7 @@ LearnerClustHclust = R6Class(
         ),
         diag = p_lgl(default = FALSE, tags = c("train", "dist")),
         upper = p_lgl(default = FALSE, tags = c("train", "dist")),
-        p = p_dbl(default = 2, tags = c("train", "dist"), depends = quote(distmethod == "minkowski")),
+        p = p_dbl(0, default = 2, tags = c("train", "dist"), depends = quote(distmethod == "minkowski")),
         k = p_int(1L, tags = c("train", "cutree", "predict"))
       )
 
@@ -83,8 +83,10 @@ LearnerClustHclust = R6Class(
 
     .predict = function(task) {
       pv = self$param_set$get_values(tags = "predict")
-      if (pv$k > task$nrow) {
-        error_input("`k` needs to be between 1 and %i.", task$nrow)
+      # `cutree` cuts the training tree, so `k` is bounded by the number of training observations
+      n = length(self$model$order)
+      if (pv$k > n) {
+        error_input("`k` needs to be between 1 and %i.", n)
       }
 
       warn_prediction_useless(self$id)
@@ -94,7 +96,7 @@ LearnerClustHclust = R6Class(
         .args = self$param_set$get_values(tags = c("train", "cutree"))
       )
 
-      PredictionClust$new(task = task, partition = partition)
+      list(partition = partition)
     }
   )
 )

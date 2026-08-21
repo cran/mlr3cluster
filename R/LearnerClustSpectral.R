@@ -41,7 +41,7 @@ LearnerClustSpectral = R6Class(
         ),
         degree = p_int(
           1L,
-          default = 3L,
+          default = 1L,
           tags = c("train", "kpar"),
           depends = quote(kernel %in% c("polydot", "anovadot", "besseldot"))
         ),
@@ -88,8 +88,8 @@ LearnerClustSpectral = R6Class(
 
     .predict = function(task) {
       warn_prediction_useless(self$id)
-      partition = self$assignments %??% as.integer(self$model)
-      PredictionClust$new(task = task, partition = partition)
+      partition = as.integer(self$model)
+      list(partition = partition)
     }
   )
 )

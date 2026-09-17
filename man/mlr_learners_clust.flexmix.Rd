@@ -10,6 +10,8 @@ Calls \code{\link[flexmix:stepFlexmix]{flexmix::stepFlexmix()}} from package \CR
 best fit. When \code{cluster} provides fixed initial assignments, \code{\link[flexmix:flexmix]{flexmix::flexmix()}} is called instead and \code{nrep}
 must not be larger than 1.
 
+The \code{k} parameter is set to 2 by default since \code{\link[flexmix:stepFlexmix]{flexmix::stepFlexmix()}} doesn't have a default value for the number
+of components.
 The component model is selected through the \code{model} parameter, exposing the multivariate normal, univariate normal,
 multivariate binary, and multivariate Poisson drivers shipped with flexmix.
 The predict method calls \code{flexmix::clusters()} for cluster assignments and \code{flexmix::posterior()} for component
@@ -33,7 +35,7 @@ lrn("clust.flexmix")
 \item Task type: \dQuote{clust}
 \item Predict Types: \dQuote{partition}, \dQuote{prob}
 \item Feature Types: \dQuote{logical}, \dQuote{integer}, \dQuote{numeric}
-\item Required Packages: \CRANpkg{mlr3}, \CRANpkg{mlr3cluster}, \CRANpkg{flexmix}
+\item Required Packages: \CRANpkg{mlr3}, \CRANpkg{mlr3cluster}, \CRANpkg{flexmix}, \CRANpkg{mvtnorm}
 }
 }
 
@@ -44,7 +46,7 @@ lrn("clust.flexmix")
    model \tab character \tab FLXMCmvnorm \tab FLXMCmvnorm, FLXMCnorm1, FLXMCmvbinary, FLXMCmvpois \tab - \cr
    diagonal \tab logical \tab TRUE \tab TRUE, FALSE \tab - \cr
    truncated \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
-   cluster \tab untyped \tab - \tab  \tab - \cr
+   cluster \tab untyped \tab NULL \tab  \tab - \cr
    iter.max \tab integer \tab 200 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
    minprior \tab numeric \tab 0.05 \tab  \tab \eqn{[0, 1]}{[0, 1]} \cr
    tolerance \tab numeric \tab 1e-06 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr

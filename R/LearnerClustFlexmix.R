@@ -1,6 +1,7 @@
 #' @title Finite Mixture Model Clustering Learner
 #'
 #' @name mlr_learners_clust.flexmix
+#' @include LearnerClust.R
 #'
 #' @description
 #' Finite mixture model clustering via the EM algorithm.
@@ -8,6 +9,8 @@
 #' best fit. When `cluster` provides fixed initial assignments, [flexmix::flexmix()] is called instead and `nrep`
 #' must not be larger than 1.
 #'
+#' The `k` parameter is set to 2 by default since [flexmix::stepFlexmix()] doesn't have a default value for the number
+#' of components.
 #' The component model is selected through the `model` parameter, exposing the multivariate normal, univariate normal,
 #' multivariate binary, and multivariate Poisson drivers shipped with flexmix.
 #' The predict method calls `flexmix::clusters()` for cluster assignments and `flexmix::posterior()` for component
@@ -41,7 +44,11 @@ LearnerClustFlexmix = R6Class(
         ),
         diagonal = p_lgl(default = TRUE, tags = "train", depends = quote(model == "FLXMCmvnorm")),
         truncated = p_lgl(default = FALSE, tags = "train", depends = quote(model == "FLXMCmvbinary")),
-        cluster = p_uty(tags = "train", custom_check = check_numeric),
+        cluster = p_uty(
+          default = NULL,
+          tags = "train",
+          custom_check = crate(function(x) check_numeric(x, null.ok = TRUE))
+        ),
         iter.max = p_int(1L, default = 200L, tags = c("train", "control")),
         minprior = p_dbl(0, 1, default = 0.05, tags = c("train", "control")),
         tolerance = p_dbl(0, default = 1e-6, tags = c("train", "control")),
@@ -62,7 +69,7 @@ LearnerClustFlexmix = R6Class(
         predict_types = c("partition", "prob"),
         param_set = param_set,
         properties = c("partitional", "fuzzy", "complete"),
-        packages = "flexmix",
+        packages = c("flexmix", "mvtnorm"),
         man = "mlr3cluster::mlr_learners_clust.flexmix",
         label = "Finite Mixture Model"
       )
@@ -91,7 +98,7 @@ LearnerClustFlexmix = R6Class(
         driver_args$truncated = pv$truncated
       }
       pv = remove_named(pv, c("model", "diagonal", "truncated"))
-      driver = do.call(getExportedValue("flexmix", model_name), driver_args)
+      driver = invoke(getExportedValue("flexmix", model_name), .args = driver_args)
 
       data = setDF(task$data())
       # multivariate LHS via cbind() so that posterior() can rebuild the design matrix from newdata

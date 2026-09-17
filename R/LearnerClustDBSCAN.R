@@ -1,6 +1,7 @@
 #' @title DBSCAN Clustering Learner
 #'
 #' @name mlr_learners_clust.dbscan
+#' @include LearnerClust.R
 #'
 #' @description
 #' DBSCAN (density-based spatial clustering of applications with noise) clustering.
@@ -25,12 +26,16 @@ LearnerClustDBSCAN = R6Class(
       param_set = ps(
         eps = p_dbl(0, tags = c("train", "required")),
         minPts = p_int(0L, default = 5L, tags = "train"),
-        weights = p_uty(tags = "train", custom_check = check_numeric),
+        weights = p_uty(
+          default = NULL,
+          tags = "train",
+          custom_check = crate(function(x) check_numeric(x, null.ok = TRUE))
+        ),
         borderPoints = p_lgl(default = TRUE, tags = "train"),
         search = p_fct(c("kdtree", "linear", "dist"), default = "kdtree", tags = "train"),
         bucketSize = p_int(1L, default = 10L, tags = "train", depends = quote(search == "kdtree")),
         splitRule = p_fct(
-          levels = c("STD", "MIDPT", "FAIR", "SL_MIDPT", "SL_FAIR", "SUGGEST"),
+          c("STD", "MIDPT", "FAIR", "SL_MIDPT", "SL_FAIR", "SUGGEST"),
           default = "SUGGEST",
           tags = "train",
           depends = quote(search == "kdtree")
@@ -54,9 +59,9 @@ LearnerClustDBSCAN = R6Class(
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      data = task$data()
+      data = as_numeric_matrix(task$data())
       m = invoke(dbscan::dbscan, x = data, .args = pv)
-      m = insert_named(m, list(data = data))
+      m$data = data
       if (self$save_assignments) {
         self$assignments = m$cluster
       }
@@ -64,7 +69,12 @@ LearnerClustDBSCAN = R6Class(
     },
 
     .predict = function(task) {
-      partition = invoke(predict, self$model, newdata = ordered_features(task, self), data = self$model$data)
+      partition = invoke(
+        predict,
+        self$model,
+        newdata = as_numeric_matrix(ordered_features(task, self)),
+        data = self$model$data
+      )
       list(partition = partition)
     }
   )

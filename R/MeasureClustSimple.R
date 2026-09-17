@@ -4,9 +4,8 @@
 MeasureClustSimple = R6Class(
   "MeasureClustSimple",
   inherit = MeasureClust,
-  cloneable = FALSE,
   public = list(
-    initialize = function(name, label) {
+    initialize = function(name) {
       info = measures[[name]]
       super$initialize(
         id = paste0("clust.", name),
@@ -15,7 +14,7 @@ MeasureClustSimple = R6Class(
         predict_type = info$predict_type,
         packages = if (info$input == "dist") "cluster" else character(),
         properties = if (info$input != "none") "requires_task" else character(),
-        label = label,
+        label = info$label,
         man = paste0("mlr3cluster::mlr_measures_clust.", name)
       )
       private$.fun = info$fun
@@ -38,7 +37,7 @@ MeasureClustSimple = R6Class(
       switch(
         private$.input,
         data = {
-          if (any(task$feature_types$type %in% c("character", "factor", "ordered"))) {
+          if (any(task$feature_types$type %chin% c("character", "factor", "ordered"))) {
             error_input(
               "Measure '%s' requires numeric features, but task '%s' has character, factor, or ordered features.",
               self$id,
@@ -60,40 +59,11 @@ MeasureClustSimple = R6Class(
   )
 )
 
-MeasureClustSil = R6Class(
-  "MeasureClustSil",
-  inherit = MeasureClust,
-  cloneable = FALSE,
-  public = list(
-    initialize = function() {
-      super$initialize(
-        id = "clust.silhouette",
-        range = c(-1, 1),
-        minimize = FALSE,
-        predict_type = "partition",
-        packages = "cluster",
-        properties = "requires_task",
-        label = "Silhouette",
-        man = "mlr3cluster::mlr_measures_clust.silhouette"
-      )
-    }
-  ),
-  private = list(
-    .score = function(prediction, task, ...) {
-      if (length(unique(prediction$partition)) < 2L) {
-        return(NaN)
-      }
-
-      d = task_dist(task, prediction$row_ids)
-
-      mean(silhouette(prediction$partition, d)[, "sil_width"])
-    }
-  )
-)
-
 #' @title Rousseeuw's Silhouette Quality Index
 #'
 #' @description
+#' Calls [cluster::silhouette()] from package \CRANpkg{cluster}.
+#'
 #' The Silhouette Width measures how well each observation fits within its assigned cluster compared to neighboring
 #' clusters. For each observation, the silhouette value is defined as
 #' \eqn{s(i) = (b(i) - a(i)) / \max(a(i), b(i))}{s(i) = (b(i) - a(i)) / max(a(i), b(i))}
@@ -107,11 +77,18 @@ MeasureClustSil = R6Class(
 #' Euclidean distances.
 #'
 #' @templateVar id silhouette
-#' @template measure_sil
+#' @template measure_clust
 #'
 #' @references
 #' `r format_bib("rousseeuw1987silhouettes")`
-NULL
+measures$silhouette = make_measure_info(
+  cluster_silhouette,
+  label = "Silhouette",
+  lower = -1,
+  upper = 1,
+  minimize = FALSE,
+  input = "dist"
+)
 
 #' @title Calinski Harabasz Pseudo F-Statistic
 #'
@@ -127,7 +104,14 @@ NULL
 #'
 #' @references
 #' `r format_bib("calinski1974dendrite")`
-measures$ch = make_measure_info(cluster_ch, lower = 0, upper = Inf, minimize = FALSE, input = "data")
+measures$ch = make_measure_info(
+  cluster_ch,
+  label = "Calinski Harabasz",
+  lower = 0,
+  upper = Inf,
+  minimize = FALSE,
+  input = "data"
+)
 
 #' @title Dunn Index
 #'
@@ -147,7 +131,14 @@ measures$ch = make_measure_info(cluster_ch, lower = 0, upper = Inf, minimize = F
 #'
 #' @references
 #' `r format_bib("dunn1974well")`
-measures$dunn = make_measure_info(cluster_dunn, lower = 0, upper = Inf, minimize = FALSE, input = "dist")
+measures$dunn = make_measure_info(
+  cluster_dunn,
+  label = "Dunn",
+  lower = 0,
+  upper = Inf,
+  minimize = FALSE,
+  input = "dist"
+)
 
 #' @title Within Sum of Squares
 #'
@@ -161,6 +152,7 @@ measures$dunn = make_measure_info(cluster_dunn, lower = 0, upper = Inf, minimize
 #' @template measure_clust
 measures$wss = make_measure_info(
   cluster_wss,
+  label = "Within Sum of Squares",
   lower = 0,
   upper = Inf,
   minimize = TRUE,
@@ -182,6 +174,7 @@ measures$wss = make_measure_info(
 #' @template measure_clust
 measures$sse_ratio = make_measure_info(
   cluster_sse_ratio,
+  label = "Within/Total Ratio",
   lower = 0,
   upper = 1,
   minimize = TRUE,
@@ -206,7 +199,14 @@ measures$sse_ratio = make_measure_info(
 #'
 #' @references
 #' `r format_bib("dunn1974well")`
-measures$dunn2 = make_measure_info(cluster_dunn2, lower = 0, upper = Inf, minimize = FALSE, input = "dist")
+measures$dunn2 = make_measure_info(
+  cluster_dunn2,
+  label = "Dunn2",
+  lower = 0,
+  upper = Inf,
+  minimize = FALSE,
+  input = "dist"
+)
 
 #' @title Within/Between Ratio
 #'
@@ -222,7 +222,14 @@ measures$dunn2 = make_measure_info(cluster_dunn2, lower = 0, upper = Inf, minimi
 #'
 #' @templateVar id wb_ratio
 #' @template measure_clust
-measures$wb_ratio = make_measure_info(cluster_wb_ratio, lower = 0, upper = Inf, minimize = TRUE, input = "dist")
+measures$wb_ratio = make_measure_info(
+  cluster_wb_ratio,
+  label = "Within/Between Ratio",
+  lower = 0,
+  upper = Inf,
+  minimize = TRUE,
+  input = "dist"
+)
 
 #' @title Entropy
 #'
@@ -237,6 +244,7 @@ measures$wb_ratio = make_measure_info(cluster_wb_ratio, lower = 0, upper = Inf, 
 #' @template measure_clust
 measures$entropy = make_measure_info(
   cluster_entropy,
+  label = "Entropy",
   lower = 0,
   upper = Inf,
   minimize = NA,
@@ -258,7 +266,14 @@ measures$entropy = make_measure_info(
 #'
 #' @templateVar id pearsongamma
 #' @template measure_clust
-measures$pearsongamma = make_measure_info(cluster_pearsongamma, lower = -1, upper = 1, minimize = FALSE, input = "dist")
+measures$pearsongamma = make_measure_info(
+  cluster_pearsongamma,
+  label = "Pearson Gamma",
+  lower = -1,
+  upper = 1,
+  minimize = FALSE,
+  input = "dist"
+)
 
 #' @title Davies-Bouldin Index
 #'
@@ -277,6 +292,7 @@ measures$pearsongamma = make_measure_info(cluster_pearsongamma, lower = -1, uppe
 #' `r format_bib("davies1979cluster")`
 measures$davies_bouldin = make_measure_info(
   cluster_davies_bouldin,
+  label = "Davies-Bouldin",
   lower = 0,
   upper = Inf,
   minimize = TRUE,
@@ -296,7 +312,14 @@ measures$davies_bouldin = make_measure_info(
 #'
 #' @templateVar id avg_between
 #' @template measure_clust
-measures$avg_between = make_measure_info(cluster_avg_between, lower = 0, upper = Inf, minimize = FALSE, input = "dist")
+measures$avg_between = make_measure_info(
+  cluster_avg_between,
+  label = "Average Between",
+  lower = 0,
+  upper = Inf,
+  minimize = FALSE,
+  input = "dist"
+)
 
 #' @title Average Within-Cluster Distance
 #'
@@ -313,6 +336,7 @@ measures$avg_between = make_measure_info(cluster_avg_between, lower = 0, upper =
 #' @template measure_clust
 measures$avg_within = make_measure_info(
   cluster_avg_within,
+  label = "Average Within",
   lower = 0,
   upper = Inf,
   minimize = TRUE,

@@ -1,6 +1,7 @@
 #' @title ST-DBSCAN Clustering Learner
 #'
 #' @name mlr_learners_clust.stdbscan
+#' @include LearnerClust.R
 #'
 #' @description
 #' ST-DBSCAN (spatio-temporal density-based spatial clustering of applications with noise) clustering.
@@ -29,12 +30,16 @@ LearnerClustSTDBSCAN = R6Class(
         eps_spatial = p_dbl(0, tags = c("train", "required")),
         eps_temporal = p_dbl(0, tags = c("train", "required")),
         min_pts = p_int(1L, tags = c("train", "required")),
-        weights = p_uty(tags = "train", custom_check = check_numeric),
+        weights = p_uty(
+          default = NULL,
+          tags = "train",
+          custom_check = crate(function(x) check_numeric(x, null.ok = TRUE))
+        ),
         borderPoints = p_lgl(default = TRUE, tags = "train"),
         search = p_fct(c("kdtree", "linear", "dist"), default = "kdtree", tags = "train"),
         bucketSize = p_int(1L, default = 10L, tags = "train", depends = quote(search == "kdtree")),
         splitRule = p_fct(
-          levels = c("STD", "MIDPT", "FAIR", "SL_MIDPT", "SL_FAIR", "SUGGEST"),
+          c("STD", "MIDPT", "FAIR", "SL_MIDPT", "SL_FAIR", "SUGGEST"),
           default = "SUGGEST",
           tags = "train",
           depends = quote(search == "kdtree")
@@ -66,7 +71,7 @@ LearnerClustSTDBSCAN = R6Class(
       pv = self$param_set$get_values(tags = "train")
       data = task$data()
       m = invoke(stdbscan::st_dbscan, data = as.matrix(data), .args = pv)
-      m = insert_named(m, list(data = data))
+      m$data = data
       if (self$save_assignments) {
         self$assignments = m$cluster
       }

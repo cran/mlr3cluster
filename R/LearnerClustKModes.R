@@ -1,6 +1,7 @@
 #' @title K-Modes Clustering Learner
 #'
 #' @name mlr_learners_clust.kmodes
+#' @include LearnerClust.R
 #'
 #' @description
 #' K-modes clustering for categorical data.
@@ -14,6 +15,11 @@
 #' Since [klaR::kmodes()] does not provide a predict method, new observations are assigned to their closest learned
 #' mode.
 #' Prediction always uses unweighted simple matching distance, including for models trained with `weighted = TRUE`.
+#'
+#' @section Custom mlr3 parameters:
+#' - `ties`:
+#'   - Not an argument of [klaR::kmodes()]. Controls how ties are broken when assigning observations to their
+#'     closest mode during prediction.
 #'
 #' @templateVar id clust.kmodes
 #' @template learner

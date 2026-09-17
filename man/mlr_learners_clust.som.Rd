@@ -8,10 +8,31 @@
 Self-organizing map (Kohonen network) clustering.
 Calls \code{\link[kohonen:som]{kohonen::som()}} from package \CRANpkg{kohonen}.
 
-Each map unit corresponds to a cluster, so the number of clusters is \code{xdim * ydim}. Grid dimensions, topology, and
-neighbourhood function are exposed directly as parameters and forwarded to \code{\link[kohonen:somgrid]{kohonen::somgrid()}}. The predict method
+Each map unit corresponds to a cluster, so the number of clusters is \code{xdim * ydim}. The predict method
 uses \code{\link[kohonen:map]{kohonen::map()}} to assign new data to the closest unit.
 }
+\section{Custom mlr3 parameters}{
+
+\itemize{
+\item \code{xdim}, \code{ydim}, \code{topo}, \code{neighbourhood.fct}, \code{toroidal}:
+\itemize{
+\item Not arguments of \code{\link[kohonen:som]{kohonen::som()}}. These construct the map grid and are forwarded to \code{\link[kohonen:somgrid]{kohonen::somgrid()}}.
+}
+}
+}
+
+\section{Initial parameter values}{
+
+\itemize{
+\item \code{cores}:
+\itemize{
+\item Actual default: \code{-1L}, using all available cores.
+\item Adjusted default: \code{1L}.
+\item Reason for change: Conflicting with parallelization via \CRANpkg{future}.
+}
+}
+}
+
 \section{Dictionary}{
 
 This \link[mlr3:Learner]{mlr3::Learner} can be instantiated via the \link[mlr3misc:Dictionary]{dictionary} \link[mlr3:mlr_learners]{mlr3::mlr_learners} or with the associated sugar function \code{\link[mlr3:lrn]{mlr3::lrn()}}:

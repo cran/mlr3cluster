@@ -1,6 +1,7 @@
 #' @title Robust Trimmed Clustering Learner
 #'
 #' @name mlr_learners_clust.tclust
+#' @include LearnerClust.R
 #'
 #' @description
 #' Robust trimmed clustering. Each cluster is modeled by a multivariate Gaussian; the most
@@ -11,11 +12,17 @@
 #' clusters. There is no predict method for [tclust::tclust()], so the method returns cluster labels for the training
 #' data.
 #'
+#' Setting `n.cores` to a value greater than one enables `parallel` at train time unless it is set explicitly.
+#'
 #' @section Initial parameter values:
 #' - `store_x`:
 #'   - Actual default: `TRUE`.
 #'   - Adjusted default: `FALSE`.
 #'   - Reason for change: Avoid storing the training data in the model to save memory.
+#' - `n.cores`:
+#'   - Actual default: `-1L`, using all available cores.
+#'   - Adjusted default: `1L`.
+#'   - Reason for change: Conflicting with parallelization via \CRANpkg{future}.
 #'
 #' @templateVar id clust.tclust
 #' @template learner
@@ -49,13 +56,13 @@ LearnerClustTclust = R6Class(
         scale = p_lgl(default = FALSE, tags = "train"),
         store_x = p_lgl(default = TRUE, tags = "train"),
         parallel = p_lgl(default = FALSE, tags = "train"),
-        n.cores = p_int(default = -1L, tags = "train", depends = quote(parallel == TRUE)),
+        n.cores = p_int(-2L, default = -1L, tags = c("train", "threads")),
         zero_tol = p_dbl(0, default = 1e-16, tags = "train"),
         drop.empty.clust = p_lgl(default = TRUE, tags = "train"),
         trace = p_int(0L, default = 0L, tags = "train")
       )
 
-      param_set$set_values(k = 2L, store_x = FALSE)
+      param_set$set_values(k = 2L, store_x = FALSE, n.cores = 1L)
 
       super$initialize(
         id = "clust.tclust",
@@ -73,7 +80,10 @@ LearnerClustTclust = R6Class(
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      m = invoke(tclust::tclust, x = as_numeric_matrix(task$data()), .args = pv)
+      if (isTRUE(pv$n.cores > 1L) && is.null(pv$parallel)) {
+        pv$parallel = TRUE
+      }
+      m = invoke(tclust::tclust, x = as_numeric_matrix(task$data()), .args = pv, .opts = allow_partial_matching)
       if (self$save_assignments) {
         self$assignments = as.integer(m$cluster)
       }

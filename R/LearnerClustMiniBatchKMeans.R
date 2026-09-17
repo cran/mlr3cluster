@@ -1,14 +1,15 @@
 #' @title Mini Batch K-Means Clustering Learner
 #'
 #' @name mlr_learners_clust.MBatchKMeans
+#' @include LearnerClust.R
 #'
 #' @description
 #' Mini-batch k-means clustering.
 #' Calls [ClusterR::MiniBatchKmeans()] from package \CRANpkg{ClusterR}.
 #'
 #' The `clusters` parameter is set to 2 by default since [ClusterR::MiniBatchKmeans()] doesn't have a default value for
-#' the number of clusters. The predict method uses [ClusterR::predict_MBatchKMeans()] to compute the cluster memberships
-#' for new data. The learner supports both partitional and fuzzy clustering.
+#' the number of clusters. The predict method uses [ClusterR::predict_KMeans()] on the fitted centroids to compute the
+#' cluster memberships for new data. The learner supports both partitional and fuzzy clustering.
 #'
 #' @templateVar id clust.MBatchKMeans
 #' @template learner
@@ -48,7 +49,8 @@ LearnerClustMiniBatchKMeans = R6Class(
         CENTROIDS = p_uty(default = NULL, tags = "train"),
         tol = p_dbl(0, default = 1e-04, tags = "train"),
         tol_optimal_init = p_dbl(0, default = 0.3, tags = "train"),
-        seed = p_int(default = 1L, tags = "train")
+        seed = p_int(default = 1L, tags = "train"),
+        threads = p_int(1L, default = 1L, tags = c("predict", "threads"))
       )
 
       param_set$set_values(clusters = 2L)
@@ -77,17 +79,22 @@ LearnerClustMiniBatchKMeans = R6Class(
       data = task$data()
       m = invoke(ClusterR::MiniBatchKmeans, data = data, .args = pv)
       if (self$save_assignments) {
-        self$assignments = as.integer(invoke(predict, m, newdata = data))
+        pv_predict = self$param_set$get_values(tags = "predict")
+        self$assignments = as.integer(
+          invoke(ClusterR::predict_KMeans, data = data, CENTROIDS = m$centroids, .args = pv_predict)
+        )
       }
       m
     },
 
     .predict = function(task) {
+      pv = self$param_set$get_values(tags = "predict")
       data = ordered_features(task, self)
-      partition = as.integer(invoke(predict, self$model, newdata = data))
+      centroids = self$model$centroids
+      partition = as.integer(invoke(ClusterR::predict_KMeans, data = data, CENTROIDS = centroids, .args = pv))
       prob = NULL
       if (self$predict_type == "prob") {
-        prob = invoke(predict, self$model, newdata = data, fuzzy = TRUE)
+        prob = invoke(ClusterR::predict_KMeans, data = data, CENTROIDS = centroids, fuzzy = TRUE, .args = pv)
         colnames(prob) = seq_col(prob)
       }
       list(partition = partition, prob = prob)

@@ -1,6 +1,7 @@
 #' @title OPTICS Clustering Learner
 #'
 #' @name mlr_learners_clust.optics
+#' @include LearnerClust.R
 #'
 #' @description
 #' OPTICS (ordering points to identify the clustering structure) clustering.
@@ -28,7 +29,7 @@ LearnerClustOPTICS = R6Class(
         search = p_fct(c("kdtree", "linear", "dist"), default = "kdtree", tags = "train"),
         bucketSize = p_int(1L, default = 10L, tags = "train", depends = quote(search == "kdtree")),
         splitRule = p_fct(
-          levels = c("STD", "MIDPT", "FAIR", "SL_MIDPT", "SL_FAIR", "SUGGEST"),
+          c("STD", "MIDPT", "FAIR", "SL_MIDPT", "SL_FAIR", "SUGGEST"),
           default = "SUGGEST",
           tags = "train",
           depends = quote(search == "kdtree")
@@ -55,7 +56,7 @@ LearnerClustOPTICS = R6Class(
       pv = self$param_set$get_values(tags = "train")
       data = as_numeric_matrix(task$data())
       m = invoke(dbscan::optics, x = data, .args = remove_named(pv, "eps_cl"))
-      m = insert_named(m, list(data = data))
+      m$data = data
       m = invoke(dbscan::extractDBSCAN, object = m, eps_cl = pv$eps_cl)
 
       if (self$save_assignments) {

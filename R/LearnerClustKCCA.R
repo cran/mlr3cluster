@@ -1,6 +1,7 @@
 #' @title K-Centroids Cluster Analysis Learner
 #'
 #' @name mlr_learners_clust.kcca
+#' @include LearnerClust.R
 #'
 #' @description
 #' K-Centroids Cluster Analysis - a unified framework for partitional clustering with selectable distance / centroid
@@ -8,9 +9,7 @@
 #' Calls [flexclust::kcca()] from package \CRANpkg{flexclust}.
 #'
 #' The `k` parameter is set to 2 by default since [flexclust::kcca()] has no default value for the number of clusters.
-#' Predictions dispatch to flexclust's S4 `predict` method via `methods::getMethod("predict", "kccasimple")`
-#' rather than calling `predict()` directly, since both \pkg{flexclust} and \pkg{kernlab} define an S4 class
-#' named `"kcca"` and the resulting class-cache collision can break S4 dispatch when both packages are loaded.
+#' The predict method uses `flexclust::clusters()` to compute the cluster memberships for new data.
 #'
 #' @templateVar id clust.kcca
 #' @template learner
@@ -31,8 +30,12 @@ LearnerClustKCCA = R6Class(
       param_set = ps(
         k = p_int(2L, tags = c("train", "required")),
         family = p_fct(c("kmeans", "kmedians", "angle", "jaccard", "ejaccard"), default = "kmeans", tags = "train"),
-        weights = p_uty(tags = "train", custom_check = check_numeric),
-        group = p_uty(tags = "train"),
+        weights = p_uty(
+          default = NULL,
+          tags = "train",
+          custom_check = crate(function(x) check_numeric(x, null.ok = TRUE))
+        ),
+        group = p_uty(default = NULL, tags = "train"),
         simple = p_lgl(default = FALSE, tags = "train"),
         save.data = p_lgl(default = FALSE, tags = "train"),
         iter.max = p_int(1L, default = 200L, tags = c("train", "control")),
@@ -70,9 +73,7 @@ LearnerClustKCCA = R6Class(
       pv = ps$get_values(tags = "train")
       control_args = ps$get_values(tags = "control")
       pv = remove_named(pv, names(control_args))
-      if (length(control_args) > 0L) {
-        pv$control = invoke(methods::new, "flexclustControl", .args = control_args)
-      }
+      pv$control = control_args
       pv$family = flexclust::kccaFamily(pv$family %??% "kmeans")
 
       m = invoke(flexclust::kcca, x = as.matrix(task$data()), .args = pv)
@@ -83,11 +84,7 @@ LearnerClustKCCA = R6Class(
     },
 
     .predict = function(task) {
-      partition = as.integer(invoke(
-        methods::getMethod("predict", "kccasimple"),
-        self$model,
-        newdata = as.matrix(ordered_features(task, self))
-      ))
+      partition = as.integer(flexclust::clusters(self$model, newdata = as.matrix(ordered_features(task, self))))
       list(partition = partition)
     }
   )

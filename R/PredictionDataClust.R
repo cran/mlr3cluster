@@ -7,23 +7,21 @@ as_prediction.PredictionDataClust = function(x, check = TRUE, ...) {
 check_prediction_data.PredictionDataClust = function(pdata, ...) {
   pdata$row_ids = assert_row_ids(pdata$row_ids)
   n = length(pdata$row_ids)
-  pdata$partition = assert_integerish(
-    pdata$partition,
-    len = n,
-    any.missing = FALSE,
-    null.ok = TRUE,
-    coerce = TRUE
-  )
+  if (!is.null(pdata$partition)) {
+    pdata$partition = assert_integerish(pdata$partition, any.missing = FALSE, coerce = TRUE)
+    assert_prediction_count(length(pdata$partition), n, "partition")
+  }
 
   if (!is.null(pdata$weights)) {
     # weights may never be NA, even if no prediction was made
-    pdata$weights = assert_numeric(unname(pdata$weights), len = n, any.missing = FALSE)
+    pdata$weights = assert_numeric(unname(pdata$weights), any.missing = FALSE)
+    assert_prediction_count(length(pdata$weights), n, "weights")
   }
 
   prob = pdata$prob
   if (!is.null(prob)) {
-    # need to check number of columns for matrix
-    assert_matrix(prob, nrows = n)
+    assert_matrix(prob)
+    assert_prediction_count(nrow(prob), n, "prob")
     assert_numeric(prob, lower = 0, upper = 1)
     if (!is.null(rownames(prob))) {
       rownames(prob) = NULL
@@ -31,7 +29,7 @@ check_prediction_data.PredictionDataClust = function(pdata, ...) {
     }
 
     labels = suppressWarnings(as.integer(colnames(prob)))
-    if (!length(labels) || anyNA(labels)) {
+    if (length(labels) == 0L || anyNA(labels)) {
       labels = seq_col(prob)
     }
 
@@ -39,6 +37,13 @@ check_prediction_data.PredictionDataClust = function(pdata, ...) {
       pdata$partition = labels[max.col(prob, ties.method = "first")]
     } else if (ncol(prob) > 0L) {
       assert_subset(pdata$partition, labels, .var.name = "partition")
+    }
+  }
+
+  if (!is.null(pdata$extra)) {
+    assert_list(pdata$extra, names = "unique")
+    if (any(lengths(pdata$extra) != n)) {
+      error_learner_predict("Extra data must have the same length as the number of predictions")
     }
   }
 
@@ -79,28 +84,43 @@ c.PredictionDataClust = function(..., keep_duplicates = TRUE) {
     error_input("Cannot combine predictions: Some predictions have weights, others do not.")
   }
 
+  if (length(unique(map_lgl(dots, function(x) is.null(x$extra)))) > 1L) {
+    error_input("Cannot combine predictions: Some predictions have extra data, others do not.")
+  }
+
   nn = names(dots[[1L]])
   elems = c("row_ids", "partition", if ("weights" %chin% nn) "weights")
   tab = map_dtr(dots, function(x) x[elems], .fill = FALSE)
   probs = map(dots, "prob")
-  # empty predictions carry a 0-column prob placeholder (k is unknown), so drop 0-row matrices before rbind
-  non_empty = compact(probs)
-  prob = if (length(non_empty)) {
-    do.call(rbind, non_empty)
-  } else {
-    # only the 0-column placeholder means unknown k, real 0-row matrices must still agree on their columns
-    known = discard(probs, function(p) is.null(p) || ncol(p) == 0L)
-    if (length(known)) do.call(rbind, known) else probs[[1L]]
+  # empty predictions carry a 0-column prob placeholder (k is unknown), so only matrices with columns constrain k
+  known = discard(probs, function(p) is.null(p) || ncol(p) == 0L)
+  if (length(unique(map_int(known, ncol))) > 1L) {
+    error_input("Cannot combine predictions: Different number of clusters.")
+  }
+  prob = if (length(known) > 0L) do.call(rbind, known) else probs[[1L]]
+
+  extra = NULL
+  if ("extra" %chin% nn) {
+    extra = rbindlist(map(dots, "extra"), fill = TRUE, use.names = TRUE)
   }
 
   if (!keep_duplicates) {
     keep = !duplicated(tab, by = "row_ids", fromLast = TRUE)
     tab = tab[keep]
     prob = prob[keep, , drop = FALSE]
+    extra = extra[keep]
   }
 
   result = as.list(tab)
   result$prob = prob
+  if (!is.null(extra)) {
+    result$extra = as.list(extra)
+  }
+
+  raw = discard(map(dots, "raw"), is.null)
+  if (length(raw) > 0L) {
+    result$raw = raw
+  }
 
   set_class(result, c("PredictionDataClust", "PredictionData"))
 }
@@ -122,6 +142,10 @@ filter_prediction_data.PredictionDataClust = function(pdata, row_ids, ...) {
     pdata$weights = pdata$weights[keep]
   }
 
+  if (!is.null(pdata$extra)) {
+    pdata$extra = map(pdata$extra, function(x) x[keep])
+  }
+
   pdata
 }
 
@@ -129,10 +153,7 @@ filter_prediction_data.PredictionDataClust = function(pdata, row_ids, ...) {
 create_empty_prediction_data.TaskClust = function(task, learner) {
   predict_types = mlr_reflections$learner_predict_types[["clust"]][[learner$predict_type]]
 
-  pdata = list(
-    row_ids = integer(),
-    partition = integer()
-  )
+  pdata = list(row_ids = integer(), partition = integer())
 
   if ("prob" %chin% predict_types) {
     # the number of clusters is unknown here, so use a prob matrix without columns

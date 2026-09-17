@@ -3,27 +3,27 @@
 #' @import mlr3
 #' @import mlr3misc
 #' @import paradox
-#' @importFrom cluster silhouette
+#' @importFrom graphics plot
 #' @importFrom R6 R6Class
-#' @importFrom stats model.frame predict runif terms
+#' @importFrom stats model.frame predict rnorm runif terms
 "_PACKAGE"
 
 mlr3cluster_tasks = new.env(parent = emptyenv())
 mlr3cluster_learners = new.env(parent = emptyenv())
+mlr3cluster_task_generators = new.env(parent = emptyenv())
 
-register_task = function(name, constructor) {
-  if (name %chin% names(mlr3cluster_tasks)) {
-    stopf("task %s registered twice.", name)
+register_item = function(env, type) {
+  function(name, constructor) {
+    if (name %chin% names(env)) {
+      stopf("%s %s registered twice.", type, name)
+    }
+    env[[name]] = constructor
   }
-  mlr3cluster_tasks[[name]] = constructor
 }
 
-register_learner = function(name, constructor) {
-  if (name %chin% names(mlr3cluster_learners)) {
-    stopf("learner %s registered twice.", name)
-  }
-  mlr3cluster_learners[[name]] = constructor
-}
+register_task = register_item(mlr3cluster_tasks, "task")
+register_learner = register_item(mlr3cluster_learners, "learner")
+register_task_generator = register_item(mlr3cluster_task_generators, "task generator")
 
 register_mlr3 = function(...) {
   # reflections
@@ -37,17 +37,9 @@ register_mlr3 = function(...) {
 
   mlr_reflections$task_col_roles$clust = mlr_reflections$task_col_roles$regr
   mlr_reflections$task_properties$clust = mlr_reflections$task_properties$regr
-  mlr_reflections$learner_properties$clust = c(
-    "missings",
-    "marshal",
-    "partitional",
-    "hierarchical",
-    "exclusive",
-    "overlapping",
-    "fuzzy",
-    "complete",
-    "partial",
-    "density"
+  mlr_reflections$learner_properties$clust = union(
+    mlr_reflections$learner_properties$regr,
+    c("partitional", "hierarchical", "exclusive", "overlapping", "fuzzy", "complete", "partial", "density")
   )
   mlr_reflections$learner_predict_types$clust = list(partition = "partition", prob = c("partition", "prob"))
   mlr_reflections$measure_properties$clust = mlr_reflections$measure_properties$regr
@@ -58,24 +50,19 @@ register_mlr3 = function(...) {
   mlr_tasks = utils::getFromNamespace("mlr_tasks", ns = "mlr3")
   iwalk(as.list(mlr3cluster_tasks), function(task, id) mlr_tasks$add(id, task))
 
+  # task generators
+  mlr_task_generators = utils::getFromNamespace("mlr_task_generators", ns = "mlr3")
+  iwalk(as.list(mlr3cluster_task_generators), function(generator, id) mlr_task_generators$add(id, generator))
+
   # learners
   mlr_learners = utils::getFromNamespace("mlr_learners", ns = "mlr3")
   iwalk(as.list(mlr3cluster_learners), function(learner, id) mlr_learners$add(id, learner))
 
   # measures
   mlr_measures = utils::getFromNamespace("mlr_measures", ns = "mlr3")
-  mlr_measures$add("clust.silhouette", MeasureClustSil)
-  mlr_measures$add("clust.ch", MeasureClustSimple, name = "ch", label = "Calinski Harabasz")
-  mlr_measures$add("clust.dunn", MeasureClustSimple, name = "dunn", label = "Dunn")
-  mlr_measures$add("clust.wss", MeasureClustSimple, name = "wss", label = "Within Sum of Squares")
-  mlr_measures$add("clust.sse_ratio", MeasureClustSimple, name = "sse_ratio", label = "Within/Total Ratio")
-  mlr_measures$add("clust.dunn2", MeasureClustSimple, name = "dunn2", label = "Dunn2")
-  mlr_measures$add("clust.wb_ratio", MeasureClustSimple, name = "wb_ratio", label = "Within/Between Ratio")
-  mlr_measures$add("clust.entropy", MeasureClustSimple, name = "entropy", label = "Entropy")
-  mlr_measures$add("clust.pearsongamma", MeasureClustSimple, name = "pearsongamma", label = "Pearson Gamma")
-  mlr_measures$add("clust.davies_bouldin", MeasureClustSimple, name = "davies_bouldin", label = "Davies-Bouldin")
-  mlr_measures$add("clust.avg_between", MeasureClustSimple, name = "avg_between", label = "Average Between")
-  mlr_measures$add("clust.avg_within", MeasureClustSimple, name = "avg_within", label = "Average Within")
+  iwalk(as.list(measures), function(info, name) {
+    mlr_measures$add(paste0("clust.", name), MeasureClustSimple, name = name)
+  })
 }
 
 .onLoad = function(libname, pkgname) {
@@ -86,9 +73,9 @@ register_mlr3 = function(...) {
 
 .onUnload = function(libpath) {
   walk(names(mlr3cluster_tasks), function(id) mlr_tasks$remove(id))
+  walk(names(mlr3cluster_task_generators), function(id) mlr_task_generators$remove(id))
   walk(names(mlr3cluster_learners), function(id) mlr_learners$remove(id))
-  mlr_measures$remove("clust.silhouette")
-  walk(names(measures), function(id) mlr_measures$remove(paste("clust", id, sep = ".")))
+  walk(names(measures), function(id) mlr_measures$remove(paste0("clust.", id)))
 
   mlr_reflections$task_types = mlr_reflections$task_types[!"clust"]
   reflections = c(

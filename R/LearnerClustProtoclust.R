@@ -1,6 +1,7 @@
 #' @title Prototype Hierarchical Clustering Learner
 #'
 #' @name mlr_learners_clust.protoclust
+#' @include LearnerClust.R
 #'
 #' @description
 #' Hierarchical clustering using minimax linkage with prototypes.
@@ -9,6 +10,11 @@
 #' The predict method cuts the tree at the current `k` via [protoclust::protocut()] and assigns each new observation
 #' to the cluster of its nearest prototype, using the same distance method as during training. The model is therefore
 #' a list containing the fitted [protoclust::protoclust()] object along with the training data.
+#'
+#' @section Custom mlr3 parameters:
+#' - `k`:
+#'   - Not an argument of [protoclust::protoclust()]. The number of clusters to cut the tree into,
+#'     passed to [protoclust::protocut()]. Initialized to `2`.
 #'
 #' @templateVar id clust.protoclust
 #' @template learner
@@ -28,7 +34,7 @@ LearnerClustProtoclust = R6Class(
     initialize = function() {
       param_set = ps(
         method = p_fct(
-          levels = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"),
+          c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"),
           default = "euclidean",
           tags = c("train", "dist")
         ),
@@ -36,7 +42,7 @@ LearnerClustProtoclust = R6Class(
         upper = p_lgl(default = FALSE, tags = c("train", "dist")),
         p = p_dbl(0, default = 2, tags = c("train", "dist"), depends = quote(method == "minkowski")),
         verb = p_lgl(default = FALSE, tags = c("train", "protoclust")),
-        k = p_int(1L, tags = c("train", "protocut", "predict"))
+        k = p_int(1L, tags = c("train", "protocut", "predict", "required"))
       )
 
       param_set$set_values(k = 2L)
@@ -95,7 +101,7 @@ LearnerClustProtoclust = R6Class(
       x = as.matrix(ordered_features(task, self))
       protos = m$data[pc$protos, , drop = FALSE]
       d = invoke(stats::dist, x = rbind(protos, x), .args = self$param_set$get_values(tags = c("train", "dist")))
-      d = as.matrix(d)[-seq_len(nrow(protos)), seq_len(nrow(protos)), drop = FALSE]
+      d = as.matrix(d)[-seq_row(protos), seq_row(protos), drop = FALSE]
       partition = pc$cl[pc$protos][max.col(-d, ties.method = "first")]
 
       list(partition = partition)

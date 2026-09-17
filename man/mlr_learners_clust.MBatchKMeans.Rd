@@ -9,8 +9,8 @@ Mini-batch k-means clustering.
 Calls \code{\link[ClusterR:MiniBatchKmeans]{ClusterR::MiniBatchKmeans()}} from package \CRANpkg{ClusterR}.
 
 The \code{clusters} parameter is set to 2 by default since \code{\link[ClusterR:MiniBatchKmeans]{ClusterR::MiniBatchKmeans()}} doesn't have a default value for
-the number of clusters. The predict method uses \code{\link[ClusterR:predict_MBatchKMeans]{ClusterR::predict_MBatchKMeans()}} to compute the cluster memberships
-for new data. The learner supports both partitional and fuzzy clustering.
+the number of clusters. The predict method uses \code{\link[ClusterR:predict_KMeans]{ClusterR::predict_KMeans()}} on the fitted centroids to compute the
+cluster memberships for new data. The learner supports both partitional and fuzzy clustering.
 }
 \section{Dictionary}{
 
@@ -46,6 +46,7 @@ lrn("clust.MBatchKMeans")
    tol \tab numeric \tab 1e-04 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
    tol_optimal_init \tab numeric \tab 0.3 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
    seed \tab integer \tab 1 \tab  \tab \eqn{(-\infty, \infty)}{(-Inf, Inf)} \cr
+   threads \tab integer \tab 1 \tab  \tab \eqn{[1, \infty)}{[1, Inf)} \cr
 }
 }
 

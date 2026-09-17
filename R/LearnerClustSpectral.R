@@ -1,15 +1,21 @@
 #' @title Spectral Clustering Learner
 #'
 #' @name mlr_learners_clust.specc
+#' @include LearnerClust.R
 #'
 #' @description
 #' Spectral clustering.
 #' Calls [kernlab::specc()] from package \CRANpkg{kernlab}.
 #'
 #' The `centers` parameter is set to 2 by default since [kernlab::specc()] doesn't have a default value for the number
-#' of clusters. Kernel parameters have to be passed directly and not by using the `kpar` list in [kernlab::specc()].
+#' of clusters.
 #'
 #' There is no predict method for [kernlab::specc()], so the method returns cluster labels for the training data.
+#'
+#' @section Custom mlr3 parameters:
+#' - `sigma`, `degree`, `scale`, `offset`, `order`:
+#'   - In [kernlab::specc()], these kernel parameters are passed inside the `kpar` list. Here they are exposed
+#'     directly and assembled into `kpar` internally.
 #'
 #' @templateVar id clust.specc
 #' @template learner
@@ -30,7 +36,7 @@ LearnerClustSpectral = R6Class(
       param_set = ps(
         centers = p_int(2L, tags = c("train", "required")),
         kernel = p_fct(
-          levels = c("rbfdot", "polydot", "vanilladot", "tanhdot", "laplacedot", "besseldot", "anovadot", "splinedot"),
+          c("rbfdot", "polydot", "vanilladot", "tanhdot", "laplacedot", "besseldot", "anovadot", "splinedot"),
           default = "rbfdot",
           tags = "train"
         ),

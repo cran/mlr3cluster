@@ -1,13 +1,19 @@
 #' @title Divisive Analysis Clustering Learner
 #'
 #' @name mlr_learners_clust.diana
+#' @include LearnerClust.R
 #'
 #' @description
 #' Divisive hierarchical clustering.
 #' Calls [cluster::diana()] from package \CRANpkg{cluster}.
 #'
 #' The predict method uses [stats::cutree()] which cuts the tree resulting from hierarchical clustering into specified
-#' number of groups (see parameter `k`). The default value for `k` is 2.
+#' number of groups (see parameter `k`).
+#'
+#' @section Custom mlr3 parameters:
+#' - `k`:
+#'   - Not an argument of [cluster::diana()]. The number of clusters to cut the tree into,
+#'     passed to [stats::cutree()]. Initialized to `2`.
 #'
 #' @section Initial parameter values:
 #' - `keep.diss`:
@@ -46,7 +52,7 @@ LearnerClustDiana = R6Class(
         keep.diss = p_lgl(tags = "train"),
         keep.data = p_lgl(default = TRUE, tags = "train"),
         trace.lev = p_int(0L, default = 0L, tags = "train"),
-        k = p_int(1L, tags = c("train", "cutree", "predict"))
+        k = p_int(1L, tags = c("train", "cutree", "predict", "required"))
       )
 
       param_set$set_values(k = 2L, keep.diss = FALSE, keep.data = FALSE)
@@ -70,7 +76,6 @@ LearnerClustDiana = R6Class(
       m = invoke(
         cluster::diana,
         x = task$data(),
-        diss = FALSE,
         .args = remove_named(ps$get_values(tags = "train"), "k")
       )
       if (self$save_assignments) {

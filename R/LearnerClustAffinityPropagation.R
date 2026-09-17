@@ -1,6 +1,7 @@
 #' @title Affinity Propagation Clustering Learner
 #'
 #' @name mlr_learners_clust.ap
+#' @include LearnerClust.R
 #'
 #' @description
 #' Affinity Propagation clustering.
@@ -11,6 +12,9 @@
 #' The code is taken from
 #' [StackOverflow](https://stackoverflow.com/questions/34932692/using-the-apcluster-package-in-r-it-is-possible-to-score-unclustered-data-poi)
 #' answer by the `apcluster` package maintainer.
+#'
+#' The similarity `s` can be a function, e.g. `apcluster::negDistMat(r = 2)`, or the name of a function such as
+#' `"negDistMat"`.
 #'
 #' @section Initial parameter values:
 #' - `includeSim`:
@@ -35,8 +39,11 @@ LearnerClustAP = R6Class(
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        s = p_uty(tags = c("train", "required")),
-        p = p_uty(default = NA_real_, special_vals = list(NA_real_), tags = "train", custom_check = check_numeric),
+        s = p_uty(
+          tags = c("train", "required"),
+          custom_check = crate(function(x) check_function(x) %check||% check_string(x))
+        ),
+        p = p_uty(default = NA_real_, tags = "train", custom_check = check_numeric),
         q = p_dbl(0, 1, default = NA_real_, special_vals = list(NA_real_), tags = "train"),
         maxits = p_int(1L, default = 1000L, tags = "train"),
         convits = p_int(1L, default = 100L, tags = "train"),
@@ -65,11 +72,11 @@ LearnerClustAP = R6Class(
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      data = task$data()
+      data = as_numeric_matrix(task$data())
       m = invoke(apcluster::apcluster, x = data, .args = pv)
       # add data points corresponding to exemplars
       exemplars = m@exemplars
-      setattr(m, "exemplar_data", data[exemplars])
+      setattr(m, "exemplar_data", data[exemplars, , drop = FALSE])
 
       if (self$save_assignments) {
         self$assignments = apcluster::labels(m, type = "enum")
@@ -79,11 +86,19 @@ LearnerClustAP = R6Class(
 
     .predict = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      sim_func = pv$s
+      sim_fun = pv$s
+      if (is.character(sim_fun)) {
+        ns = asNamespace("apcluster")
+        sim_fun = if (exists(sim_fun, envir = ns, mode = "function", inherits = FALSE)) {
+          get(sim_fun, envir = ns, mode = "function")
+        } else {
+          match.fun(sim_fun)
+        }
+      }
       exemplar_data = attr(self$model, "exemplar_data")
 
-      data = ordered_features(task, self)
-      sim_mat = sim_func(
+      data = as_numeric_matrix(ordered_features(task, self))
+      sim_mat = sim_fun(
         rbind(exemplar_data, data),
         sel = seq_row(data) + nrow(exemplar_data)
       )[seq_row(exemplar_data), , drop = FALSE]

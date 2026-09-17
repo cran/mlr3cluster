@@ -1,6 +1,7 @@
 #' @title K-Means Clustering Learner from ClusterR
 #'
 #' @name mlr_learners_clust.kmeans_rcpp
+#' @include LearnerClust.R
 #'
 #' @description
 #' K-means clustering.
@@ -39,7 +40,7 @@ LearnerClustKMeansRcpp = R6Class(
         tol = p_dbl(0, default = 1e-04, tags = "train"),
         tol_optimal_init = p_dbl(0, default = 0.3, tags = "train"),
         seed = p_int(default = 1L, tags = "train"),
-        threads = p_int(1L, default = 1L, tags = "predict")
+        threads = p_int(1L, default = 1L, tags = c("predict", "threads"))
       )
 
       param_set$set_values(clusters = 2L)

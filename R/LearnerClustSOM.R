@@ -1,14 +1,24 @@
 #' @title Self-Organizing Maps Clustering Learner
 #'
 #' @name mlr_learners_clust.som
+#' @include LearnerClust.R
 #'
 #' @description
 #' Self-organizing map (Kohonen network) clustering.
 #' Calls [kohonen::som()] from package \CRANpkg{kohonen}.
 #'
-#' Each map unit corresponds to a cluster, so the number of clusters is `xdim * ydim`. Grid dimensions, topology, and
-#' neighbourhood function are exposed directly as parameters and forwarded to [kohonen::somgrid()]. The predict method
+#' Each map unit corresponds to a cluster, so the number of clusters is `xdim * ydim`. The predict method
 #' uses [kohonen::map()] to assign new data to the closest unit.
+#'
+#' @section Custom mlr3 parameters:
+#' - `xdim`, `ydim`, `topo`, `neighbourhood.fct`, `toroidal`:
+#'   - Not arguments of [kohonen::som()]. These construct the map grid and are forwarded to [kohonen::somgrid()].
+#'
+#' @section Initial parameter values:
+#' - `cores`:
+#'   - Actual default: `-1L`, using all available cores.
+#'   - Adjusted default: `1L`.
+#'   - Reason for change: Conflicting with parallelization via \CRANpkg{future}.
 #'
 #' @templateVar id clust.som
 #' @template learner
@@ -44,10 +54,12 @@ LearnerClustSOM = R6Class(
         keep.data = p_lgl(default = TRUE, tags = "train"),
         dist.fcts = p_uty(default = NULL, tags = "train"),
         mode = p_fct(c("online", "batch", "pbatch"), default = "online", tags = "train"),
-        cores = p_int(default = -1L, tags = "train"),
+        cores = p_int(default = -1L, tags = c("train", "threads")),
         init = p_uty(tags = "train"),
         normalizeDataLayers = p_lgl(default = TRUE, tags = "train")
       )
+
+      param_set$set_values(cores = 1L)
 
       super$initialize(
         id = "clust.som",
@@ -70,15 +82,22 @@ LearnerClustSOM = R6Class(
       pv$grid = invoke(kohonen::somgrid, .args = grid_args)
 
       data = as_numeric_matrix(task$data())
-      m = invoke(kohonen::som, X = data, .args = pv)
+      m = invoke(kohonen::som, X = data, .args = pv, .opts = allow_partial_matching)
       if (self$save_assignments) {
-        self$assignments = as.integer(m$unit.classif %??% invoke(kohonen::map, m, newdata = data)$unit.classif)
+        self$assignments = as.integer(
+          m$unit.classif %??% invoke(kohonen::map, m, newdata = data, .opts = allow_partial_matching)$unit.classif
+        )
       }
       m
     },
 
     .predict = function(task) {
-      p = invoke(kohonen::map, self$model, newdata = as_numeric_matrix(ordered_features(task, self)))
+      p = invoke(
+        kohonen::map,
+        self$model,
+        newdata = as_numeric_matrix(ordered_features(task, self)),
+        .opts = allow_partial_matching
+      )
       list(partition = as.integer(p$unit.classif))
     }
   )

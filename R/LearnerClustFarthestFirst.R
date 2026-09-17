@@ -1,6 +1,7 @@
 #' @title Farthest First Clustering Learner
 #'
 #' @name mlr_learners_clust.ff
+#' @include LearnerClust.R
 #'
 #' @description
 #' Farthest First clustering.
@@ -27,7 +28,8 @@ LearnerClustFarthestFirst = R6Class(
       param_set = ps(
         N = p_int(1L, default = 2L, tags = "train"),
         S = p_int(0L, default = 1L, tags = "train"),
-        output_debug_info = p_lgl(default = FALSE, tags = "train")
+        output_debug_info = p_lgl(default = FALSE, tags = "train"),
+        do_not_check_capabilities = p_lgl(default = FALSE, tags = "train")
       )
 
       super$initialize(

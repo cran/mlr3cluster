@@ -35,6 +35,25 @@ check_centers = function(x) {
   }
 }
 
+assert_prediction_count = function(actual, expected, type) {
+  if (actual != expected) {
+    if (actual < expected) {
+      error_learner_predict(
+        "Predicted %s not complete, %s for %i observations is missing",
+        type,
+        type,
+        expected - actual
+      )
+    } else {
+      error_learner_predict(
+        "Predicted %s contains %i additional predictions without matching rows",
+        type,
+        actual - expected
+      )
+    }
+  }
+}
+
 row_any_na = function(x) {
   if (!anyNA(x)) {
     return(logical(nrow(x)))
@@ -44,7 +63,7 @@ row_any_na = function(x) {
 
 task_dist = function(task, rows) {
   data = task$data(rows = rows)
-  if (any(task$feature_types$type %in% c("character", "factor", "ordered"))) {
+  if (any(task$feature_types$type %chin% c("character", "factor", "ordered"))) {
     chr_cols = task$feature_types[get("type") == "character", "id", with = FALSE][[1L]]
     if (length(chr_cols) > 0L) {
       # daisy() rejects bare character columns

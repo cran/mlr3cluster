@@ -1,6 +1,7 @@
 #' @title HDBSCAN Clustering Learner
 #'
 #' @name mlr_learners_clust.hdbscan
+#' @include LearnerClust.R
 #'
 #' @description
 #' HDBSCAN (hierarchical DBSCAN) clustering.
@@ -51,12 +52,12 @@ LearnerClustHDBSCAN = R6Class(
   private = list(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
-      data = task$data()
+      data = as_numeric_matrix(task$data())
       m = invoke(dbscan::hdbscan, x = data, .args = pv)
-      m = insert_named(m, list(data = data))
+      m$data = data
 
       if (self$save_assignments) {
-        self$assignments = m$cluster
+        self$assignments = as.integer(m$cluster)
       }
       m
     },
@@ -65,7 +66,7 @@ LearnerClustHDBSCAN = R6Class(
       partition = as.integer(invoke(
         predict,
         self$model,
-        newdata = ordered_features(task, self),
+        newdata = as_numeric_matrix(ordered_features(task, self)),
         data = self$model$data
       ))
       list(partition = partition)

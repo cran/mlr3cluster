@@ -1,6 +1,7 @@
 #' @title Featureless Clustering Learner
 #'
 #' @name mlr_learners_clust.featureless
+#' @include LearnerClust.R
 #'
 #' @description
 #' Featureless clustering.
@@ -24,10 +25,10 @@ LearnerClustFeatureless = R6Class(
 
       super$initialize(
         id = "clust.featureless",
-        feature_types = c("logical", "integer", "numeric"),
+        feature_types = unname(mlr_reflections$task_feature_types),
         predict_types = c("partition", "prob"),
         param_set = param_set,
-        properties = c("partitional", "exclusive", "complete", "missings"),
+        properties = c("partitional", "exclusive", "complete", "featureless", "missings"),
         man = "mlr3cluster::mlr_learners_clust.featureless",
         label = "Featureless Clustering Learner"
       )

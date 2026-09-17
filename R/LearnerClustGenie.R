@@ -1,6 +1,7 @@
 #' @title Genie Hierarchical Clustering Learner
 #'
 #' @name mlr_learners_clust.genie
+#' @include LearnerClust.R
 #'
 #' @description
 #' Genie hierarchical clustering, a fast and robust outlier-resistant algorithm based on the Gini inequality measure
@@ -10,6 +11,11 @@
 #' There is no predict method for [genieclust::gclust()], so the method returns cluster labels for the training data
 #' obtained via [stats::cutree()] at the requested `k`.
 #' The task must have at least 2 features.
+#'
+#' @section Custom mlr3 parameters:
+#' - `k`:
+#'   - Not an argument of [genieclust::gclust()]. The number of clusters to cut the tree into,
+#'     passed to [stats::cutree()]. Initialized to `2`.
 #'
 #' @templateVar id clust.genie
 #' @template learner
@@ -36,7 +42,7 @@ LearnerClustGenie = R6Class(
           tags = c("train", "gclust")
         ),
         verbose = p_lgl(default = FALSE, tags = c("train", "gclust")),
-        k = p_int(1L, tags = c("train", "cutree", "predict"))
+        k = p_int(1L, tags = c("train", "cutree", "predict", "required"))
       )
 
       param_set$set_values(k = 2L)

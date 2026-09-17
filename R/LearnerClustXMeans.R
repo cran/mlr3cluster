@@ -1,12 +1,20 @@
 #' @title X-Means Clustering Learner
 #'
 #' @name mlr_learners_clust.xmeans
+#' @include LearnerClust.R
 #'
 #' @description
 #' X-means clustering.
 #' Calls [RWeka::XMeans()] from package \CRANpkg{RWeka}.
 #'
 #' The predict method uses [RWeka::predict.Weka_clusterer()] to compute the cluster memberships for new data.
+#'
+#' @section Installation:
+#' XMeans is not part of the Weka core and must be installed once through the Weka package manager:
+#' ```r
+#' RWeka::WPM("refresh-cache")
+#' RWeka::WPM("install-package", "XMeans")
+#' ```
 #'
 #' @templateVar id clust.xmeans
 #' @template learner
@@ -40,7 +48,8 @@ LearnerClustXMeans = R6Class(
         N = p_uty(tags = "train"),
         O = p_uty(tags = "train"),
         Y = p_uty(tags = "train"),
-        output_debug_info = p_lgl(default = FALSE, tags = "train")
+        output_debug_info = p_lgl(default = FALSE, tags = "train"),
+        do_not_check_capabilities = p_lgl(default = FALSE, tags = "train")
       )
 
       super$initialize(
@@ -60,7 +69,7 @@ LearnerClustXMeans = R6Class(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
       ctrl = weka_control(pv)
-      m = invoke(RWeka::XMeans, x = task$data(), control = ctrl)
+      m = invoke(RWeka::XMeans, x = as_numeric_matrix(task$data()), control = ctrl)
       if (self$save_assignments) {
         self$assignments = unname(m$class_ids + 1L)
       }
@@ -68,7 +77,8 @@ LearnerClustXMeans = R6Class(
     },
 
     .predict = function(task) {
-      partition = invoke(predict, self$model, newdata = ordered_features(task, self), type = "class_ids") + 1L
+      newdata = as_numeric_matrix(ordered_features(task, self))
+      partition = invoke(predict, self$model, newdata = newdata, type = "class_ids") + 1L
       list(partition = partition)
     }
   )

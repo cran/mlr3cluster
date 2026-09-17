@@ -1,6 +1,7 @@
 #' @title Expectation-Maximization Clustering Learner
 #'
 #' @name mlr_learners_clust.em
+#' @include LearnerClust.R
 #'
 #' @description
 #' Expectation-Maximization clustering.
@@ -32,12 +33,14 @@ LearnerClustEM = R6Class(
         M = p_dbl(1e-6, default = 1e-6, tags = "train"),
         max = p_int(-1L, default = -1L, tags = "train"),
         N = p_int(-1L, default = -1L, tags = "train"),
-        num_slots = p_int(1L, default = 1L, tags = "train"),
+        num_slots = p_int(1L, default = 1L, tags = c("train", "threads")),
         S = p_int(0L, default = 100L, tags = "train"),
         X = p_int(1L, default = 10L, tags = "train"),
         K = p_int(1L, default = 10L, tags = "train"),
         V = p_lgl(default = FALSE, tags = "train"),
-        output_debug_info = p_lgl(default = FALSE, tags = "train")
+        O = p_lgl(default = FALSE, tags = "train"),
+        output_debug_info = p_lgl(default = FALSE, tags = "train"),
+        do_not_check_capabilities = p_lgl(default = FALSE, tags = "train")
       )
 
       super$initialize(

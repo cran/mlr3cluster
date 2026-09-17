@@ -1,13 +1,19 @@
 #' @title Agglomerative Nesting Clustering Learner
 #'
 #' @name mlr_learners_clust.agnes
+#' @include LearnerClust.R
 #'
 #' @description
 #' Agglomerative hierarchical clustering.
 #' Calls [cluster::agnes()] from package \CRANpkg{cluster}.
 #'
 #' The predict method uses [stats::cutree()] which cuts the tree resulting from hierarchical clustering into specified
-#' number of groups (see parameter `k`). The default number for `k` is 2.
+#' number of groups (see parameter `k`).
+#'
+#' @section Custom mlr3 parameters:
+#' - `k`:
+#'   - Not an argument of [cluster::agnes()]. The number of clusters to cut the tree into,
+#'     passed to [stats::cutree()]. Initialized to `2`.
 #'
 #' @section Initial parameter values:
 #' - `keep.diss`:
@@ -39,14 +45,14 @@ LearnerClustAgnes = R6Class(
         metric = p_fct(c("euclidean", "manhattan"), default = "euclidean", tags = "train"),
         stand = p_lgl(default = FALSE, tags = "train"),
         method = p_fct(
-          levels = c("average", "single", "complete", "ward", "weighted", "flexible", "gaverage"),
+          c("average", "single", "complete", "ward", "weighted", "flexible", "gaverage"),
           default = "average",
           tags = "train"
         ),
         keep.diss = p_lgl(tags = "train"),
         keep.data = p_lgl(default = TRUE, tags = "train"),
         trace.lev = p_int(0L, default = 0L, tags = "train"),
-        k = p_int(1L, tags = c("train", "cutree", "predict")),
+        k = p_int(1L, tags = c("train", "cutree", "predict", "required")),
         par.method = p_uty(
           tags = "train",
           depends = quote(method %in% c("flexible", "gaverage")),
@@ -80,7 +86,6 @@ LearnerClustAgnes = R6Class(
       m = invoke(
         cluster::agnes,
         x = task$data(),
-        diss = FALSE,
         .args = remove_named(ps$get_values(tags = "train"), "k")
       )
       if (self$save_assignments) {

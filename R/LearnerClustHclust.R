@@ -1,12 +1,23 @@
 #' @title Hierarchical Clustering Learner
 #'
 #' @name mlr_learners_clust.hclust
+#' @include LearnerClust.R
 #'
 #' @description
 #' Agglomerative hierarchical clustering.
 #' Calls [stats::hclust()] from package \pkg{stats}.
 #'
 #' Distance calculation is done by [stats::dist()].
+#'
+#' @section Custom mlr3 parameters:
+#' - `distmethod`:
+#'   - Not an argument of [stats::hclust()]. The distance measure, passed as `method` to [stats::dist()] when
+#'     computing the dissimilarity matrix.
+#' - `diag`, `upper`, `p`:
+#'   - Not arguments of [stats::hclust()]. Forwarded to [stats::dist()] when computing the dissimilarity matrix.
+#' - `k`:
+#'   - Not an argument of [stats::hclust()]. The number of clusters to cut the tree into,
+#'     passed to [stats::cutree()]. Initialized to `2`.
 #'
 #' @templateVar id clust.hclust
 #' @template learner
@@ -26,20 +37,20 @@ LearnerClustHclust = R6Class(
     initialize = function() {
       param_set = ps(
         method = p_fct(
-          levels = c("ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid"),
+          c("ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid"),
           default = "complete",
           tags = c("train", "hclust")
         ),
         members = p_uty(default = NULL, tags = c("train", "hclust")),
         distmethod = p_fct(
-          levels = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"),
+          c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"),
           default = "euclidean",
           tags = "train"
         ),
         diag = p_lgl(default = FALSE, tags = c("train", "dist")),
         upper = p_lgl(default = FALSE, tags = c("train", "dist")),
         p = p_dbl(0, default = 2, tags = c("train", "dist"), depends = quote(distmethod == "minkowski")),
-        k = p_int(1L, tags = c("train", "cutree", "predict"))
+        k = p_int(1L, tags = c("train", "cutree", "predict", "required"))
       )
 
       param_set$set_values(k = 2L)

@@ -12,6 +12,8 @@ Calls \code{\link[tclust:tclust]{tclust::tclust()}} from package \CRANpkg{tclust
 The \code{k} parameter is set to 2 by default since \code{\link[tclust:tclust]{tclust::tclust()}} doesn't have a default value for the number of
 clusters. There is no predict method for \code{\link[tclust:tclust]{tclust::tclust()}}, so the method returns cluster labels for the training
 data.
+
+Setting \code{n.cores} to a value greater than one enables \code{parallel} at train time unless it is set explicitly.
 }
 \section{Initial parameter values}{
 
@@ -21,6 +23,12 @@ data.
 \item Actual default: \code{TRUE}.
 \item Adjusted default: \code{FALSE}.
 \item Reason for change: Avoid storing the training data in the model to save memory.
+}
+\item \code{n.cores}:
+\itemize{
+\item Actual default: \code{-1L}, using all available cores.
+\item Adjusted default: \code{1L}.
+\item Reason for change: Conflicting with parallelization via \CRANpkg{future}.
 }
 }
 }
@@ -62,7 +70,7 @@ lrn("clust.tclust")
    scale \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
    store_x \tab logical \tab TRUE \tab TRUE, FALSE \tab - \cr
    parallel \tab logical \tab FALSE \tab TRUE, FALSE \tab - \cr
-   n.cores \tab integer \tab -1 \tab  \tab \eqn{(-\infty, \infty)}{(-Inf, Inf)} \cr
+   n.cores \tab integer \tab -1 \tab  \tab \eqn{[-2, \infty)}{[-2, Inf)} \cr
    zero_tol \tab numeric \tab 1e-16 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr
    drop.empty.clust \tab logical \tab TRUE \tab TRUE, FALSE \tab - \cr
    trace \tab integer \tab 0 \tab  \tab \eqn{[0, \infty)}{[0, Inf)} \cr

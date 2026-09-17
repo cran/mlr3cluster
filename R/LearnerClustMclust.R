@@ -1,6 +1,7 @@
 #' @title Gaussian Mixture Model Clustering Learner
 #'
 #' @name mlr_learners_clust.mclust
+#' @include LearnerClust.R
 #'
 #' @description
 #' Gaussian mixture model-based clustering.
@@ -36,12 +37,24 @@ LearnerClustMclust = R6Class(
     initialize = function() {
       param_set = ps(
         G = p_uty(default = 1:9, tags = "train", custom_check = check_numeric),
-        modelNames = p_uty(tags = "train", custom_check = check_character),
-        prior = p_uty(tags = "train", custom_check = check_list),
+        modelNames = p_uty(
+          default = NULL,
+          tags = "train",
+          custom_check = crate(function(x) check_character(x, null.ok = TRUE))
+        ),
+        prior = p_uty(default = NULL, tags = "train", custom_check = crate(function(x) check_list(x, null.ok = TRUE))),
         control = p_uty(tags = "train", custom_check = check_list),
-        initialization = p_uty(tags = "train", custom_check = check_list),
+        initialization = p_uty(
+          default = NULL,
+          tags = "train",
+          custom_check = crate(function(x) check_list(x, null.ok = TRUE))
+        ),
         warn = p_lgl(default = FALSE, tags = "train"),
-        x = p_uty(tags = "train", custom_check = crate(function(x) check_class(x, "mclustBIC"))),
+        x = p_uty(
+          default = NULL,
+          tags = "train",
+          custom_check = crate(function(x) check_class(x, "mclustBIC", null.ok = TRUE))
+        ),
         verbose = p_lgl(default = FALSE, tags = "train")
       )
 
@@ -64,7 +77,7 @@ LearnerClustMclust = R6Class(
     .train = function(task) {
       pv = self$param_set$get_values(tags = "train")
       with_package("mclust", {
-        m = invoke(mclust::Mclust, data = task$data(), .args = pv)
+        m = invoke(mclust::Mclust, data = task$data(), .args = pv, .opts = allow_partial_matching)
       })
       if (self$save_assignments) {
         self$assignments = as.integer(m$classification)
@@ -73,7 +86,12 @@ LearnerClustMclust = R6Class(
     },
 
     .predict = function(task) {
-      predictions = invoke(predict, self$model, newdata = ordered_features(task, self))
+      predictions = invoke(
+        predict,
+        self$model,
+        newdata = ordered_features(task, self),
+        .opts = allow_partial_matching
+      )
       partition = as.integer(predictions$classification)
       prob = NULL
       if (self$predict_type == "prob") {
